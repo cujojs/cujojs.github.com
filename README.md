@@ -1,4 +1,3 @@
 www
-===
 
-testing the automatic page generation
+The cujojs website
