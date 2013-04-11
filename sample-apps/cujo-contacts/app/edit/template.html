@@ -1,0 +1,13 @@
+<div class="edit-contact-view">
+	<form>
+		<fieldset>
+			<input type="text" style="display:none" name="id"/>
+			<input type="text" placeholder="${label.firstName}" class="first-name" name="firstName"> <input type="text" placeholder="${label.lastName}" class="last-name" name="lastName">
+			<label><span>${label.phone}</span> <input type="text" name="phone"></label>
+			<label><span>${label.email}</span> <input type="text" name="email"></label>
+		</fieldset>
+        <fieldset class="controls">
+            <input type="submit" value="${save}"> <input type="reset" value="${clear}">
+        </fieldset>
+	</form>
+</div>

@@ -7,7 +7,7 @@
 		//},
 		packages: [
 			// Define application-level packages
-			{ name: 'contacts', location: 'sample-apps/cujo-contacts' },
+			{ name: 'welcome', location: 'app/welcome' },
 
 			// Define a theme package, and configure it to always use the css module loader
 			// No need to use AMD 'css!' plugin to load things in this package, it will happen

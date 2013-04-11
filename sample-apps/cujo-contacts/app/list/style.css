@@ -1,0 +1,19 @@
+.contact-list-view {
+	position: absolute;
+	height: 100%;
+	width: 30%;
+}
+
+.contact-list-view .contact-list {
+	margin: .5em 1em;
+	padding: 0;
+}
+
+.contact-list-view .contact {
+    margin: .5em 0;
+	list-style: none;
+}
+
+.contact-list-view {
+	overflow-y: scroll;
+}

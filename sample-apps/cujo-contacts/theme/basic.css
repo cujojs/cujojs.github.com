@@ -1,0 +1,91 @@
+.cujo-contacts h1, .cujo-contacts h2, .cujo-contacts h3 {
+    color: #333;
+}
+
+.cujo-contacts h1 {
+    font-weight: bold;
+    font-size: 3em;
+    letter-spacing: -.1ex;
+}
+
+.cujo-contacts fieldset {
+	border: none;
+}
+
+.cujo-contacts input[type="text"] {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1em;
+    margin: 1em 0;
+    border: none;
+    border-bottom: 1px dotted #ddd;
+    outline: none;
+}
+
+.cujo-contacts input[type="text"]:focus {
+    border-bottom: 1px dotted #666;
+}
+
+::-webkit-input-placeholder {
+    color: #acacac;
+}
+:-moz-placeholder {
+    color: #acacac;
+}
+::-moz-placeholder {
+    color: #acacac;
+}
+:-ms-input-placeholder {
+    color: #acacac;
+}
+
+.cujo-contacts label {
+    font-weight: normal;
+    color: #acacac;
+}
+
+.cujo-contacts {
+	width: 100%;
+    max-width: 800px;
+    min-width: 400px;
+    margin: 0 auto;
+	overflow: visible;
+}
+
+.cujo-contacts  .contacts-view-container {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+	position: relative;
+	height: 100%;
+	width: 100%;
+	min-height: 400px;
+	overflow: hidden;
+	clear: both;
+}
+
+.cujo-contacts .header-view, .footer-view {
+	padding: .25em 1em;
+}
+
+.cujo-contacts .header-view {
+	font-size: 18pt;
+}
+
+.cujo-contacts .contact-list-view {
+    background-color: #fafafa;
+}
+
+.cujo-contacts .contact-list-view .contact-list {
+    cursor: pointer;
+}
+
+.cujo-contacts .footer-view {
+    color: #aaa;
+	font-size: .8em;
+}
+
+.cujo-contacts .footer-view a:link,
+.cujo-contacts .footer-view a:visited,
+.cujo-contacts .footer-view a:hover,
+.cujo-contacts .footer-view a:active {
+    color: #aaa;
+}

@@ -1,0 +1,30 @@
+.edit-contact-view {
+	padding: 0;
+	position: absolute;
+	right: 0;
+	height: 100%;
+	width: 70%;
+}
+
+.edit-contact-view .contact-form {
+	margin: 1em;
+}
+
+.edit-contact-view label {
+	display: block;
+	width: 100%;
+}
+
+.edit-contact-view label span {
+    display: inline-block;
+    width: 10em;
+}
+
+.edit-contact-view input[type="text"] {
+	width: 10em;
+}
+
+.edit-contact-view .controls {
+    position: absolute;
+    bottom: 0;
+}
