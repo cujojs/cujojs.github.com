@@ -8,12 +8,6 @@ html {
     color: #222;
     margin: 0;
     padding: 0;
-
-    /*transition: opacity 1s ease;*/
-	/*-webkit-transition: opacity 1s ease;*/
-	/*-moz-transition: opacity 1s ease;*/
-	/*-o-transition: opacity 1s ease;*/
-	/*-ms-transition: opacity 1s ease;*/
 }
 
 body {
@@ -43,12 +37,15 @@ p {
 }
 
 nav ul {
-    width: 800px;
+    padding: 0;
     margin: 1em auto;
+    text-align: center;
 }
+
 nav li {
     display: inline-block;
-    margin: 0 1em;
+    margin: 0 2em 0 0;
+    padding: 0;
 }
 
 header {
@@ -60,12 +57,18 @@ header {
 }
 
 .header-content {
-    width: 650px;
+    text-align: center;
     margin: 0 auto;
 }
 
 .header-content .prefix {
     text-shadow: #0066ff 0 0 20px;
+
+    transition: text-shadow 1s ease;
+    -webkit-transition: text-shadow 1s ease;
+    -moz-transition: text-shadow 1s ease;
+    -o-transition: text-shadow 1s ease;
+    -ms-transition: text-shadow 1s ease;
 }
 
 .header-content .suffix {
@@ -76,6 +79,12 @@ header {
     margin: 0 0;
     font-weight: 100;
     font-size: 3em;
+
+    transition: opacity 1s ease;
+    -webkit-transition: opacity 1s ease;
+    -moz-transition: opacity 1s ease;
+    -o-transition: opacity 1s ease;
+    -ms-transition: opacity 1s ease;
 }
 
 .quickstart {
@@ -110,14 +119,23 @@ header {
     margin: 1em;
 }
 
-.content {
+.box {
     overflow: hidden;
     height: 100%;
     padding: 0 10%;
     margin: 0 auto;
     min-width: 800px;
+}
+
+.content {
     min-height: 480px;
     border-bottom: 2px solid #ddd;
+
+    transition: opacity 1s ease;
+    -webkit-transition: opacity 1s ease;
+    -moz-transition: opacity 1s ease;
+    -o-transition: opacity 1s ease;
+    -ms-transition: opacity 1s ease;
 }
 
 .content article {
