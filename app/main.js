@@ -1,7 +1,5 @@
 define({
 
-	// Load a basic theme. This is just a CSS file, and since a moduleLoader is
-	// configured in run.js, curl knows to load this as CSS.
 	theme: { module: 'theme/basic.css' },
 
 	strings: { module: 'i18n!app/subheader/strings' },

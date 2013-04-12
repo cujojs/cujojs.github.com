@@ -17,13 +17,9 @@ body {
     line-height: 1.4;
 }
 
-a {
+nav a {
     color: #111;
     text-decoration: none;
-}
-
-h1, h2 {
-    color: #eee;
 }
 
 h1 {
@@ -57,6 +53,7 @@ header {
 }
 
 .header-content {
+    color: #eee;
     text-align: center;
     margin: 0 auto;
 }
@@ -128,14 +125,7 @@ header {
 }
 
 .content {
-    min-height: 480px;
     border-bottom: 2px solid #ddd;
-
-    transition: opacity 1s ease;
-    -webkit-transition: opacity 1s ease;
-    -moz-transition: opacity 1s ease;
-    -o-transition: opacity 1s ease;
-    -ms-transition: opacity 1s ease;
 }
 
 .content article {
@@ -144,18 +134,18 @@ header {
     width: 30%;
 }
 
-.content h1 {
+.content h1, .content h2 {
     margin-top: 1em;
-    font-size: 2.5em;
     font-weight: 200;
     color: #222;
 }
 
+.content h1 {
+    font-size: 2.5em;
+}
+
 .content h2 {
-    margin-top: 1em;
     font-size: 2em;
-    font-weight: 200;
-    color: #222;
 }
 
 .content p {
@@ -184,4 +174,9 @@ header {
     display: block;
     float: left;
     margin-left: 2.5em;
+}
+
+.main {
+    margin: 0 auto;
+    width: 60%;
 }
