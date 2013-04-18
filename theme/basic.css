@@ -38,7 +38,6 @@ a:hover {
 h1 {
     margin: 0 0;
     font-size: 8em;
-    letter-spacing: -.1ex;
 }
 
 p {
@@ -69,6 +68,10 @@ header {
     color: #eee;
     text-align: center;
     margin: 0 auto;
+}
+
+.header-content h1 {
+    letter-spacing: -.1ex;
 }
 
 .header-content .prefix {
@@ -249,6 +252,12 @@ header {
 
 .stack pre {
     margin: 1em;
+}
+
+.footer {
+    background: #111;
+    color: #888;
+    font-size: .9em;
 }
 
 /* Cujo contacts overrides */
