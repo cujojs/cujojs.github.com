@@ -16,7 +16,7 @@ define({
 
 	contactsAppContainer: {
 		render: { module: 'text!app/contacts-app/template.html' },
-		insert: { first: { $ref: 'dom.first!.app' }, at: 'contactsContainer' }
+		insert: { last: { $ref: 'dom.first!.app' }, at: 'contactsContainer' }
 	},
 
 	contactsApp: {

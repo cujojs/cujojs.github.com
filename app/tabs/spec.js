@@ -21,7 +21,7 @@ define({
 		render: {
 			template: { module: 'text!app/tabs/tabs.html' }
 		},
-		insert: { first: 'root' },
+		insert: { last: 'root' },
 		bind: {
 			to: { $ref: 'collection' },
 			bindings: {
