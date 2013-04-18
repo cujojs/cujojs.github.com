@@ -17,9 +17,22 @@ body {
     line-height: 1.4;
 }
 
+a {
+    transition: text-shadow .25s ease;
+    -webkit-transition: text-shadow .25s ease;
+    -moz-transition: text-shadow .25s ease;
+    -o-transition: text-shadow .25s ease;
+    -ms-transition: text-shadow .25s ease;
+}
+
 nav a {
     color: #111;
     text-decoration: none;
+}
+
+a:hover {
+    color: #004499;
+    text-shadow: #2266ff 0 0 8px;
 }
 
 h1 {
@@ -153,12 +166,16 @@ header {
     margin: 1em 0;
 }
 
-.app {
-    background: #eee;
+.app-container .app {
+    float: left;
+    width: 40%;
 }
 
-.app h1 {
-    color: #666;
+.app-container .code {
+    float: right;
+    width: 55%;
+    min-height: 40em;
+    overflow: hidden;
 }
 
 .get .button {
@@ -179,4 +196,63 @@ header {
 .main {
     margin: 0 auto;
     width: 60%;
+}
+
+.tabs {
+    border-bottom: 1px solid #ccc;
+}
+
+.tabs .item {
+    background: #eee;
+    padding: .5em 1em;
+    margin: 0 -1px -1px 0;
+    border: 1px solid #ddd;
+}
+
+.tabs .active {
+    background: #fff;
+    margin-right: 0;
+    border: 1px solid #ccc;
+    border-bottom: 1px solid white;
+    cursor: pointer;
+    padding-top: .75em;
+}
+
+.tabs .item a {
+    color: #666;
+    text-decoration: none;
+}
+
+.tabs .item a:hover {
+    color: #004499;
+}
+
+.tabs .active a:hover {
+    text-shadow: none;
+}
+
+.tabs .active a {
+    color: #0066ff;
+    cursor: default;
+}
+
+.stack .active {
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.stack code {
+    font-size: 12px;
+    overflow: scroll;
+}
+
+.stack pre {
+    margin: 1em;
+}
+
+/* Cujo contacts overrides */
+
+.cujo-contacts-container .header-view, .cujo-contacts-container .footer-view {
+    display: none;
 }

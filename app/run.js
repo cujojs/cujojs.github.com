@@ -22,7 +22,9 @@
 			{ name: 'cola', location: 'lib/cola', main: 'cola' },
 			{ name: 'when', location: 'lib/when', main: 'when' },
 			{ name: 'meld', location: 'lib/meld', main: 'meld' },
-			{ name: 'poly', location: 'lib/poly' }
+			{ name: 'poly', location: 'lib/poly' },
+
+			{ name: 'highlight', location: 'lib/highlight', main: 'amd' }
 		],
 		// Polyfill everything ES5-ish
 		preloads: ['poly/all']

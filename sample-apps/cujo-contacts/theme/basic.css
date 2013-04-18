@@ -44,9 +44,7 @@
 }
 
 .cujo-contacts {
-	width: 100%;
-    max-width: 800px;
-    min-width: 400px;
+	width: auto;
     margin: 0 auto;
 	overflow: visible;
 }

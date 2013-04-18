@@ -12,17 +12,61 @@ define({
 		}
 	},
 
-	contacts: {
+	contactsContainer: { $ref: 'dom.first!.cujo-contacts-container' },
+
+	contactsAppContainer: {
+		render: { module: 'text!app/contacts-app/template.html' },
+		insert: { first: { $ref: 'dom.first!.app' }, at: 'contactsContainer' }
+	},
+
+	contactsApp: {
 		wire: {
 			spec: 'contacts/app/main',
 			provide: {
-				root: { $ref: 'dom.first!.cujo-contacts' }
+				root: { $ref: 'contactsAppContainer' }
 			}
 		}
 	},
 
-	// Wire.js plugins
+	contactsCode: {
+		wire: {
+			spec: 'app/tabs/spec',
+			provide: {
+				root: { $ref: 'dom.first!.code', at: { $ref: 'contactsContainer' } },
+				collection: { $ref: 'contactsSources' }
+			}
+		}
+	},
+
+	contactsSources: { create: 'cola/Collection' },
+	contactsSourcesData: {
+		create: {
+			module: 'cola/adapter/Array',
+			args: [[
+				{
+					id: 'controller.js',
+					content: { module: 'highlight!contacts/app/controller.js' }
+				},
+				{
+					id: 'list/template.html',
+					content: { module: 'highlight!contacts/app/list/template.html' }
+				},
+				{
+					id: 'edit/template.html',
+					content: { module: 'highlight!contacts/app/edit/template.html' }
+				}
+			]]
+		},
+		bind: {
+			to: { $ref: 'contactsSources' }
+		}
+	},
+
 	plugins: [
-		{ module: 'wire/dom', classes: { init: 'loading' } }
+		{ module: 'wire/dom', classes: { init: 'loading' } },
+		{ module: 'wire/dom/render' },
+		{ module: 'wire/on' },
+		{ module: 'wire/aop' },
+		{ module: 'cola' }
 	]
 });
