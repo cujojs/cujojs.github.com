@@ -100,7 +100,7 @@ header {
     -ms-transition: opacity 1s ease;
 }
 
-.quickstart {
+.getit {
     font-size: .16em;
     vertical-align: middle;
     margin-left: 1em;
@@ -210,6 +210,21 @@ header {
     padding: .5em 1em;
     margin: 0 -1px -1px 0;
     border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.tabs .item:hover {
+    background: #ddd;
+}
+
+.tabs .item a {
+    color: #666;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tabs .item a:hover {
+    color: #004499;
 }
 
 .tabs .active {
@@ -217,26 +232,20 @@ header {
     margin-right: 0;
     border: 1px solid #ccc;
     border-bottom: 1px solid white;
-    cursor: pointer;
+    cursor: default;
     padding-top: .75em;
 }
 
-.tabs .item a {
-    color: #666;
-    text-decoration: none;
-}
-
-.tabs .item a:hover {
-    color: #004499;
-}
-
-.tabs .active a:hover {
-    text-shadow: none;
+.tabs .active:hover {
+    background: #fff;
 }
 
 .tabs .active a {
     color: #0066ff;
-    cursor: default;
+}
+
+.tabs .active a:hover {
+    text-shadow: none;
 }
 
 .stack .active {
@@ -252,6 +261,19 @@ header {
 
 .stack pre {
     margin: 1em;
+}
+
+.alacarte-list {
+    padding: 0;
+    margin: 0;
+}
+.alacarte-list li {
+    list-style-type: none
+}
+
+.alacarte-list span {
+    display: inline-block;
+    width: 3em;
 }
 
 .footer {

@@ -50,8 +50,7 @@
 }
 
 .cujo-contacts  .contacts-view-container {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
+    border: 1px solid #ccc;
 	position: relative;
 	height: 100%;
 	width: 100%;
