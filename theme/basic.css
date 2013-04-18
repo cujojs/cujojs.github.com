@@ -31,8 +31,8 @@ nav a {
 }
 
 a:hover {
-    color: #004499;
-    text-shadow: #2266ff 0 0 8px;
+    /*color: #004499;*/
+    text-shadow: #ccc 0 0 8px;
 }
 
 h1 {
