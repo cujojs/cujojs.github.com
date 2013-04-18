@@ -63,9 +63,10 @@ define({
 	// CONTROLLER
 	//
 	controller: {
-		create: {
-			module: 'contacts/app/controller',
-			args: { $ref: 'editForm' }
+		create: 'contacts/app/controller',
+		properties: {
+			_form: { $ref: 'editForm' },
+			_updateForm: { compose: 'form.setValues' }
 		},
 		on: {
 			editForm: {
