@@ -4,7 +4,7 @@ html {
 	-ms-text-size-adjust: 100%;
 
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: lighter;
+    font-weight: 200;
     color: #222;
     margin: 0;
     padding: 0;
@@ -31,7 +31,6 @@ nav a {
 }
 
 a:hover {
-    /*color: #004499;*/
     text-shadow: #ccc 0 0 8px;
 }
 
@@ -58,10 +57,7 @@ nav li {
 
 header {
     border-bottom: 3px solid #666;
-    background-repeat: no-repeat;
-    background-color: #000;
-    background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 1000, from(#333), to(#000));
-    background-image: -moz-radial-gradient(center 45deg, circle closest-side, #333 0, #000 1000px);
+    background-color: #222;
 }
 
 .header-content {
@@ -75,7 +71,7 @@ header {
 }
 
 .header-content .prefix {
-    text-shadow: #0066ff 0 0 20px;
+    text-shadow: #0066ff 0 0 30px;
 
     transition: text-shadow 1s ease;
     -webkit-transition: text-shadow 1s ease;
@@ -100,19 +96,14 @@ header {
     -ms-transition: opacity 1s ease;
 }
 
-.getit {
-    font-size: .16em;
-    vertical-align: middle;
-    margin-left: 1em;
-}
-
 .button {
     letter-spacing: 0;
     padding: .5em 1em;
-    background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 1000, from(#3e5), to(#395));
-    border: 1px solid #4f9;
+    border-radius: 1px;
+    vertical-align: middle;
+    border-width: 1px;
+    border-style: solid;
     border-radius: 8px;
-    -webkit-box-shadow: 0 0 2px 1px #3f7;
 }
 
 .button a {
@@ -120,6 +111,18 @@ header {
     font-weight: bold;
     text-decoration: none;
     text-shadow: #274 -1px -1px 0;
+}
+
+.button.getit {
+    font-size: .16em;
+    margin-left: 1em;
+    background-color: #395;
+    background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 1000, from(#3e5), to(#395));
+    background-image: -moz-radial-gradient(center 45deg, circle closest-side, #3e5 0, #395 1000px);
+    border-color: #4f9;
+    box-shadow: 0 0 8px 2px #3f7;
+    -webkit-box-shadow: 0 0 8px 2px #3f7;
+    -moz-box-shadow: 0 0 8px 2px #3f7;
 }
 
 .share {
