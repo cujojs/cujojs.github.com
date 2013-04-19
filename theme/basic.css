@@ -143,6 +143,12 @@ header {
     min-width: 800px;
 }
 
+.manifesto .box {
+    min-width: 320px;
+    width: 60%;
+    max-width: 700px;
+}
+
 .content {
     border-bottom: 2px solid #ddd;
 }
@@ -197,11 +203,6 @@ header {
     display: block;
     float: left;
     margin-left: 2.5em;
-}
-
-.main {
-    margin: 0 auto;
-    width: 60%;
 }
 
 .tabs {
