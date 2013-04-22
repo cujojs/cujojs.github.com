@@ -201,21 +201,6 @@ header {
     overflow: hidden;
 }
 
-.get .button {
-    width: 10em;
-    font-size: 1.25em;
-    display: inline-block;
-    float: left;
-    text-align: center;
-}
-
-.get .description {
-    width: 60%;
-    display: block;
-    float: left;
-    margin-left: 2.5em;
-}
-
 .tabs {
     border-bottom: 1px solid #ccc;
 }
@@ -283,18 +268,76 @@ header {
     margin: 0;
 }
 .alacarte-list li {
-    list-style-type: none
+    list-style-type: none;
+    width: 30%;
+    margin: 1em;
+    display: inline-block;
+    vertical-align: top;
 }
 
-.alacarte-list span {
+.alacarte-list h3 {
+    margin: 0;
+    padding: 0 0 0 48px;
     display: inline-block;
-    width: 3em;
+    background: no-repeat left -8px;
+    height: 48px;
+}
+
+.alacarte-list .links {
+    margin-left: 1em;
+    font-size: .9em;
+    display: inline-block;
+}
+
+.alacarte-list .description {
+    margin: 0;
+}
+
+.alacarte-list .cola h3 {
+    background-image: url(img/cola.png);
+}
+
+.alacarte-list .cram h3 {
+    background-image: url(img/cram.png);
+}
+
+.alacarte-list .curl h3 {
+    background-image: url(img/curl.png);
+}
+
+.alacarte-list .meld h3 {
+    background-image: url(img/meld.png);
+}
+
+.alacarte-list .msgs h3 {
+    background-image: url(img/msgs.png);
+}
+
+.alacarte-list .poly h3 {
+    background-image: url(img/poly.png);
+}
+
+.alacarte-list .rest h3 {
+    background-image: url(img/rest.png);
+}
+
+.alacarte-list .when h3 {
+    background-image: url(img/when.png);
+}
+.alacarte-list .wire h3 {
+    background-image: url(img/wire.png);
 }
 
 .footer {
+    overflow: hidden;
+    height: 100%;
     background: #111;
     color: #888;
     font-size: .9em;
+}
+
+.footer a {
+    color: #999;
 }
 
 /* Cujo contacts overrides */
