@@ -46,7 +46,6 @@ p {
 nav ul {
     padding: 0;
     margin: 1em auto;
-    text-align: center;
 }
 
 nav li {
@@ -56,7 +55,6 @@ nav li {
 }
 
 header {
-    border-bottom: 3px solid #666;
     background-color: #222;
 }
 
@@ -72,28 +70,16 @@ header {
 
 .header-content .prefix {
     text-shadow: #0066ff 0 0 30px;
-
-    transition: text-shadow 1s ease;
-    -webkit-transition: text-shadow 1s ease;
-    -moz-transition: text-shadow 1s ease;
-    -o-transition: text-shadow 1s ease;
-    -ms-transition: text-shadow 1s ease;
 }
 
 .header-content .suffix {
-    color: #666;
+    color: rgba(255, 255, 255, 0.3);
 }
 
 .header-content h2 {
     margin: 0 0;
     font-weight: 100;
     font-size: 3em;
-
-    transition: opacity 1s ease;
-    -webkit-transition: opacity 1s ease;
-    -moz-transition: opacity 1s ease;
-    -o-transition: opacity 1s ease;
-    -ms-transition: opacity 1s ease;
 }
 
 .button {
@@ -135,6 +121,31 @@ header {
     margin: 1em;
 }
 
+.announcements {
+    background: #0a2;
+    color: #fff;
+    height: 1.5em;
+    margin: 0;
+    padding: 0;
+}
+
+.announcements p {
+    vertical-align: top;
+    background-color: #0c2;
+    margin: 0 0 0 10%;
+    padding: 0;
+    height: 1.5em;
+    line-height: 1.5em;
+}
+
+.announcements p:before {
+    display: inline-block;
+    height: 0;
+    border: .75em solid transparent;
+    border-left-color: #0a2;
+    content: ' ';
+}
+
 .box {
     overflow: hidden;
     height: 100%;
@@ -143,7 +154,7 @@ header {
     min-width: 800px;
 }
 
-.manifesto .box {
+.manifesto .content.box {
     min-width: 320px;
     width: 60%;
     max-width: 700px;
