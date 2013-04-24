@@ -13,7 +13,7 @@ html {
 body {
     margin: 0;
     padding: 0;
-    font-size: 0.9em;
+    font-size: 0.8em;
     line-height: 1.4;
 }
 
@@ -173,7 +173,7 @@ nav li {
 }
 
 .content {
-    padding-bottom: 2.5em;
+    padding-bottom: 2em;
     padding-top: 2em;
     border-bottom: 1px solid #ddd;
 }
@@ -223,8 +223,8 @@ nav li {
 }
 
 .app-container .app, .app-container .code {
-    width: 99%;
-    overflow: hidden;
+    width: auto;
+    overflow: visible;
 }
 
 .tabs {
@@ -233,9 +233,9 @@ nav li {
 
 .tabs .item {
     background: #eee;
-    padding: .5em;
+    padding: .25em .5em;
     margin: 0 -1px -1px 0;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     cursor: pointer;
 }
 
@@ -255,11 +255,8 @@ nav li {
 
 .tabs .active {
     background: #fff;
-    margin-right: 0;
-    border: 1px solid #ccc;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid #fff;
     cursor: default;
-    padding-top: .75em;
 }
 
 .tabs .active:hover {
@@ -395,6 +392,10 @@ nav li {
 
 @media only screen and (min-width: 640px) {
 
+    body {
+        font-size: 0.9em;
+    }
+
     .hero, .announcements, .footer {
         width: 100%;
     }
@@ -414,6 +415,11 @@ nav li {
         font-weight: 100;
         font-size: 3em;
     }
+
+    .tabs .item {
+        padding: .5em 1em;
+    }
+
 }
 
 @media only screen and (min-width: 1024px) {
@@ -448,10 +454,6 @@ nav li {
 
     .app-container .code {
         width: 55%;
-    }
-
-    .tabs .item {
-        padding: .5em 1em;
     }
 
     .alacarte-list li {
