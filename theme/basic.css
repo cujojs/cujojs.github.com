@@ -276,6 +276,7 @@ nav li {
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     overflow: scroll;
+    max-height: 25em;
 }
 
 .stack code {
@@ -367,10 +368,19 @@ nav li {
     padding: 1em;
 }
 
+.cujo-hello-container .app input {
+    font-size: 1.1em;
+    padding: .25em;
+}
+
 /* Cujo contacts overrides */
 
 .cujo-contacts-container .header-view, .cujo-contacts-container .footer-view {
     display: none;
+}
+
+.app-container .app > div {
+    background: #eee;
 }
 
 /* Manifesto */

@@ -1,7 +1,5 @@
 define({
 
-//	root: { $ref: 'dom!contacts-app' },
-
 	theme: { module: 'css!contacts/theme/basic.css' },
 
 	//
@@ -116,15 +114,13 @@ define({
 	cleanContact: { module: 'contacts/app/contacts/cleanContact' },
 	generateMetadata: { module: 'contacts/app/contacts/generateMetadata' },
 
-
 	// Wire.js plugins
 	plugins: [
-		{ module: 'wire/dom', classes: { init: 'loading' } },
+		{ module: 'wire/dom' },
 		{ module: 'wire/dom/render' },
 		{ module: 'wire/on' },
 		{ module: 'wire/aop' },
 		{ module: 'wire/connect' },
 		{ module: 'cola' }
-		
 	]
 });
