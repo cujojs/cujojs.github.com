@@ -8,7 +8,6 @@
 		packages: [
 			// Define application-level packages
 			{ name: 'contacts', location: 'sample-apps/cujo-contacts' },
-			{ name: 'math', location: 'sample-apps/cujo-math' },
 			{ name: 'hello', location: 'sample-apps/cujo-hello' },
 
 			// Add third-party packages here
