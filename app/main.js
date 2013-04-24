@@ -20,11 +20,7 @@ define({
 		wire: { spec: 'app/contacts-sample/spec' }
 	},
 
-	plugins: [
-//		{ module: 'wire/debug' },
+	$plugins: [
 		{ module: 'wire/dom', classes: { init: 'loading' } },
-		{ module: 'wire/dom/render' },
-		{ module: 'wire/on' },
-		{ module: 'cola' }
 	]
 });
