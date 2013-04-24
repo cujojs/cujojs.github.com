@@ -20,7 +20,7 @@
 .stack .item {
     display: none;
     list-style-type: none;
-    position: absolute;
+    position: relative;
     left: 0;
     top: 0;
     right: 0;

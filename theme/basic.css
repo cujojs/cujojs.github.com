@@ -13,7 +13,7 @@ html {
 body {
     margin: 0;
     padding: 0;
-    font-size: 1em;
+    font-size: 0.9em;
     line-height: 1.4;
 }
 
@@ -25,11 +25,6 @@ a {
     -ms-transition: text-shadow .25s ease;
 }
 
-nav a {
-    color: #111;
-    text-decoration: none;
-}
-
 a:hover {
     text-shadow: #ccc 0 0 8px;
 }
@@ -39,13 +34,22 @@ h1 {
     font-size: 8em;
 }
 
+h3 {
+    margin: 0 0 1em 0;
+}
+
 p {
     line-height: 1.5em;
 }
 
+section {
+    clear: both;
+}
+
 nav ul {
     padding: 0;
-    margin: 1em auto;
+    margin: 0;
+    display: inline-block;
 }
 
 nav li {
@@ -54,8 +58,18 @@ nav li {
     padding: 0;
 }
 
-header {
+.hero {
     background-color: #222;
+}
+
+.hero nav {
+    font-size: 1em;
+    text-align: right;
+}
+
+.hero nav a {
+    color: #aaa;
+    text-decoration: none;
 }
 
 .header-content {
@@ -65,6 +79,7 @@ header {
 }
 
 .header-content h1 {
+    display: inline-block;
     letter-spacing: -.1ex;
 }
 
@@ -76,32 +91,35 @@ header {
     color: rgba(255, 255, 255, 0.3);
 }
 
-.header-content h2 {
-    margin: 0 0;
-    font-weight: 100;
-    font-size: 3em;
+.header-content h2, .header-content .getit {
+    display: none;
 }
 
 .button {
-    letter-spacing: 0;
-    padding: .5em 1em;
     border-radius: 1px;
-    vertical-align: middle;
     border-width: 1px;
     border-style: solid;
     border-radius: 8px;
+    display: inline-block;
+    letter-spacing: 0;
+    padding: .25em 1em;
+    vertical-align: middle;
 }
 
-.button a {
+.hero .button-container {
+    font-size: 1.4em;
+}
+
+.hero .button {
     color: white;
     font-weight: bold;
+    margin: .5em 0;
     text-decoration: none;
-    text-shadow: #274 -1px -1px 0;
+    text-shadow: rgba(0,0,0,0.5) -1px -1px 0;
+    width: 8em;
 }
 
 .button.getit {
-    font-size: .16em;
-    margin-left: 1em;
     background-color: #395;
     background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 1000, from(#3e5), to(#395));
     background-image: -moz-radial-gradient(center 45deg, circle closest-side, #3e5 0, #395 1000px);
@@ -111,14 +129,14 @@ header {
     -moz-box-shadow: 0 0 8px 2px #3f7;
 }
 
-.share {
-    padding: 1em 0;
-    text-align: center;
-    background: #eee;
-}
-
-.share span {
-    margin: 1em;
+.button.seeit {
+    background-color: #359;
+    background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 1000, from(#35e), to(#359));
+    background-image: -moz-radial-gradient(center 45deg, circle closest-side, #35e 0, #395 1000px);
+    border-color: #47f;
+    box-shadow: 0 0 8px 2px #37f;
+    -webkit-box-shadow: 0 0 8px 2px #37f;
+    -moz-box-shadow: 0 0 8px 2px #37f;
 }
 
 .announcements {
@@ -149,29 +167,37 @@ header {
 .box {
     overflow: hidden;
     height: 100%;
-    padding: 0 10%;
+    padding: 0 5%;
     margin: 0 auto;
-    min-width: 800px;
-}
-
-.manifesto .content.box {
-    min-width: 320px;
-    width: 60%;
-    max-width: 700px;
+    min-width: 360px;
 }
 
 .content {
-    border-bottom: 2px solid #ddd;
+    padding-bottom: 2em;
+    padding-top: 2em;
+    border-bottom: 1px solid #ddd;
+}
+
+.content.intro {
+    background: #eee;
+}
+
+.content h3 {
+    font-weight: 200;
+    font-size: 2em;
 }
 
 .content article {
-    float: left;
-    margin: 0 3% 1.5em 0;
-    width: 30%;
+    float: none;
+    margin: 0 0 1.5em 0;
+    width: auto;
+}
+
+.content article.span2 {
+    width: 63%;
 }
 
 .content h1, .content h2 {
-    margin-top: 1em;
     font-weight: 200;
     color: #222;
 }
@@ -189,15 +215,15 @@ header {
     margin: 1em 0;
 }
 
-.app-container .app {
-    float: left;
-    width: 40%;
+.content .leader {
+    font-size: 3em;
+    font-weight: bold;
+    color: #ccc;
+    text-align: center;
 }
 
-.app-container .code {
-    float: right;
-    width: 55%;
-    min-height: 40em;
+.app-container .app, .app-container .code {
+    width: 99%;
     overflow: hidden;
 }
 
@@ -207,7 +233,7 @@ header {
 
 .tabs .item {
     background: #eee;
-    padding: .5em 1em;
+    padding: .5em;
     margin: 0 -1px -1px 0;
     border: 1px solid #ddd;
     cursor: pointer;
@@ -248,15 +274,15 @@ header {
     text-shadow: none;
 }
 
-.stack .active {
+.code .stack {
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+    overflow: scroll;
 }
 
 .stack code {
     font-size: 12px;
-    overflow: scroll;
 }
 
 .stack pre {
@@ -269,10 +295,7 @@ header {
 }
 .alacarte-list li {
     list-style-type: none;
-    width: 30%;
-    margin: 1em;
-    display: inline-block;
-    vertical-align: top;
+    margin: 2em 0;
 }
 
 .alacarte-list h3 {
@@ -344,4 +367,89 @@ header {
 
 .cujo-contacts-container .header-view, .cujo-contacts-container .footer-view {
     display: none;
+}
+
+/* Manifesto */
+
+.manifesto .content.box {
+    min-width: 320px;
+    width: 60%;
+    max-width: 700px;
+}
+
+.manifesto h3 {
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+.hero, .announcements, .footer {
+    width: 100%;
+}
+
+@media only screen and (min-width: 640px) {
+
+    .hero, .announcements, .footer {
+        width: 100%;
+    }
+
+    .header-content h2, .header-content .getit {
+        display: block;
+    }
+
+    .hero .button-container {
+        display: inline-block;
+        margin: 0 1em;
+        width: 10em;
+    }
+
+    .header-content h2 {
+        margin: 0 0;
+        font-weight: 100;
+        font-size: 3em;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    .box {
+        padding-left: 10%;
+        padding-right: 10%;
+    }
+
+    .content article {
+        float: left;
+        margin: 0 3% 1.5em 0;
+        width: 30%;
+    }
+
+    .col2, .col3 {
+        display: inline-block;
+        float: left;
+    }
+
+    .col3 {
+        width: 30%;
+    }
+
+    .col2 {
+        min-width: 300px;
+        margin-right: 1em;
+    }
+
+    .app-container .app {
+        width: 40%;
+    }
+
+    .app-container .code {
+        width: 55%;
+    }
+
+    .tabs .item {
+        padding: .5em 1em;
+    }
+
+    .alacarte-list li {
+        margin: 1em 0;
+        display: inline-block;
+        vertical-align: top;
+    }
 }

@@ -25,7 +25,7 @@ define({
 		bind: {
 			to: { $ref: 'collection' },
 			bindings: {
-				id: '.tab-title'
+				name: '.tab-title'
 			}
 		}
 	},

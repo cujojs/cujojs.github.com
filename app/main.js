@@ -1,6 +1,6 @@
 define({
 
-	theme: { module: 'theme/basic.css' },
+	theme: { module: 'css!theme/basic.css' },
 
 	strings: { module: 'i18n!app/subheader/strings' },
 
@@ -12,11 +12,62 @@ define({
 		}
 	},
 
+	helloApp: {
+		wire: {
+			spec: 'hello/app/main',
+			provide: {
+				root: { $ref: 'dom.first!.cujo-hello-container .app' }
+			}
+		}
+	},
+
+	helloCode: {
+		wire: {
+			spec: 'app/tabs/spec',
+			provide: {
+				root: { $ref: 'dom.first!.cujo-hello-container .code' },
+				collection: { $ref: 'helloSources' }
+			}
+		}
+	},
+
+	helloSources: { create: 'cola/Collection' },
+	helloSourcesData: {
+		create: {
+			module: 'cola/adapter/Array',
+			args: [[
+				{
+					id: 1,
+					name: 'template.html',
+					content: { module: 'highlight!hello/app/template.html' }
+				},
+				{
+					id: 2,
+					name: 'controller.js',
+					content: { module: 'highlight!hello/app/controller.js' }
+				},
+				{
+					id: 3,
+					name: 'strings.js',
+					content: { module: 'highlight!hello/app/strings.js' }
+				},
+				{
+					id: 4,
+					name: 'main.js',
+					content: { module: 'highlight!hello/app/main.js' }
+				}
+			]]
+		},
+		bind: {
+			to: { $ref: 'helloSources' }
+		}
+	},
+
 	contactsContainer: { $ref: 'dom.first!.cujo-contacts-container' },
 
 	contactsAppContainer: {
 		render: { module: 'text!app/contacts-app/template.html' },
-		insert: { last: { $ref: 'dom.first!.app' }, at: 'contactsContainer' }
+		insert: { last: { $ref: 'dom.first!.cujo-contacts-container .app' } }
 	},
 
 	contactsApp: {
@@ -44,15 +95,18 @@ define({
 			module: 'cola/adapter/Array',
 			args: [[
 				{
-					id: 'controller.js',
+					id: 1,
+					name: 'controller.js',
 					content: { module: 'highlight!contacts/app/controller.js' }
 				},
 				{
-					id: 'list/template.html',
+					id: 2,
+					name: 'list/template.html',
 					content: { module: 'highlight!contacts/app/list/template.html' }
 				},
 				{
-					id: 'edit/template.html',
+					id: 3,
+					name: 'edit/template.html',
 					content: { module: 'highlight!contacts/app/edit/template.html' }
 				}
 			]]
@@ -63,6 +117,7 @@ define({
 	},
 
 	plugins: [
+//		{ module: 'wire/debug' },
 		{ module: 'wire/dom', classes: { init: 'loading' } },
 		{ module: 'wire/dom/render' },
 		{ module: 'wire/on' },
