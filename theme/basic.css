@@ -30,12 +30,12 @@ a:hover {
 }
 
 h1 {
-    margin: 0 0;
+    margin: 0;
     font-size: 8em;
 }
 
 h3 {
-    margin: 0 0 1em 0;
+    margin: 0;
 }
 
 p {
@@ -60,6 +60,7 @@ nav li {
 
 .hero {
     background-color: #222;
+    padding: 1em 0;
 }
 
 .hero nav {
@@ -116,7 +117,7 @@ nav li {
     margin: .5em 0;
     text-decoration: none;
     text-shadow: rgba(0,0,0,0.5) -1px -1px 0;
-    width: 8em;
+    width: 15em;
 }
 
 .button.getit {
@@ -131,9 +132,9 @@ nav li {
 
 .button.seeit {
     background-color: #359;
-    background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 1000, from(#35e), to(#359));
-    background-image: -moz-radial-gradient(center 45deg, circle closest-side, #35e 0, #395 1000px);
-    border-color: #47f;
+    background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 1000, from(#28f), to(#359));
+    background-image: -moz-radial-gradient(center 45deg, circle closest-side, #28f 0, #395 1000px);
+    border-color: #49f;
     box-shadow: 0 0 8px 2px #37f;
     -webkit-box-shadow: 0 0 8px 2px #37f;
     -moz-box-shadow: 0 0 8px 2px #37f;
@@ -178,10 +179,6 @@ nav li {
     border-bottom: 1px solid #ddd;
 }
 
-.content.intro {
-    background: #eee;
-}
-
 .content h3 {
     font-weight: 200;
     font-size: 2em;
@@ -220,6 +217,15 @@ nav li {
     font-weight: bold;
     color: #ccc;
     text-align: center;
+}
+
+.tagline {
+    background: #28f;
+    color: #fff;
+}
+
+.intro {
+    background: #eee;
 }
 
 .app-container .app, .app-container .code {
@@ -408,6 +414,10 @@ nav li {
 
     .hero, .announcements, .footer {
         width: 100%;
+    }
+
+    .hero .button {
+        width: 8em;
     }
 
     .header-content h2, .header-content .getit {
