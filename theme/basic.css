@@ -173,7 +173,7 @@ nav li {
 }
 
 .content {
-    padding-bottom: 2em;
+    padding-bottom: 2.5em;
     padding-top: 2em;
     border-bottom: 1px solid #ddd;
 }
@@ -361,6 +361,13 @@ nav li {
 
 .footer a {
     color: #999;
+}
+
+/* Hello overrides */
+
+.cujo-hello-container .app > div {
+    border: 1px solid #ccc;
+    padding: 1em;
 }
 
 /* Cujo contacts overrides */
