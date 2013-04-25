@@ -46,9 +46,7 @@ define({
 				}
 			]]
 		},
-		bind: {
-			to: { $ref: 'helloSources' }
-		}
+		bind: { $ref: 'helloSources' }
 	},
 
 	$plugins: [

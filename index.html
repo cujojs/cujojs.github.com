@@ -16,13 +16,18 @@
 </head>
 <body>
 <header class="hero">
-    <!--<nav>-->
-        <!--<ul>-->
-            <!--<li><a href="http://know.cloudfoundry.com/">Learn</a></li>-->
-            <!--<li><a href="http://know.cloudfoundry.com/">Compare</a></li>-->
-            <!--<li><a href="manifesto.html">Contribute</a></li>-->
-        <!--</ul>-->
-    <!--</nav>-->
+    <nav class="box">
+        <ul class="main">
+            <li><a href="http://know.a1.cf-app.com/">Learn</a></li>
+            <li><a href="http://know.a1.cf-app.com/">Compare</a></li>
+            <li><a href="manifesto.html">Contribute</a></li>
+        </ul>
+
+        <ul class="social">
+            <li><a href="http://twitter.com/cujojs">Twitter</a></li>
+            <li><a href="http://github.com/cujojs">GitHub</a></li>
+        </ul>
+    </nav>
     <div class="header-content">
         <h1>
             <span class="prefix">cujo</span><span class="suffix">JS</span>
@@ -41,43 +46,36 @@
 <section class="content box intro">
     <article class="col3">
         <h1>Sanity</h1>
-        <p>Remain calm and write the code.  cujoJS is the sane architectural toolkit.  cujoJS encourages patterns that foster ultra-clean, ultra-testable code at all levels.  From HTTP to HTML and from CORS to CSS, unit test everything and get a good night’s sleep for a change.</p>
+        <p>Remain calm and write the code.  cujoJS is the sane architectural toolkit.  cujoJS encourages patterns that foster clean, testable code at all levels.  From HTTP to HTML and from CORS to CSS, unit test everything and get a good night’s sleep for a change.</p>
     </article>
 
     <article class="col3">
         <h1>Freedom</h1>
-        <p>Make exactly the app you want.  Use all or just a piece of cujoJS.  cujoJS embraces standards and integrates with any reasonably open library, component, or widget with <em>zero</em> entanglement with your code.  Replace third-party or cujoJS libraries easily without rewriting everything.</p>
+        <p>Make exactly the app you want.  cujoJS embraces standards and integrates with any reasonably open library, component, or widget with <em>zero</em> entanglement with your code.  Use as much or as little as you need, and replace third-party or cujoJS libraries easily without rewriting everything.</p>
     </article>
 
     <article class="col3">
         <h1>Speed</h1>
-        <p>Stop writing bloated apps.  cujoJS apps are tiny and fast.  Develop at the speed of innovation.  Ultra-pure separation of concerns lets multiple engineering and design teams rapidly design, develop, refactor, and test iteratively and in parallel.</p>
+        <p>Stop writing bloated apps.  cujoJS apps are tiny and fast.  Develop at the speed of innovation.  Separation of concerns lets multiple engineering and design teams rapidly design, develop, refactor, and test iteratively and in parallel.</p>
     </article>
 
 </section>
 
 <section id="see" class="content box code app-container cujo-hello-container">
     <h1>Sample App: Hello</h1>
-    <p>Your app is not a toy. But looking at a toy application stills reveals some of the powerful aspects of cujoJS: Small, testable modules with framework-free code and HTML templates, composed together using dependency injection.</p>
-    <div>
-        <a href="https://github.com/know-cujojs/"></a>
-    </div>
+    <p>Your app is not a toy. But looking at even a simple toy application reveals some of the powerful aspects of cujoJS: simple, testable modules with framework-free Javascript and HTML, composed together declaratively.</p>
     <div class="app col2">
-        <h2>The App</h2>
     </div>
     <div class="code col2">
-        <h2>The Code</h2>
     </div>
 </section>
 
 <section class="content box code app-container cujo-contacts-container">
     <h1>Sample App: Contacts</h1>
-    <p>As cujoJS applications grow, something something something</p>
+    <p>Start simple and stay simple. As cujoJS applications grow ... say something about  code remaining simple/testable/refactorable while allowing teams to scale easily</p>
     <div class="app col2">
-        <h2>The App</h2>
     </div>
     <div class="code col2">
-        <h2>The Code</h2>
     </div>
 </section>
 
@@ -85,18 +83,40 @@
     <h1>Sample App: cujoJS Homepage</h1>
     <p>Something about this homepage being a cujoJS app, composed from the smaller sample cujoJS apps above, without entanglement, still testable, refactorable, etc etc.</p>
     <div class="app col2">
-        <h2>The App</h2>
         <p>Put screenshot here. What other code should we show?</p>
     </div>
     <div class="code col2">
-        <h2>The Code</h2>
     </div>
 </section>
 
 <section id="get" class="content box get">
     <section>
         <h1>Get it</h1>
-        <h2>cujoJS Core</h2>
+        <div class="col2">
+            <h2>cujoJS seed</h2>
+            <p>Overwhelmed by all the awesomeness?  Start here.  Have your first “hello world” cujoJS app up and running in under a minute.</p>
+
+            <h3>npm</h3>
+
+            <ol>
+                <li><code>git clone https://github.com/cujojs/seed.git myapp</code></li>
+                <li><code>cd myapp</code></li>
+                <li><code>npm start</code></li>
+            </ol>
+
+            <p>Launch http://localhost:8000/ in your browser.  Point your editor at the <code>myapp</code> folder and start coding!<p>
+        </div>
+
+        <div class="col2">
+            <h2>cujoJS core</h2>
+            <p>Install the essential bits of cujoJS into your existing app.</p>
+
+            <h3>bower</h3>
+            <p><code>bower install cujo-core</code></p>
+
+            <h3>npm</h3>
+            <p><code>npm install cujo-core</code></p>
+        </div>
     </section>
 
     <section>
@@ -185,9 +205,9 @@
         </ul>
     </section>
 
-    <section>
-        <h2>Add-ons</h2>
-    </section>
+    <!--<section>-->
+        <!--<h2>Add-ons</h2>-->
+    <!--</section>-->
 </section>
 
 <footer class="footer">

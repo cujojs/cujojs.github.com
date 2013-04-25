@@ -49,12 +49,12 @@ section {
 nav ul {
     padding: 0;
     margin: 0;
-    display: inline-block;
+    text-align: center;
 }
 
 nav li {
     display: inline-block;
-    margin: 0 2em 0 0;
+    margin: 0 1em;
     padding: 0;
 }
 
@@ -64,24 +64,31 @@ nav li {
 }
 
 .hero nav {
-    font-size: 1em;
-    text-align: right;
+    font-size: 1.2em;
 }
 
 .hero nav a {
-    color: #aaa;
+    color: #999;
+    font-weight: bold;
     text-decoration: none;
+    text-shadow: none;
+}
+
+.hero nav a:hover {
+    text-decoration: underline;
+}
+
+.hero h1 {
+    display: inline-block;
+    letter-spacing: -.1ex;
+    line-height: 1;
+    margin-bottom: .1em;
 }
 
 .header-content {
     color: #eee;
     text-align: center;
     margin: 0 auto;
-}
-
-.header-content h1 {
-    display: inline-block;
-    letter-spacing: -.1ex;
 }
 
 .header-content .prefix {
@@ -222,8 +229,9 @@ nav li {
 }
 
 .app-container .app, .app-container .code {
-    width: auto;
+    margin-top: 2em;
     overflow: visible;
+    width: auto;
 }
 
 .tabs {
@@ -234,6 +242,7 @@ nav li {
     background: #eee;
     padding: .25em .5em;
     margin: 0 -1px -1px 0;
+    max-width: 23%;
     border: 1px solid #ccc;
     cursor: pointer;
 }
@@ -275,7 +284,7 @@ nav li {
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
     overflow: scroll;
-    max-height: 25em;
+    max-height: 28em;
 }
 
 .stack code {
@@ -405,6 +414,26 @@ nav li {
         width: 100%;
     }
 
+    nav ul {
+        display: inline-block;
+    }
+
+    nav li {
+        margin: 0 2em 0 0;
+    }
+
+    .hero h1 {
+        line-height: 1.4em;
+    }
+
+    .hero .main {
+        float: left;
+    }
+
+    .hero .social {
+        float: right;
+    }
+
     .hero .button {
         width: 8em;
     }
@@ -428,14 +457,14 @@ nav li {
     .tabs .item {
         padding: .5em 1em;
     }
-
 }
 
 @media only screen and (min-width: 800px) {
     .col2 {
         display: inline-block;
         float: left;
-        margin-right: 1em;
+        margin-right: 2%;
+        width: 45%;
     }
 
     .app-container .app {

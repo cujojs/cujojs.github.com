@@ -6,8 +6,8 @@
 	width: 70%;
 }
 
-.edit-contact-view .contact-form {
-	margin: 1em;
+.edit-contact-view fieldset {
+	margin: .5em 1em;
 }
 
 .edit-contact-view label {

@@ -22,9 +22,7 @@ define({
 				}
 			]]
 		},
-		bind: {
-			to: { $ref: 'homepageSources' }
-		}
+		bind: { $ref: 'homepageSources' }
 	},
 
 	$plugins: ['wire/dom', 'wire/on', 'cola']

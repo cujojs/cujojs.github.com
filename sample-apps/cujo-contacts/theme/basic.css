@@ -69,15 +69,14 @@
 
 .cujo-contacts .contact-list-view {
     background-color: #fafafa;
-}
-
-.cujo-contacts .contact-list-view .contact-list {
     cursor: pointer;
 }
 
 .cujo-contacts .footer-view {
     color: #aaa;
 	font-size: .8em;
+    padding: .5em 0;
+    text-align: center;
 }
 
 .cujo-contacts .footer-view a:link,

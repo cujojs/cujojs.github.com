@@ -1,4 +1,4 @@
-define({
+define({ // Wire spec
 
 	helloSample: {
 		wire: { spec: 'app/hello-sample/spec' }
@@ -30,6 +30,7 @@ define({
 	},
 
 	$plugins: [
+		'wire/debug',
 		{ module: 'wire/dom', classes: { init: 'loading' } },
 		'wire/dom/render'
 	]

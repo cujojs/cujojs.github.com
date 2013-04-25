@@ -53,9 +53,7 @@ define({
 				}
 			]]
 		},
-		bind: {
-			to: { $ref: 'contactsSources' }
-		}
+		bind: { $ref: 'contactsSources' }
 	},
 
 	$plugins: [

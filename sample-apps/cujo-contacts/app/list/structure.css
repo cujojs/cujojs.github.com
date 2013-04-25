@@ -2,15 +2,12 @@
 	position: absolute;
 	height: 100%;
 	width: 30%;
-}
-
-.contact-list-view .contact-list {
-	margin: .5em 1em;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .contact-list-view .contact {
-    margin: .5em 0;
+    margin: .5em;
 	list-style: none;
 }
 

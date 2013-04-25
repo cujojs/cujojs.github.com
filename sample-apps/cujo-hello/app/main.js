@@ -1,4 +1,4 @@
-define({
+define({ // Wire spec
 
 	controller: {
 		create: 'hello/app/controller',
