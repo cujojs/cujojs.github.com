@@ -1,7 +1,3 @@
-/**
- * findTabs
- * @author: brian
- */
 (function(define) {
 define(function() {
 

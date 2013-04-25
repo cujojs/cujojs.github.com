@@ -13,7 +13,7 @@ html {
 body {
     margin: 0;
     padding: 0;
-    font-size: 0.8em;
+    font-size: 14px;
     line-height: 1.4;
 }
 
@@ -108,7 +108,7 @@ nav li {
 }
 
 .hero .button-container {
-    font-size: 1.4em;
+    font-size: 1.3em;
 }
 
 .hero .button {
@@ -210,13 +210,6 @@ nav li {
 .content p {
     font-size: 1.2em;
     margin: 1em 0;
-}
-
-.content .leader {
-    font-size: 3em;
-    font-weight: bold;
-    color: #ccc;
-    text-align: center;
 }
 
 .tagline {
@@ -408,10 +401,6 @@ nav li {
 
 @media only screen and (min-width: 640px) {
 
-    body {
-        font-size: 0.9em;
-    }
-
     .hero, .announcements, .footer {
         width: 100%;
     }
@@ -442,6 +431,22 @@ nav li {
 
 }
 
+@media only screen and (min-width: 800px) {
+    .col2 {
+        display: inline-block;
+        float: left;
+        margin-right: 1em;
+    }
+
+    .app-container .app {
+        width: 35%;
+    }
+
+    .app-container .code {
+        width: 60%;
+    }
+}
+
 @media only screen and (min-width: 1024px) {
     .box {
         padding-left: 10%;
@@ -454,26 +459,13 @@ nav li {
         width: 30%;
     }
 
-    .col2, .col3 {
+    .col3 {
         display: inline-block;
         float: left;
     }
 
     .col3 {
         width: 30%;
-    }
-
-    .col2 {
-        min-width: 300px;
-        margin-right: 1em;
-    }
-
-    .app-container .app {
-        width: 40%;
-    }
-
-    .app-container .code {
-        width: 55%;
     }
 
     .alacarte-list li {

@@ -15,11 +15,10 @@ define({
 		}
 	},
 
-	css: { module: 'css!app/tabs/structure.css' },
-
 	tabs: {
 		render: {
-			template: { module: 'text!app/tabs/tabs.html' }
+			template: { module: 'text!app/tabs/tabs.html' },
+			css: { module: 'css!app/tabs/structure.css' }
 		},
 		insert: { last: 'root' },
 		bind: {

@@ -115,12 +115,5 @@ define({
 	generateMetadata: { module: 'contacts/app/contacts/generateMetadata' },
 
 	// Wire.js plugins
-	$plugins: [
-		{ module: 'wire/dom' },
-		{ module: 'wire/dom/render' },
-		{ module: 'wire/on' },
-		{ module: 'wire/aop' },
-		{ module: 'wire/connect' },
-		{ module: 'cola' }
-	]
+	$plugins: ['wire/dom','wire/dom/render','wire/on','wire/aop','wire/connect','cola']
 });

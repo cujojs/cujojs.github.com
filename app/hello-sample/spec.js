@@ -52,7 +52,6 @@ define({
 	},
 
 	$plugins: [
-		{ module: 'wire/debug' },
 		{ module: 'wire/dom' },
 		{ module: 'wire/dom/render' },
 		{ module: 'wire/on' },

@@ -1,37 +1,46 @@
 {
-	"name": "cujo-quickstart",
-	"version": "0.2.0",
-	"description": "Starter Kit for cujo.js apps",
-	"keywords": ["cujo", "modules", "ioc", "promises", "aop", "rest"],
-	"licenses": [
-		{
-			"type": "MIT",
-			"url": "http://www.opensource.org/licenses/mit-license.php"
-		}
-	],
-	"repositories": [
-		{
-			"type": "git",
-			"url": "https://github.com/cujojs/quickstart"
-		}
-	],
-	"maintainers": [
-		{
-			"name": "Brian Cavalier",
-			"web": "http://hovercraftstudios.com"
-		},
-		{
-			"name": "John Hann",
-			"web": "http://unscriptable.com"
-		}
-	],
-	"dependencies": {},
-	"devDependencies": {
-		"serv": "",
-		"bower": ""
-	},
-	"scripts": {
-		"postinstall": "bower install",
-		"start": "serv --port 8000"
-	}
+  "name": "cujo-quickstart",
+  "version": "0.2.0",
+  "description": "Starter Kit for cujo.js apps",
+  "keywords": [
+    "cujo",
+    "modules",
+    "ioc",
+    "promises",
+    "aop",
+    "rest"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/cujojs/quickstart"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "Brian Cavalier",
+      "web": "http://hovercraftstudios.com"
+    },
+    {
+      "name": "John Hann",
+      "web": "http://unscriptable.com"
+    }
+  ],
+  "dependencies": {
+    "buster": "~0.6.12"
+  },
+  "devDependencies": {
+    "serv": "",
+    "bower": ""
+  },
+  "scripts": {
+    "postinstall": "bower install",
+    "start": "serv --port 8000"
+  }
 }
