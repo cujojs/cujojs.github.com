@@ -1,6 +1,5 @@
 <form class="edit-contact-view">
     <fieldset>
-        <input type="text" style="display:none" name="id"/>
         <input type="text" placeholder="${firstName}" class="first-name" name="firstName">
         <input type="text" placeholder="${lastName}" class="last-name" name="lastName">
         <label>
@@ -12,6 +11,7 @@
             <input type="text" name="email">
         </label>
     </fieldset>
+    <input type="text" name="id"/>
     <fieldset class="controls">
         <input type="submit" value="${save}">
         <input type="reset" value="${clear}">

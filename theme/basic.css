@@ -234,6 +234,10 @@ nav li {
     width: auto;
 }
 
+.app-container .app > div {
+    background: #eee;
+}
+
 .tabs {
     border-bottom: 1px solid #ccc;
 }
@@ -379,16 +383,6 @@ nav li {
 .cujo-hello-container .app input {
     font-size: 1.1em;
     padding: .25em;
-}
-
-/* Cujo contacts overrides */
-
-.cujo-contacts-container .header-view, .cujo-contacts-container .footer-view {
-    display: none;
-}
-
-.app-container .app > div {
-    background: #eee;
 }
 
 /* Manifesto */

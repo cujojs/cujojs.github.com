@@ -1,13 +1,26 @@
 define({// Wire spec
 
-	theme: { module: 'css!contacts/theme/basic.css' },
-
-	headerView: {
-		render: {
-			template: { module: 'text!contacts/app/header/template.html' },
-			replace: { module: 'i18n!contacts/app/header/strings' }
+	controller: {
+		create: 'contacts/app/controller',
+		properties: {
+			_form: { $ref: 'editView' },
+			_updateForm: { compose: 'form.setValues' }
 		},
-		insert: { first: 'root' }
+		connect: {
+			'contacts.onEdit': 'editContact'
+		}
+	},
+
+	editView: {
+		render: {
+			template: { module: 'text!contacts/app/edit/template.html' },
+			replace: { module: 'i18n!contacts/app/edit/strings' },
+			css: { module: 'css!contacts/app/edit/structure.css' }
+		},
+		insert: { after: 'listView' },
+		on: {
+			submit: 'form.getValues | contacts.update'
+		}
 	},
 
 	listView: {
@@ -31,37 +44,6 @@ define({// Wire spec
 		}
 	},
 
-	editView: {
-		render: {
-			template: { module: 'text!contacts/app/edit/template.html' },
-			replace: { module: 'i18n!contacts/app/edit/strings' },
-			css: { module: 'css!contacts/app/edit/structure.css' }
-		},
-		insert: { after: 'listView' },
-		on: {
-			submit: 'form.getValues | contacts.update'
-		}
-	},
-
-	footerView: {
-		render: {
-			template: { module: 'text!contacts/app/footer/template.html' },
-			replace: { module: 'i18n!contacts/app/footer/strings.js' }
-		},
-		insert: { last: 'root' }
-	},
-	
-	controller: {
-		create: 'contacts/app/controller',
-		properties: {
-			_form: { $ref: 'editView' },
-			_updateForm: { compose: 'form.setValues' }
-		},
-		connect: {
-			'contacts.onEdit': 'editContact'
-		}
-	},
-	
 	contacts: {
 		create: {
 			module: 'cola/Collection',
@@ -87,7 +69,9 @@ define({// Wire spec
 		},
 		bind: { $ref: 'contacts' }
 	},
-	
+
+	theme: { module: 'css!contacts/theme/basic.css' },
+
 	form: { module: 'cola/dom/form' },
 	cleanContact: { module: 'contacts/app/contacts/cleanContact' },
 	generateMetadata: { module: 'contacts/app/contacts/generateMetadata' },

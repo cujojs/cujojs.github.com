@@ -1,13 +1,3 @@
-.cujo-contacts h1, .cujo-contacts h2, .cujo-contacts h3 {
-    color: #333;
-}
-
-.cujo-contacts h1 {
-    font-weight: bold;
-    font-size: 3em;
-    letter-spacing: -.1ex;
-}
-
 .cujo-contacts fieldset {
 	border: none;
 }
@@ -16,13 +6,6 @@
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 1em;
     margin: 1em 0;
-    border: none;
-    border-bottom: 1px dotted #ddd;
-    outline: none;
-}
-
-.cujo-contacts input[type="text"]:focus {
-    border-bottom: 1px dotted #666;
 }
 
 ::-webkit-input-placeholder {
@@ -59,29 +42,7 @@
 	clear: both;
 }
 
-.cujo-contacts .header-view, .footer-view {
-	padding: .25em 1em;
-}
-
-.cujo-contacts .header-view {
-	font-size: 18pt;
-}
-
 .cujo-contacts .contact-list-view {
     background-color: #fafafa;
     cursor: pointer;
-}
-
-.cujo-contacts .footer-view {
-    color: #aaa;
-	font-size: .8em;
-    padding: .5em 0;
-    text-align: center;
-}
-
-.cujo-contacts .footer-view a:link,
-.cujo-contacts .footer-view a:visited,
-.cujo-contacts .footer-view a:hover,
-.cujo-contacts .footer-view a:active {
-    color: #aaa;
 }
