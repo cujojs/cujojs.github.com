@@ -28,6 +28,6 @@ define({
 	cleanContact: { module: 'contacts/app/collection/cleanContact' },
 	generateMetadata: { module: 'contacts/app/collection/generateMetadata' },
 
-	$plugins: ['wire/debug', 'wire/dom', 'wire/on', 'wire/aop', 'cola']
+	$plugins: ['wire/dom', 'wire/on', 'wire/aop', 'cola']
 
 });

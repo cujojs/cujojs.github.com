@@ -25,7 +25,6 @@ define({ // Wire spec
 	theme: { module: 'css!theme/basic.css' },
 
 	$plugins: [
-		'wire/debug',
 		{ module: 'wire/dom', classes: { init: 'loading' } },
 		'wire/dom/render'
 	]
