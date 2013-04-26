@@ -1,18 +1,10 @@
 define({ // Wire spec
 
-	helloSample: {
-		wire: { spec: 'app/hello-sample/spec' }
-	},
+	helloSample: { wire: 'app/hello-sample/spec' },
 
-	contactsSample: {
-		wire: { spec: 'app/contacts-sample/spec' }
-	},
+	contactsSample: { wire: 'app/contacts-sample/spec' },
 
-	homepageSample: {
-		wire: { spec: 'app/homepage-sample/spec' }
-	},
-
-	theme: { module: 'css!theme/basic.css' },
+	homepageSample: { wire: 'app/homepage-sample/spec' },
 
 	subheader: {
 		render: {
@@ -22,12 +14,15 @@ define({ // Wire spec
 		insert: { last: { $ref: 'first!.header-content' } }
 	},
 
+	subheaderStrings: { module: 'i18n!app/subheader/strings' },
 	subheaderText: {
 		create: {
 			module: 'app/subheader/randomText',
-			args: { module: 'i18n!app/subheader/strings' }
+			args: { $ref: 'subheaderStrings.phrases' }
 		}
 	},
+
+	theme: { module: 'css!theme/basic.css' },
 
 	$plugins: [
 		'wire/debug',

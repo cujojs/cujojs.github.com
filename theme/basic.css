@@ -1,3 +1,11 @@
+@font-face {
+    font-family: 'EntypoSocial';
+    src: url('font/entypo/entypo-social.eot?#iefix') format('embedded-opentype'),
+        url('font/entypo/entypo-social.woff') format('woff'),
+        url('font/entypo/entypo-social.ttf') format('truetype'),
+        url('font/entypo/entypo-social.svg#svgFontName') format('svg');
+}
+
 html {
 	font-size: 100%;
 	-webkit-text-size-adjust: 100%;
@@ -54,8 +62,25 @@ nav ul {
 
 nav li {
     display: inline-block;
-    margin: 0 1em;
+    margin: 0 .5em;
     padding: 0;
+}
+
+.icon:before {
+    font-family: EntypoSocial;
+    display: inline-block;
+    font-size: 3em;
+    margin-right: .1em;
+    margin-top: -.4em;
+    vertical-align: top;
+}
+
+.twitter-icon:before {
+    content: '\f309';
+}
+
+.github-icon:before {
+    content: '\f300';
 }
 
 .hero {
@@ -64,18 +89,33 @@ nav li {
 }
 
 .hero nav {
-    font-size: 1.2em;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.hero nav .main {
+    margin-bottom: 1em;
 }
 
 .hero nav a {
-    color: #999;
-    font-weight: bold;
+    color: #888;
+    padding-bottom: .25em;
     text-decoration: none;
     text-shadow: none;
+    -webkit-transition: color .5s ease;
+    -moz-transition: color .5s ease;
+    transition: color .5s ease;
 }
 
 .hero nav a:hover {
-    text-decoration: underline;
+    color: #ccc;
+}
+
+.hero nav .active {
+    border-bottom: 1px solid #888;
+    color: #666;
+    padding-bottom: .25em;
+    cursor: default;
 }
 
 .hero h1 {
@@ -88,7 +128,7 @@ nav li {
 .header-content {
     color: #eee;
     text-align: center;
-    margin: 0 auto;
+    margin: -1em auto 0;
 }
 
 .header-content .prefix {
@@ -413,7 +453,7 @@ nav li {
     }
 
     nav li {
-        margin: 0 2em 0 0;
+        margin: 0 1em 0 0;
     }
 
     .hero h1 {
@@ -454,6 +494,10 @@ nav li {
 }
 
 @media only screen and (min-width: 800px) {
+    nav li {
+        margin: 0 2em 0 0;
+    }
+
     .col2 {
         display: inline-block;
         float: left;
