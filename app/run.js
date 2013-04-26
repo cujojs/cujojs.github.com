@@ -7,8 +7,8 @@
 		//},
 		packages: [
 			// Define application-level packages
-			{ name: 'contacts', location: 'sample-apps/cujo-contacts' },
-			{ name: 'hello', location: 'sample-apps/cujo-hello' },
+			{ name: 'contacts', location: 'sample-apps/contacts' },
+			{ name: 'hello', location: 'sample-apps/hello' },
 
 			// Add third-party packages here
 			{ name: 'curl', location: 'lib/curl/src/curl' },
