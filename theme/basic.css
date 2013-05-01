@@ -3,7 +3,19 @@
     src: url('font/entypo/entypo-social.eot?#iefix') format('embedded-opentype'),
         url('font/entypo/entypo-social.woff') format('woff'),
         url('font/entypo/entypo-social.ttf') format('truetype'),
-        url('font/entypo/entypo-social.svg#svgFontName') format('svg');
+        url('font/entypo/entypo-social.svg#EntypoSocial') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "cujojs";
+    src: url("font/cujojs/cujojs-75081c4171d8983e82138a057be2c849.eot?#iefix") format("embedded-opentype"),
+    url("font/cujojs/cujojs-75081c4171d8983e82138a057be2c849.woff") format("woff"),
+    url("font/cujojs/cujojs-75081c4171d8983e82138a057be2c849.ttf") format("truetype"),
+    url("font/cujojs/cujojs-75081c4171d8983e82138a057be2c849.svg#cujojs") format("svg");
+    font-weight: normal;
+    font-style: normal;
 }
 
 html {
@@ -83,6 +95,71 @@ nav li {
     content: '\f300';
 }
 
+/* cujoJS icons */
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+    font-family: "cujojs";
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    text-decoration: inherit;
+}
+
+a [class^="icon-"], a [class*=" icon-"] {
+    display: inline-block;
+    text-decoration: inherit;
+}
+
+/* makes the font 33% larger relative to the icon container */
+.icon-large:before {
+    vertical-align: top;
+    font-size: 1.333em;
+}
+
+/* keeps button heights with and without icons the same */
+.btn [class^="icon-"], .btn [class*=" icon-"] {
+    line-height: 0.9em;
+}
+
+li [class^="icon-"], li [class*=" icon-"] {
+    display: inline-block;
+    width: 1.25em;
+    text-align: center;
+}
+
+/* 1.5 increased font size for icon-large * 1.25 width */
+li .icon-large[class^="icon-"], li .icon-large[class*=" icon-"] {
+    width: 1.875em;
+}
+
+li[class^="icon-"], li[class*=" icon-"] {
+    margin-left: 0;
+    list-style-type: none;
+}
+
+li[class^="icon-"]:before, li[class*=" icon-"]:before {
+    text-indent: -2em;
+    text-align: center;
+}
+
+li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
+    text-indent: -1.333em;
+}
+
+/*
+  Icon Classes
+*/
+
+.icon-cola:before { content: "\f100"; }
+.icon-cram:before { content: "\f101"; }
+.icon-curl:before { content: "\f102"; }
+.icon-meld:before { content: "\f103"; }
+.icon-msgs:before { content: "\f104"; }
+.icon-poly:before { content: "\f105"; }
+.icon-rest:before { content: "\f106"; }
+.icon-when:before { content: "\f107"; }
+.icon-wire:before { content: "\f108"; }
+
 .hero {
     background-color: #222;
     padding: 1em 0;
@@ -144,43 +221,50 @@ nav li {
 }
 
 .button {
-    border-radius: 1px;
-    border-width: 1px;
-    border-style: solid;
+    border: 1px solid;
     border-radius: 8px;
     display: inline-block;
     letter-spacing: 0;
     padding: .25em 1em;
     vertical-align: middle;
-}
-
-.hero .button-container {
-    font-size: 1.3em;
-}
-
-.hero .button {
     color: white;
     font-weight: bold;
     margin: .5em 0;
     text-decoration: none;
     text-shadow: rgba(0,0,0,0.5) -1px -1px 0;
+    font-size: 1.3em;
+    opacity: .9;
+}
+
+.hero .button {
     width: 15em;
 }
 
-.button.getit {
+.button.primary {
     background-color: #395;
-    background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 1000, from(#3e5), to(#395));
-    background-image: -moz-radial-gradient(center 45deg, circle closest-side, #3e5 0, #395 1000px);
+    background-image: linear-gradient(90deg, #395, #3e5);;
+    background-image: -webkit-linear-gradient(90deg, #395, #3e5);;
+    background-image: -moz-linear-gradient(90deg, #395, #3e5);;
+    background-image: -o-linear-gradient(90deg, #395, #3e5);;
+    background-image: -ms-linear-gradient(90deg, #395, #3e5);;
     border-color: #4f9;
     box-shadow: 0 0 8px 2px #3f7;
     -webkit-box-shadow: 0 0 8px 2px #3f7;
     -moz-box-shadow: 0 0 8px 2px #3f7;
 }
 
-.button.seeit {
+.button:hover {
+    opacity: 1;
+    text-shadow: none;
+}
+
+.button.secondary {
     background-color: #359;
-    background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 1000, from(#28f), to(#359));
-    background-image: -moz-radial-gradient(center 45deg, circle closest-side, #28f 0, #395 1000px);
+    background-image: linear-gradient(90deg, #359, #28f);
+    background-image: -webkit-linear-gradient(90deg, #359, #28f);
+    background-image: -moz-linear-gradient(90deg, #359, #28f);
+    background-image: -o-linear-gradient(90deg, #359, #28f);
+    background-image: -ms-linear-gradient(90deg, #359, #28f);
     border-color: #49f;
     box-shadow: 0 0 8px 2px #37f;
     -webkit-box-shadow: 0 0 8px 2px #37f;
@@ -268,14 +352,32 @@ nav li {
     background: #eee;
 }
 
+.app-container h1 {
+    color: #444;
+}
+
+.app-container p {
+    color: #666;
+}
+
 .app-container .app, .app-container .code {
     margin-top: 2em;
     overflow: visible;
     width: auto;
+    max-height: 32em;
+    overflow: hidden;
+}
+
+.app-container .app {
+    border: 1px solid #ccc;
 }
 
 .app-container .app > div {
     background: #eee;
+}
+
+.app-container .screenshot {
+    width: 100%;
 }
 
 .tabs {
@@ -339,66 +441,42 @@ nav li {
     margin: 1em;
 }
 
-.alacarte-list {
-    padding: 0;
-    margin: 0;
+.get h2 {
+    margin: 1em 1em 0 0;
 }
-.alacarte-list li {
+
+.get .button {
+    /*font-size: .7em;*/
+    vertical-align: baseline;
+    box-shadow: none;
+}
+
+.icon-grid {
     list-style-type: none;
-    margin: 2em 0;
-}
-
-.alacarte-list h3 {
     margin: 0;
-    padding: 0 0 0 48px;
-    display: inline-block;
-    background: no-repeat left -8px;
-    height: 48px;
+    padding: 0;
+    text-align: center;
 }
 
-.alacarte-list .links {
-    margin-left: 1em;
-    font-size: .9em;
+.icon-grid li {
     display: inline-block;
-}
-
-.alacarte-list .description {
     margin: 0;
+    padding: 0;
+    text-align: center;
+    width: 19%;
 }
 
-.alacarte-list .cola h3 {
-    background-image: url(img/cola.png);
+.icon-grid a {
+    text-decoration: none;
+    color: #666;
+    font-size: 1.25em;
+    width: 100%;
+    height: 100%;
 }
 
-.alacarte-list .cram h3 {
-    background-image: url(img/cram.png);
-}
-
-.alacarte-list .curl h3 {
-    background-image: url(img/curl.png);
-}
-
-.alacarte-list .meld h3 {
-    background-image: url(img/meld.png);
-}
-
-.alacarte-list .msgs h3 {
-    background-image: url(img/msgs.png);
-}
-
-.alacarte-list .poly h3 {
-    background-image: url(img/poly.png);
-}
-
-.alacarte-list .rest h3 {
-    background-image: url(img/rest.png);
-}
-
-.alacarte-list .when h3 {
-    background-image: url(img/when.png);
-}
-.alacarte-list .wire h3 {
-    background-image: url(img/wire.png);
+.icon-grid a:before {
+    display: block;
+    font-size: 32px;
 }
 
 .footer {
@@ -416,7 +494,6 @@ nav li {
 /* Hello overrides */
 
 .cujo-hello-container .app > div {
-    border: 1px solid #ccc;
     padding: 1em;
 }
 
@@ -441,6 +518,8 @@ nav li {
 .hero, .announcements, .footer {
     width: 100%;
 }
+
+/* Screen size breaks */
 
 @media only screen and (min-width: 640px) {
 
@@ -491,6 +570,10 @@ nav li {
     .tabs .item {
         padding: .5em 1em;
     }
+
+    .icon-grid a:before {
+        font-size: 40px;
+    }
 }
 
 @media only screen and (min-width: 800px) {
@@ -512,6 +595,10 @@ nav li {
     .app-container .code {
         width: 60%;
     }
+
+    .get h2 {
+        display: inline-block;
+    }
 }
 
 @media only screen and (min-width: 1024px) {
@@ -526,6 +613,11 @@ nav li {
         width: 28%;
     }
 
+    .app-container p {
+        font-size: 1.5em;
+        line-height: 1.6;
+    }
+
     .col3 {
         display: inline-block;
         float: left;
@@ -533,11 +625,5 @@ nav li {
 
     .col3 {
         width: 30%;
-    }
-
-    .alacarte-list li {
-        margin: 1em 0;
-        display: inline-block;
-        vertical-align: top;
     }
 }

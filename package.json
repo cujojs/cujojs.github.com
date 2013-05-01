@@ -33,14 +33,16 @@
     }
   ],
   "dependencies": {
-    "buster": "~0.6.12"
+    "buster": "~0.6"
   },
   "devDependencies": {
+    "when": "~1.8",
     "serv": "",
     "bower": ""
   },
   "scripts": {
     "postinstall": "bower install",
-    "start": "serv --port 8000"
+    "start": "serv --port 8000",
+	"test": "buster test -e node"
   }
 }

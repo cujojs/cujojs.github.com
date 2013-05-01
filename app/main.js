@@ -17,7 +17,7 @@ define({ // Wire spec
 	subheaderStrings: { module: 'i18n!app/subheader/strings' },
 	subheaderText: {
 		create: {
-			module: 'app/subheader/randomText',
+			module: 'app/subheader/selectText',
 			args: { $ref: 'subheaderStrings.phrases' }
 		}
 	},

@@ -38,8 +38,8 @@
             <span class="prefix">cujo</span><span class="suffix">JS</span>
         </h1>
         <div class="button-container">
-            <a class="button getit" href="#get">Get Started Now</a>
-            <a class="button seeit" href="#see">See It In Action</a>
+            <a class="button primary getit" href="#get">Get started now</a>
+            <a class="button secondary" href="#see">See it in action</a>
         </div>
     </div>
 </header>
@@ -66,8 +66,8 @@
 
 </section>
 
-<section id="see" class="content box code app-container cujo-hello-container">
-    <h1>Sample App: Hello</h1>
+<section id="see" class="content box app-container cujo-hello-container">
+    <h1>Sample app: Hello</h1>
     <p>Your app is not a toy. But looking at even a simple toy application reveals some of the powerful aspects of cujoJS: simple, testable modules with framework-free Javascript and HTML, composed together declaratively.</p>
     <div class="app col2">
     </div>
@@ -75,20 +75,20 @@
     </div>
 </section>
 
-<section class="content box code app-container cujo-contacts-container">
-    <h1>Sample App: Contacts</h1>
-    <p>Start simple and stay simple. As cujoJS applications grow ... say something about  code remaining simple/testable/refactorable while allowing teams to scale easily</p>
+<section class="content box app-container cujo-contacts-container">
+    <h1>Sample app: Contacts</h1>
+    <p>Start simple and stay simple. Real apps evolve over time, as do the teams that build and maintain them. With cujoJS, your modules stay simple, your HTML remains editable by mere mortals, as your architecture evolves more easily.</p>
     <div class="app col2">
     </div>
     <div class="code col2">
     </div>
 </section>
 
-<section class="content box code app-container cujo-homepage-container">
-    <h1>Sample App: cujoJS Homepage</h1>
-    <p>Something about this homepage being a cujoJS app, composed from the smaller sample cujoJS apps above, without entanglement, still testable, refactorable, etc etc.</p>
+<section class="content box app-container cujo-homepage-container">
+    <h1>Sample app: cujoJS.com</h1>
+    <p>Build and evolve quickly. Sleep at night. Even if you want to do something crazy, say, make an app for your homepage that embeds two other working apps, cujoJS helps you keep everything nicely separated, testable, refactorable, and extensible.</p>
     <div class="app col2">
-        <p>Put screenshot here. What other code should we show?</p>
+        <img class="screenshot" src="assets/img/cujojs-com.png" />
     </div>
     <div class="code col2">
     </div>
@@ -98,14 +98,13 @@
     <section>
         <h1>Get it</h1>
         <div class="col2">
-            <h2>cujoJS seed</h2>
+            <h2>cujoJS/seed</h2><a class="button secondary" href="https://github.com/cujojs/seed">Get cujoJS/seed</a>
             <p>Overwhelmed by all the awesomeness?  Start here.  Have your first “hello world” cujoJS app up and running in under a minute.</p>
-
-            <h3>npm</h3>
 
             <ol>
                 <li><code>git clone https://github.com/cujojs/seed.git myapp</code></li>
                 <li><code>cd myapp</code></li>
+                <li><code>npm install</code></li>
                 <li><code>npm start</code></li>
             </ol>
 
@@ -113,106 +112,23 @@
         </div>
 
         <div class="col2">
-            <h2>cujoJS core</h2>
-            <p>Install the essential bits of cujoJS into your existing app.</p>
-
-            <h3>bower</h3>
-            <p><code>bower install cujo-core</code></p>
-
-            <h3>npm</h3>
-            <p><code>npm install cujo-core</code></p>
+            <h2>A la carte</h2>
+            <a class="button secondary" href="http://know.cujojs.com/downloads">Go to downloads</a>
+            <p>Get exactly the bits of cujoJS you need using your favorite package manager, or by downloading them as zip files.</p>
+            <ul class="icon-grid">
+                <li><a class="icon-cola" href="http://know.cujojs.com/downloads">cola.js</a></li>
+                <li><a class="icon-cram" href="http://know.cujojs.com/downloads">cram.js</a><span></span></li>
+                <li><a class="icon-curl" href="http://know.cujojs.com/downloads">curl.js</a></li>
+                <li><a class="icon-meld" href="http://know.cujojs.com/downloads">meld.js</a></li>
+                <li><a class="icon-msgs" href="http://know.cujojs.com/downloads">msgs.js</a></li>
+                <li><a class="icon-poly" href="http://know.cujojs.com/downloads">poly.js</a></li>
+                <li><a class="icon-rest" href="http://know.cujojs.com/downloads">rest.js</a></li>
+                <li><a class="icon-when" href="http://know.cujojs.com/downloads">when.js</a></li>
+                <li><a class="icon-wire" href="http://know.cujojs.com/downloads">wire.js</a></li>
+            </ul>
         </div>
     </section>
 
-    <section>
-        <h2>A la Carte</h2>
-        <ul class="alacarte-list">
-            <li class="cola col3">
-                <h3>cola.js</h3>
-                <p class="links">
-                    <a href="https://github.com/cujojs/cola/tarball/master">Download</a>
-                    <a href="https://github.com/cujojs/cola">GitHub</a>
-                </p>
-                <p class="description">Extensible, two-way data binding.</p>
-            </li>
-
-            <li class="cram col3">
-                <h3>cram.js</h3>
-                <p class="links">
-                    <a href="https://github.com/cujojs/cram/tarball/master">Download</a>
-                    <a href="https://github.com/cujojs/cram">GitHub</a>
-                </p>
-                <p class="description">Simple AMD and CommonJS module bundler.</p>
-            </li>
-
-            <li class="curl col3">
-                <h3>curl.js</h3>
-                <p class="links">
-                    <a href="https://github.com/cujojs/curl/tarball/master">Download</a>
-                    <a href="https://github.com/cujojs/curl">GitHub</a>
-                </p>
-                <p class="description">A small, fast module and resource loader with dependency management. (AMD, CommonJS Modules/1.1, CSS, HTML, etc.)</p>
-            </li>
-
-            <li class="meld col3">
-                <h3>meld.js</h3>
-                <p class="links">
-                    <a href="https://github.com/cujojs/meld/tarball/master">Download</a>
-                    <a href="https://github.com/cujojs/meld">GitHub</a>
-                </p>
-                <p class="description">AOP for JS with before, around, on, afterReturning, afterThrowing, after advice, and pointcuts.</p>
-            </li>
-
-            <li class="msgs col3">
-                <h3>msgs.js</h3>
-                <p class="links">
-                    <a href="https://github.com/cujojs/msgs/tarball/master">Download</a>
-                    <a href="https://github.com/cujojs/msgs">GitHub</a>
-                </p>
-                <p class="description">Message oriented programming.</p>
-            </li>
-
-            <li class="poly col3">
-                <h3>poly.js</h3>
-                <p class="links">
-                    <a href="https://github.com/cujojs/poly/tarball/master">Download</a>
-                    <a href="https://github.com/cujojs/poly">GitHub</a>
-                </p>
-                <p class="description">Small, fast, awesome. The only ES5-ish set of polyfills (shims) you can mix-and-match because they're individual AMD modules.</p>
-            </li>
-
-            <li class="rest col3">
-                <h3>rest.js</h3>
-                <p class="links">
-                    <a href="https://github.com/cujojs/rest/tarball/master">Download</a>
-                    <a href="https://github.com/cujojs/rest">GitHub</a>
-                </p>
-                <p class="description">RESTful HTTP client for JavaScript.</p>
-            </li>
-
-            <li class="when col3">
-                <h3>when.js</h3>
-                <p class="links">
-                    <a href="https://github.com/cujojs/when/tarball/master">Download</a>
-                    <a href="https://github.com/cujojs/when">GitHub</a>
-                </p>
-                <p class="description">A solid, fast Promises/A+ and when() implementation, plus other async goodies.</p>
-            </li>
-
-            <li class="wire col3">
-                <h3>wire.js</h3>
-                <p class="links">
-                    <a href="https://github.com/cujojs/wire/tarball/master">Download</a>
-                    <a href="https://github.com/cujojs/wire">GitHub</a>
-                </p>
-                <p class="description">A light, fast, flexible Javascript IOC container.</p>
-            </li>
-        </ul>
-    </section>
-
-    <!--<section>-->
-        <!--<h2>Add-ons</h2>-->
-    <!--</section>-->
 </section>
 
 <footer class="footer">
