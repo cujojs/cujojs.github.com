@@ -22,7 +22,6 @@ html {
 	font-size: 100%;
 	-webkit-text-size-adjust: 100%;
 	-ms-text-size-adjust: 100%;
-
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 200;
     color: #222;
@@ -62,6 +61,10 @@ p {
     line-height: 1.5em;
 }
 
+code {
+    font-size: 12px;
+}
+
 section {
     clear: both;
 }
@@ -76,14 +79,16 @@ nav li {
     display: inline-block;
     margin: 0 .5em;
     padding: 0;
+    height: 1.25em;
 }
 
 .icon:before {
-    font-family: EntypoSocial;
+    font-family: "EntypoSocial";
     display: inline-block;
     font-size: 3em;
+    font-weight: normal;
     margin-right: .1em;
-    margin-top: -.4em;
+    margin-top: -20%;
     vertical-align: top;
 }
 
@@ -162,12 +167,15 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 
 .hero {
     background-color: #222;
-    padding: 1em 0;
+    padding: 0;
 }
 
 .hero nav {
     letter-spacing: .1em;
     text-transform: uppercase;
+    margin: 1em auto;
+    height: 100%;
+    overflow: hidden;
 }
 
 .hero nav .main {
@@ -205,7 +213,7 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 .header-content {
     color: #eee;
     text-align: center;
-    margin: -1em auto 0;
+    margin: 1em auto;
 }
 
 .header-content .prefix {
@@ -223,17 +231,25 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 .button {
     border: 1px solid;
     border-radius: 8px;
-    display: inline-block;
-    letter-spacing: 0;
-    padding: .25em 1em;
-    vertical-align: middle;
     color: white;
+    display: inline-block;
     font-weight: bold;
+    font-size: 1.3em;
+    letter-spacing: 0;
+    line-height: 1;
     margin: .5em 0;
+    padding: .5em 1.5em;
+    opacity: .9;
     text-decoration: none;
     text-shadow: rgba(0,0,0,0.5) -1px -1px 0;
-    font-size: 1.3em;
-    opacity: .9;
+}
+
+.button.icon {
+    height: 1em;
+}
+
+.button.icon:before {
+    font-weight: 200;
 }
 
 .hero .button {
@@ -299,7 +315,8 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 .box {
     overflow: hidden;
     height: 100%;
-    padding: 0 5%;
+    padding-left: 5%;
+    padding-right: 5%;
     margin: 0 auto;
     min-width: 360px;
 }
@@ -362,10 +379,10 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 
 .app-container .app, .app-container .code {
     margin-top: 2em;
-    overflow: visible;
     width: auto;
     max-height: 32em;
     overflow: hidden;
+    position: relative;
 }
 
 .app-container .app {
@@ -433,22 +450,48 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
     max-height: 28em;
 }
 
-.stack code {
-    font-size: 12px;
-}
-
-.stack pre {
+.code .stack pre {
     margin: 1em;
 }
 
-.get h2 {
-    margin: 1em 1em 0 0;
+.ribbon {
+    background: none;
+    overflow: hidden;
+    height: 100px;
+    position: absolute;
+    right: -38px;
+    top: 27px;
+    z-index: 1;
 }
 
-.get .button {
-    /*font-size: .7em;*/
-    vertical-align: baseline;
-    box-shadow: none;
+.ribbon a {
+    background-image: -webkit-linear-gradient(135deg, #ccc, #fff);
+    background-image: -webkit-linear-gradient(90deg, #359, #28f);
+    border: 1px solid #fff;
+    color: #eef;
+    display: block;
+    font-size: 0.8em;
+    font-weight: bold;
+    height: 18px;
+    line-height: 1;
+    margin-top: 13px;
+    outline: 2px solid #38f;
+    padding: .5em 3em 0;
+    text-decoration: none;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    filter:  progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=-0.70710678, M21=0.70710678, M22=0.70710678, sizingMethod='auto expand'); /* IE6, IE7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=-0.70710678, M21=0.70710678, M22=0.70710678, sizingMethod='auto expand')"; /* IE8 */
+    zoom: 1;
+    position: relative\9; /* the \9 is intentional, @see http://paulirish.com/2009/browser-specific-css-hacks/*/
+    top: -21px\9;
+    left: -21px\9;
+}
+
+.get h2 {
+    margin: 1em 1em .25em 0;
 }
 
 .icon-grid {
@@ -480,8 +523,6 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 }
 
 .footer {
-    overflow: hidden;
-    height: 100%;
     background: #111;
     color: #888;
     font-size: .9em;
@@ -515,17 +556,9 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
     font-weight: bold;
 }
 
-.hero, .announcements, .footer {
-    width: 100%;
-}
-
 /* Screen size breaks */
 
 @media only screen and (min-width: 640px) {
-
-    .hero, .announcements, .footer {
-        width: 100%;
-    }
 
     nav ul {
         display: inline-block;
@@ -535,8 +568,8 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
         margin: 0 1em 0 0;
     }
 
-    .hero h1 {
-        line-height: 1.4em;
+    .header-content h1 {
+        margin-left: -.5em;
     }
 
     .hero .main {
@@ -571,6 +604,17 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
         padding: .5em 1em;
     }
 
+    .ribbon {
+        right: -34px;
+        top: 34px;
+    }
+
+    .ribbon a {
+        font-size: 0.9em;
+        height: 20px;
+        margin-top: 20px;
+    }
+
     .icon-grid a:before {
         font-size: 40px;
     }
@@ -596,7 +640,8 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
         width: 60%;
     }
 
-    .get h2 {
+    .get h2, .app-container h1 {
+        margin-right: 1em;
         display: inline-block;
     }
 }
