@@ -257,16 +257,13 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 }
 
 .button.primary {
-    background-color: #395;
-    background-image: linear-gradient(90deg, #395, #3e5);;
-    background-image: -webkit-linear-gradient(90deg, #395, #3e5);;
-    background-image: -moz-linear-gradient(90deg, #395, #3e5);;
-    background-image: -o-linear-gradient(90deg, #395, #3e5);;
-    background-image: -ms-linear-gradient(90deg, #395, #3e5);;
+    background-color: #3a5;
+    background-image: linear-gradient(90deg, #3a5, #3e5);;
+    background-image: -webkit-linear-gradient(90deg, #3a5, #3e5);;
+    background-image: -moz-linear-gradient(90deg, #3a5, #3e5);;
+    background-image: -o-linear-gradient(90deg, #3a5, #3e5);;
+    background-image: -ms-linear-gradient(90deg, #3a5, #3e5);;
     border-color: #4f9;
-    box-shadow: 0 0 8px 2px #3f7;
-    -webkit-box-shadow: 0 0 8px 2px #3f7;
-    -moz-box-shadow: 0 0 8px 2px #3f7;
 }
 
 .button:hover {
@@ -276,12 +273,21 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 
 .button.secondary {
     background-color: #359;
-    background-image: linear-gradient(90deg, #359, #28f);
-    background-image: -webkit-linear-gradient(90deg, #359, #28f);
-    background-image: -moz-linear-gradient(90deg, #359, #28f);
-    background-image: -o-linear-gradient(90deg, #359, #28f);
-    background-image: -ms-linear-gradient(90deg, #359, #28f);
+    background-image: linear-gradient(90deg, #35a, #28f);
+    background-image: -webkit-linear-gradient(90deg, #35a, #28f);
+    background-image: -moz-linear-gradient(90deg, #35a, #28f);
+    background-image: -o-linear-gradient(90deg, #35a, #28f);
+    background-image: -ms-linear-gradient(90deg, #35a, #28f);
     border-color: #49f;
+}
+
+.hero .button.primary {
+    box-shadow: 0 0 8px 2px #3f7;
+    -webkit-box-shadow: 0 0 8px 2px #3f7;
+    -moz-box-shadow: 0 0 8px 2px #3f7;
+}
+
+.hero .button.secondary {
     box-shadow: 0 0 8px 2px #37f;
     -webkit-box-shadow: 0 0 8px 2px #37f;
     -moz-box-shadow: 0 0 8px 2px #37f;
