@@ -7,10 +7,19 @@
 }
 
 .contact-list-view .contact {
-    margin: .5em;
+    padding: .25em;
 	list-style: none;
 }
 
 .contact-list-view {
 	overflow-y: scroll;
+}
+
+.contact-list-view .remove {
+    color: #aaa;
+    opacity: 0;
+}
+
+.contact-list-view .contact:hover .remove {
+    opacity: 1;
 }

@@ -1,9 +1,8 @@
 {
 	"dependencies": {
 		"curl": "",
-		"wire": "",
 		"cola": "",
-		"when": "1.8",
+		"when": "",
 		"meld": "",
 		"poly": "",
 		"rest": ""

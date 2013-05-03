@@ -1,7 +1,13 @@
 <form class="edit-contact-view">
     <fieldset>
-        <input type="text" placeholder="${firstName}" class="first-name" name="firstName">
-        <input type="text" placeholder="${lastName}" class="last-name" name="lastName">
+        <label>
+            <span>${firstName}</span>
+            <input type="text" class="first-name" name="firstName"/>
+        </label>
+        <label>
+            <span>${lastName}</span>
+            <input type="text" class="last-name" name="lastName"/>
+        </label>
         <label>
             <span>${phone}</span>
             <input type="text" name="phone">

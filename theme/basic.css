@@ -520,16 +520,19 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
     color: #999;
 }
 
+/* Embedded app overrides */
+
+.app input[type="text"], .cujo-hello-container input {
+    border: 1px solid #ccc;
+    font-size: 1em;
+    padding: .25em;
+}
+
 /* Hello overrides */
 
 .cujo-hello-container .app > div {
     padding: 1em;
     text-align: center;
-}
-
-.cujo-hello-container .app input {
-    font-size: 1.1em;
-    padding: .25em;
 }
 
 /* Manifesto */

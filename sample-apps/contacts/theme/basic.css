@@ -5,7 +5,7 @@
 .cujo-contacts input[type="text"] {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 1em;
-    margin: 1em 0;
+    margin: .5em 0 1em 0;
 }
 
 ::-webkit-input-placeholder {
@@ -22,8 +22,8 @@
 }
 
 .cujo-contacts label {
-    font-weight: normal;
     color: #acacac;
+    font-weight: normal;
 }
 
 .cujo-contacts {

@@ -24,7 +24,7 @@ define({// Wire spec
 			submit: 'form.getValues | contactsCollection.update'
 		},
 		connect: {
-			'contactsCollection.onUpdate': 'reset'
+			'contactsCollection.onChange': 'reset'
 		}
 	},
 
@@ -37,7 +37,8 @@ define({// Wire spec
 			first: { $ref: 'dom.first!.contacts-view-container', at: 'root' }
 		},
 		on: {
-			'click:.contact': 'contactsCollection.edit'
+			'click:.contact': 'contactsCollection.edit',
+			'click:.remove': 'contactsCollection.remove'
 		},
 		bind: {
 			to: { $ref: 'contactsCollection' },
