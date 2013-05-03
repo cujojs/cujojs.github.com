@@ -524,6 +524,7 @@ li[class^="icon-"].icon-large:before, li[class*=" icon-"].icon-large:before {
 
 .cujo-hello-container .app > div {
     padding: 1em;
+    text-align: center;
 }
 
 .cujo-hello-container .app input {

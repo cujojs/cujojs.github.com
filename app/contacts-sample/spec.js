@@ -56,10 +56,5 @@ define({
 		bind: { $ref: 'contactsSources' }
 	},
 
-	$plugins: [
-		{ module: 'wire/dom' },
-		{ module: 'wire/dom/render' },
-		{ module: 'wire/on' },
-		{ module: 'cola' }
-	]
+	$plugins: ['wire/dom', 'wire/dom/render', 'wire/on', 'cola']
 });

@@ -1,29 +1,36 @@
-var buster, selectText;
+(function(define) {
+define(function(require) {
 
-buster = require('buster');
-selectText = require('../../app/subheader/selectText');
+	var buster, selectText;
 
-buster.testCase('subheader/selectText', {
-	'should return empty string when input is empty': function() {
-		assert.equals(selectText([]), '');
-	},
+	buster = require('buster');
+	selectText = require('../../app/subheader/selectText');
 
-	'should call provided selector function': function() {
-		var spy, input;
+	buster.testCase('subheader/selectText', {
+		'should return empty string when input is empty': function() {
+			assert.equals(selectText([]), '');
+		},
 
-		input = ['a', 'b', 'c'];
-		spy = this.stub().returns(1);
+		'should call provided selector function': function() {
+			var spy, input;
 
-		selectText(input, spy);
-		assert.calledOnceWith(spy, input.length);
-	},
+			input = ['a', 'b', 'c'];
+			spy = this.stub().returns(1);
 
-	'should return selected string': function() {
-		var spy, input;
+			selectText(input, spy);
+			assert.calledOnceWith(spy, input.length);
+		},
 
-		input = ['a', 'b', 'c'];
-		spy = this.stub().returns(1);
+		'should return selected string': function() {
+			var spy, input;
 
-		assert.equals(selectText(input, spy), 'b');
-	}
+			input = ['a', 'b', 'c'];
+			spy = this.stub().returns(1);
+
+			assert.equals(selectText(input, spy), 'b');
+		}
+	});
+
 });
+}(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
+

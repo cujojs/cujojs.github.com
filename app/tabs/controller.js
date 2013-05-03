@@ -10,7 +10,7 @@ define(function() {
 		activeClass: 'active',
 		idAttr: 'data-cola-id',
 
-		activate: function(e) {
+		activateTab: function(e) {
 			e.preventDefault();
 			var name = e.selectorTarget.getAttribute(this.idAttr);
 

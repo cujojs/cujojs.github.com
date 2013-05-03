@@ -8,7 +8,7 @@ define({
 			stack: { $ref: 'stack' }
 		},
 		on: {
-			tabs: { 'click:.item': 'activate' }
+			tabs: { 'click:.item': 'activateTab' }
 		},
 		after: {
 			'collection.onSync': 'init'
@@ -42,11 +42,5 @@ define({
 		}
 	},
 
-	plugins: [
-		{ module: 'wire/dom' },
-		{ module: 'wire/dom/render' },
-		{ module: 'wire/on' },
-		{ module: 'wire/aop' },
-		{ module: 'cola' }
-	]
+	plugins: ['wire/dom', 'wire/dom/render', 'wire/on', 'wire/aop', 'cola']
 });

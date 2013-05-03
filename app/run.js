@@ -1,10 +1,6 @@
 (function(curl) {
 
 	var config = {
-		// baseUrl: '',
-		//paths: {
-			// Configure paths here
-		//},
 		packages: [
 			// Define application-level packages
 			{ name: 'contacts', location: 'sample-apps/contacts' },
