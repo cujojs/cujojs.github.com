@@ -11,6 +11,10 @@ define(function(require) {
 			assert.equals(selectText([]), '');
 		},
 
+		'should return empty string when input not provided': function() {
+			assert.equals(selectText(), '');
+		},
+
 		'should call provided selector function': function() {
 			var spy, input;
 

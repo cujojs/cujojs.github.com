@@ -5,8 +5,8 @@ define(function() {
 	 * Selects a text string from the provided strings array
 	 */
 	return function(strings, selector) {
-		var len = strings.length;
-		return len === 0 ? '' : strings[(selector || defaultSelector)(len)];
+		var len = strings && strings.length;
+		return len ? strings[(selector || defaultSelector)(len)] : '';
 	};
 
 	function defaultSelector(n) {
