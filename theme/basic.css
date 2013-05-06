@@ -463,6 +463,11 @@ pre code {
     font-weight: bold;
 }
 
+.manifesto li {
+    line-height: 1.5;
+    font-size: 1.2em;
+}
+
 /* Screen size breaks */
 
 @media only screen and (min-width: 640px) {
