@@ -59,7 +59,7 @@ nav ul {
 
 nav li {
     display: inline-block;
-    margin: 0 .5em;
+    margin: 0 1em;
     padding: 0;
     height: 1.5em;
 }
@@ -85,7 +85,7 @@ nav li {
     font-size: 1.5em;
     letter-spacing: 0;
     line-height: 1;
-    margin: .5em 0;
+    margin: 1em 0;
     padding: .5em 1.5em;
     opacity: .9;
     text-decoration: none;
@@ -135,7 +135,7 @@ nav li {
 .hero nav {
     letter-spacing: .1em;
     text-transform: uppercase;
-    margin: 1em auto;
+    margin: 1em auto 0;
     height: 100%;
     overflow: hidden;
 }
@@ -297,7 +297,6 @@ nav li {
 
 .tabs .item {
     background: #eee;
-    padding: .25em .5em;
     margin: 0 -1px -1px 0;
     max-width: 23%;
     border: 1px solid #ccc;
@@ -312,7 +311,8 @@ nav li {
     color: #666;
     cursor: pointer;
     display: block;
-    overflow: hidden;
+    overflow-x: hidden;
+    padding: .5em 1em;
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -326,6 +326,7 @@ nav li {
     background: #fff;
     border-bottom: 1px solid #fff;
     cursor: default;
+    max-width: 30%;
 }
 
 .tabs .active:hover {
@@ -362,7 +363,7 @@ pre code {
     height: 100px;
     position: absolute;
     right: -38px;
-    top: 22px;
+    top: 29px;
     z-index: 1;
 }
 
@@ -453,9 +454,12 @@ pre code {
 /* Manifesto */
 
 .manifesto .content.box {
-    min-width: 320px;
-    width: 60%;
     max-width: 700px;
+}
+
+.manifesto .mission {
+    font-size: 1.5em;
+    margin-bottom: 1.5em;
 }
 
 .manifesto h3 {
@@ -463,9 +467,22 @@ pre code {
     font-weight: bold;
 }
 
-.manifesto li {
+.manifesto .content li {
     line-height: 1.5;
     font-size: 1.2em;
+}
+
+.manifesto blockquote:before {
+    content: "\201C";
+}
+
+.manifesto blockquote:after {
+    content: "\201D";
+}
+
+.manifesto blockquote {
+    font-size: 1.2em;
+    line-height: 1.5;
 }
 
 /* Screen size breaks */
@@ -497,7 +514,7 @@ pre code {
         width: 8em;
     }
 
-    .header-content h1 {
+    .home .header-content h1 {
         margin-left: -.5em;
     }
 
@@ -511,14 +528,14 @@ pre code {
         width: 10em;
     }
 
+    .hero .button {
+        margin: .5em 0;
+    }
+
     .header-content h2 {
         margin: 0 0;
         font-weight: 100;
         font-size: 3em;
-    }
-
-    .tabs .item {
-        padding: .5em 1em;
     }
 
     .ribbon {
