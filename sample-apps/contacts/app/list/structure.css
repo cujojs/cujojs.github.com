@@ -12,7 +12,7 @@
 }
 
 .contact-list-view {
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .contact-list-view .remove {

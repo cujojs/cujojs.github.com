@@ -311,7 +311,6 @@ nav li {
     color: #666;
     cursor: pointer;
     display: block;
-    overflow-x: hidden;
     padding: .5em 1em;
     text-decoration: none;
     text-overflow: ellipsis;
