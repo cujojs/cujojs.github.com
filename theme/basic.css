@@ -340,7 +340,7 @@ nav li {
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
-    overflow: scroll;
+    overflow: auto;
     max-height: 28em;
 }
 
