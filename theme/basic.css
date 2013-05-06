@@ -311,7 +311,7 @@ nav li {
     color: #666;
     cursor: pointer;
     display: block;
-    padding: .5em 1em;
+    padding: .5em .5em;
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -546,6 +546,10 @@ pre code {
         font-size: 0.9em;
         height: 20px;
         margin-top: 20px;
+    }
+
+    .tabs .item a {
+        padding: .5em 1em;
     }
 
     .icon-grid a:before {
