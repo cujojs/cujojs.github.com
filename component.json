@@ -1,6 +1,7 @@
 {
 	"dependencies": {
 		"curl": "",
+		"wire": "",
 		"cola": "",
 		"when": "",
 		"meld": "",
