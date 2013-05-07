@@ -64,6 +64,14 @@ nav li {
     height: 1.5em;
 }
 
+.async {
+    transition: opacity .5s ease;
+    -webkit-transition: opacity .5s ease;
+    -moz-transition: opacity .5s ease;
+    -o-transition: opacity .5s ease;
+    -ms-transition: opacity .5s ease;
+}
+
 .social [class^="icon-"], .social [class*=" icon-"] {
     width: auto;
 }
@@ -531,10 +539,12 @@ pre code {
         margin: .5em 0;
     }
 
-    .header-content h2 {
+    .subheader {
         margin: 0 0;
         font-weight: 100;
         font-size: 3em;
+        height: 1em;
+        line-height: 1;
     }
 
     .ribbon {

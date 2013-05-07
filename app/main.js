@@ -17,12 +17,10 @@ define({ // Wire spec
 	subheader: {
 		render: {
 			template: { module: 'text!app/subheader/template.html' },
-			replace: { text: { $ref: 'subheaderText' } }
-		},
-		insert: { last: { $ref: 'first!.header-content' } }
+			replace: { text: { $ref: 'subheaderText' } },
+			at: { $ref: 'first!.subheader' }
+		}
 	},
-
-	theme: { module: 'css!theme/basic.css' },
 
 	$plugins: [
 		{ module: 'wire/dom', classes: { init: 'loading' } },

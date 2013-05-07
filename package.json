@@ -32,10 +32,8 @@
       "web": "http://unscriptable.com"
     }
   ],
-  "dependencies": {
-    "buster": "~0.6"
-  },
   "devDependencies": {
+  	"buster": "~0.6",
     "serv": ""
   },
   "scripts": {
