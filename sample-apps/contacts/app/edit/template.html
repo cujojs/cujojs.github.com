@@ -1,0 +1,25 @@
+<form class="edit-contact-view">
+    <fieldset>
+        <label>
+            <span>${firstName}</span>
+            <input type="text" class="first-name" name="firstName"/>
+        </label>
+        <label>
+            <span>${lastName}</span>
+            <input type="text" class="last-name" name="lastName"/>
+        </label>
+        <label>
+            <span>${phone}</span>
+            <input type="text" name="phone">
+        </label>
+        <label>
+            <span>${email}</span>
+            <input type="text" name="email">
+        </label>
+    </fieldset>
+    <input type="text" name="id"/>
+    <fieldset class="controls">
+        <input type="submit" value="${save}">
+        <input type="reset" value="${clear}">
+    </fieldset>
+</form>

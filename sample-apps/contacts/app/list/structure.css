@@ -1,0 +1,25 @@
+.contact-list-view {
+	position: absolute;
+	height: 100%;
+	width: 30%;
+    margin: 0;
+    padding: 0;
+}
+
+.contact-list-view .contact {
+    padding: .25em;
+	list-style: none;
+}
+
+.contact-list-view {
+	overflow-y: auto;
+}
+
+.contact-list-view .remove {
+    color: #aaa;
+    opacity: 0;
+}
+
+.contact-list-view .contact:hover .remove {
+    opacity: 1;
+}

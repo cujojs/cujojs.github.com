@@ -1,0 +1,32 @@
+.tabs {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+}
+
+.tabs .item {
+    display: inline-block;
+    list-style-type: none;
+}
+
+.stack {
+    height: 100%;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    clear: both;
+}
+
+.stack .item {
+    display: none;
+    list-style-type: none;
+    position: relative;
+    left: 0;
+    top: 0;
+    right: 0;
+}
+
+.stack .item.active {
+    display: block;
+}

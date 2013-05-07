@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>cujoJS: Manifesto</title>
+
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="theme/basic.css"/>
+</head>
+<body class="manifesto">
+
+<header class="hero box">
+    <nav>
+        <ul class="main">
+            <li><a href=".">Home</a></li>
+            <li><a href="http://know.cujojs.com/">Know</a></li>
+            <li class="active">Manifesto</li>
+        </ul>
+
+        <ul class="social">
+            <li>
+                <a class="icon-twitter" href="http://twitter.com/cujojs" title="Follow us on Twitter">Twitter</a>
+            </li>
+            <li>
+                <a class="icon-github-2" href="http://github.com/cujojs" title="Follow us on Github">Github</a>
+            </li>
+        </ul>
+    </nav>
+
+    <hgroup class="header-content">
+        <h1>
+            <span class="prefix">cujo</span><span class="suffix">JS</span>
+        </h1>
+        <h2 class="subheader">Manifesto</h2>
+    </hgroup>
+</header>
+
+<section class="content box">
+
+    <p class="mission"><em>cujoJS&#39;s mission is to provide the missing, yet vital, architectural tools and guidance that developers and library authors need to easily create unique and amazing applications.</em></p>
+
+    <p>The web is an incredible application platform.  It delivers the best user experience to the widest audience: desktops, phones, tablets, TVs.  The trend to deliver ever larger applications and richer, more responsive user experiences continues unabated.  We recognize that this trend necessarily increases the complexity of browser-based front-end applications.</p>
+
+    <p>Larger, more complex front-end applications require carefully crafted architecture and deliberate code organization.</p>
+
+    <blockquote>
+        As the size of software systems increases, the algorithms and data structures of the computation no longer constitute the major design problems. When systems are constructed from many components, the organization of the overall system &mdash; the software architecture &mdash; presents a new set of design problems.
+    </blockquote>
+
+    <p>&mdash; <cite><a href="http://www.cs.cmu.edu/afs/cs/project/able/ftp/intro_softarch/intro_softarch.pdf">An Introduction to Software Architecture</a></cite>, Garlan &amp; Shaw</p>
+
+    <p>The developer community has embraced the challenge to deliver richer apps with an impressive variety of specialized libraries and frameworks. Frameworks provide an easy startup experience for developers but lack the architectural tools necessary to address the unique needs of each application.  They inevitably become a significant limiting factor as applications grow.  Application developers must invent, develop, test, and maintain custom solutions to scale beyond the framework&#39;s limitations.</p>
+
+    <h2>Goals</h2>
+
+    <p>Our goals are simple.  We strive to:</p>
+
+    <ol>
+        <li>Provide vital tools for web-based apps (client, server, hybrid/embedded)</li>
+        <li>Provide architectural guidance to developers and engineers</li>
+        <li>Enable integration with other frameworks, libraries, and tools</li>
+    </ol>
+
+    <h2>Principles</h2>
+
+    <h3>Help developers write code that is easily created, modified, and tested.</h3>
+
+    <p>Most Javascript frameworks focus on the startup experience.  While this is important, they neglect evolution, maintainability, and scalability. We believe that it&#39;s possible to simultaneously use scalable patterns and build applications rapidly.</p>
+
+    <h3>Maximize freedom of choice</h3>
+
+    <p>Most Javascript frameworks encourage coding patterns that entangle your application&#39;s code with framework APIs and idiosyncrasies.  Your code is needlessly locked in as soon as you write the first line.  cujoJS apps have near-zero entanglement with frameworks and libraries.</p>
+
+    <h3>Embrace standards</h3>
+
+    <p>Some might blame <em>framework entanglement</em> -- at least partially -- on Javascript&#39;s lack of standards.  Alas, frameworks ignore many existing industry and de facto standards.  cujoJS seeks out and implements standards whenever possible, while advocating, pioneering, and facilitating the use of forthcoming ones.</p>
+
+    <h3>Facilitate team scalability as the application grows</h3>
+
+    <p>cujoJS encourages clean separation of subsystems, allowing teams to be scaled horizontally or vertically.  For instance, in the presentation tier, CSS and HTML can be closely integrated into the iterative development and testing processes without forcing designers to understand the Javascript architecture and without forcing engineers to maintain the HTML and CSS.</p>
+
+    <h3>Never compromise user experience</h3>
+
+    <p>A great end user experience is the ultimate goal.  cujoJS places absolutely no restrictions on how you achieve this.  We encourage you to choose any third-party widgets, libraries, or toolkits, and if they&#39;re reasonably open, we will integrate with them.</p>
+
+    <p>We understand that performance is tantamount to user experience.  We obsess on performance as much as we obsess on openness.</p>
+
+    <h3>Never compromise developer experience</h3>
+
+    <p>While we understand that some of cujoJS&#39;s concepts may be novel to web developers, we do our best to craft APIs that are flexible, consumable, and intuitive for all experience levels.</p>
+
+    <p>Debugging is just as important as coding.  Nowhere is this more important than at the cutting edge of web development.  We try hard to minimize edge cases, eliminate &quot;magic&quot;, and increase code insight, especially in areas where we&#39;re years ahead of browsers and Javascript engines, for instance, promises and modules.</p>
+
+    <h3>Do one thing and excel at it</h3>
+
+    <p>In a world where components are easily composed and connected, there&#39;s no need to amass multiple components into a tool or lib.  Library authors shouldn&#39;t reinvent yet another silo of interlocked models, views, controllers, message systems, and/or routers.  Just deliver an awesome modeling lib or a great templating lib, for instance, and use architecturally sound patterns to integrate with other awesome libs.</p>
+
+    <h3>Use the web.  Don&#39;t circumvent it</h3>
+
+    <p>The creators of the core technologies of the web platform -- HTML, CSS, and Javascript -- had no idea how their technologies would be used decades later.  Even so, we believe that the solid foundations of these technologies has allowed them to evolve and remain a powerful combination.  cujoJS tools should embrace HTML, CSS, and Javascript, not circumvent them.</p>
+
+    <h3>Embrace the future</h3>
+
+    <p>HTML, CSS, and Javascript are advancing faster than ever.  We believe that it&#39;s our job to help engineers understand and prepare for changes in the web platform as it evolves.  Our projects enable engineers to start using forthcoming features today so their code isn&#39;t obsolete tomorrow.</p>
+
+</section>
+
+<footer class="footer box">
+    <p>&copy; Copyright 2013 Brian Cavalier &amp; John Hann</p>
+</footer>
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-40625363-1', 'cujojs.com');
+    ga('send', 'pageview');
+
+</script>
+</body>
+</html>

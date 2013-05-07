@@ -1,0 +1,47 @@
+.cujo-contacts fieldset {
+	border: none;
+}
+
+.cujo-contacts input[type="text"] {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1em;
+    margin: .5em 0 1em 0;
+}
+
+::-webkit-input-placeholder {
+    color: #acacac;
+}
+:-moz-placeholder {
+    color: #acacac;
+}
+::-moz-placeholder {
+    color: #acacac;
+}
+:-ms-input-placeholder {
+    color: #acacac;
+}
+
+.cujo-contacts label {
+    color: #acacac;
+    font-weight: normal;
+}
+
+.cujo-contacts {
+	width: auto;
+    margin: 0 auto;
+	overflow: visible;
+}
+
+.cujo-contacts  .contacts-view-container {
+	position: relative;
+	height: 100%;
+	width: auto;
+	min-height: 400px;
+	overflow: hidden;
+	clear: both;
+}
+
+.cujo-contacts .contact-list-view {
+    background-color: #fafafa;
+    cursor: pointer;
+}

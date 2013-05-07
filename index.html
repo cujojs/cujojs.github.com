@@ -1,172 +1,158 @@
 <!doctype html>
-<html>
+<html lang="en-US" class="loading">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="chrome=1">
-<title>cujo.js</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-<link rel="stylesheet" href="stylesheets/styles.css">
-<link rel="stylesheet" href="stylesheets/pygment_trac.css">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<meta name="keywords" content="javascript architecture toolkit framework modern web app curl cram when wire aop cola amd modules ioc inversion of control spring bcavalier Brian Cavalier unscriptable John Hann">
-<!--[if lt IE 9]>
-<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
+	<title>cujoJS: Javascript architectural toolkit</title>
+
+    <meta name="viewport" content="width=device-width" />
+
+	<style type="text/css">html.loading { opacity: 0; }</style>
+
+	<script src="lib/curl/src/curl.js"></script>
+	<script src="app/run.js"></script>
 </head>
-<body class="backdrop">
+<body class="home">
+<header class="hero box">
+    <nav>
+        <ul class="main">
+            <li class="active">Home</li>
+            <li><a href="http://know.cujojs.com/">Know</a></li>
+            <li><a href="manifesto.html">Manifesto</a></li>
+        </ul>
 
-<div class="wrapper">
+        <ul class="social">
+            <li>
+                <a class="icon-twitter" href="http://twitter.com/cujojs" title="Follow us on Twitter">Twitter</a>
+            </li>
+            <li>
+                <a class="icon-github-2" href="http://github.com/cujojs" title="Follow us on Github">Github</a>
+            </li>
+        </ul>
+    </nav>
 
-	<header class="backdrop">
+    <div class="header-content">
+        <h1>
+            <span class="prefix">cujo</span><span class="suffix">JS</span>
+        </h1>
+        <div class="button-container">
+            <a class="button primary getit" href="#get">Get started now</a>
+            <a class="button secondary" href="#see">See it in action</a>
+        </div>
+    </div>
+</header>
 
-		<h1>cujo.js</h1>
-		<p></p>
-		<p class="view"><a href="https://github.com/cujojs">View the Project on GitHub <small>github.com/cujojs</small></a></p>
+<section class="content box tagline">
+        <h3>cujoJS is an architectural toolkit for building highly modular, maintainable web applications that are easy to test and refactor, with zero framework lock-in.</h3>
+</section>
 
-	</header>
+<section class="content box intro">
+    <article class="col3">
+        <h1>Sanity</h1>
+        <p>Remain calm and write the code.  cujoJS is the sane architectural toolkit.  cujoJS encourages patterns that foster clean, testable code at all levels.  From HTTP to HTML and from CORS to CSS, unit test everything and get a good night’s sleep for a change.</p>
+    </article>
 
-	<section class="content backdrop">
+    <article class="col3">
+        <h1>Freedom</h1>
+        <p>Make exactly the app you want.  cujoJS embraces standards and integrates with any reasonably open library, component, or widget with <em>zero</em> entanglement with your code.  Use as much or as little as you need, and replace third-party or cujoJS libraries easily without rewriting everything.</p>
+    </article>
 
-		<h3>The JavaScript Architectural Toolkit</h3>
+    <article class="col3">
+        <h1>Speed</h1>
+        <p>Stop writing bloated apps.  cujoJS apps are tiny and fast.  Develop at the speed of innovation.  Separation of concerns lets multiple engineering and design teams rapidly design, develop, refactor, and test iteratively and in parallel.</p>
+    </article>
 
-		<p>cujo is an architectural toolkit for next generation JavaScript applications.  It encourages highly modular development, declarative application assembly, and embraces the asynchronous nature of JavaScript and its fusion of object-oriented and functional programming styles.</p>
+</section>
 
-		<p>cujo’s extensible architecture and use of industry standards allows it to work seamlessly with your current application framework -- and adapt easily to your next.  </p>
+<section id="see" class="content box app-container cujo-hello-container">
+    <h1 id="app-hello">Sample app: Hello</h1>
+    <p>Your app is not a toy. But looking at even a simple toy application reveals some of the powerful aspects of cujoJS: simple, testable modules with framework-free Javascript and HTML, composed together declaratively.</p>
+    <div class="app col2">
+    </div>
+    <div class="code col2">
+        <div class="ribbon social">
+            <a class="icon-github-2" href="http://github.com/know-cujojs/hello">Fork it</a>
+        </div>
+    </div>
+</section>
 
-		<p>You focus on the business logic of your application components.  cujo loads and assembles your components and then wires them all together.</p>
+<section class="content box app-container cujo-contacts-container">
+    <h1 id="app-contacts">Sample app: Contacts</h1>
+    <p>Start simple and stay simple. Real apps evolve over time, as do the teams that build and maintain them. With cujoJS, your modules stay simple, your Javascript, CSS, and HTML remain editable by mere mortals, and your architecture evolves more easily.</p>
+    <div class="app col2">
+    </div>
+    <div class="code col2">
+        <div class="ribbon social">
+            <a class="icon-github-2" href="http://github.com/know-cujojs/contacts">Fork it</a>
+        </div>
+    </div>
+</section>
 
-		<h3>Get Started!</h3>
+<section class="content box app-container cujo-homepage-container">
+    <h1 id="app-homepage">Sample app: cujoJS.com</h1>
+    <p>Iterate quickly while sleeping at night, even if you want to do something crazy, like make your homepage an app that embeds two other working apps. cujoJS helps you keep everything nicely separated, testable, refactorable, and extensible. <em>Does your home page have unit tests</em>? Ours does.</p>
+    <div class="app col2">
+        <img class="screenshot" src="assets/img/cujojs-com.png" />
+    </div>
+    <div class="code col2">
+        <div class="ribbon social">
+            <a class="icon-github-2" href="http://github.com/cujojs/cujojs.github.com">Fork it</a>
+        </div>
+    </div>
+</section>
 
-		<p>Watch an introductory presentation by Brian and John at <a href="http://www.youtube.com/watch?v=TqX-CqYYwEc">SpringOne</a>. <br/>Check out these sample apps: <a href="https://github.com/briancavalier/hello-wire.js">Hello wire!</a>, <a href="https://github.com/cujojs/todomvc/tree/master/labs/architecture-examples/cujo">todoMVC</a>, and <a href="https://github.com/briancavalier/notes-demo-dojoconf-2011">Notes</a>. <br/>Feeling ready? Clone the <a href="https://github.com/cujojs/quickstart">cujojs/quickstart</a> repo and start coding!</p>
+<section id="get" class="content box get">
+    <section>
+        <h1>Get it</h1>
+        <div class="col2">
+            <h2>cujoJS/seed</h2><a class="button secondary" href="https://github.com/cujojs/seed">Get cujoJS/seed</a>
+            <p>Overwhelmed by all the awesomeness?  Start here.  Have your first “hello world” cujoJS app up and running in under a minute.</p>
 
-		<h3>Need Assistance?</h3>
+            <ol>
+                <li><code>git clone https://github.com/cujojs/seed.git myapp</code></li>
+                <li><code>cd myapp</code></li>
+                <li><code>npm install</code></li>
+                <li><code>npm start</code></li>
+            </ol>
 
-		<p>Join cujo.js's growing <a href="https://groups.google.com/d/forum/cujojs">online community</a> where you can find solutions, get the latest news, or share successes.  If you prefer live discussion, join the #cujojs room on freenode.  Professional support packages are also available from <a href="http://www.sitepen.com/development/index.html">SitePen</a>.</p>
+            <p>Launch <code>http://localhost:8000/</code> in your browser.  Point your editor at the <code>myapp</code> folder and start coding!</p>
+        </div>
 
-	</section>
+        <div class="col2">
+            <h2>A la carte</h2>
+            <a class="button secondary" href="http://know.cujojs.com/downloads">Go to downloads</a>
+            <p>Get exactly the bits of cujoJS you need using your favorite package manager, or by downloading them as zip files.</p>
+            <ul class="icon-grid">
+                <li><a class="icon-cola" href="http://know.cujojs.com/downloads">cola.js</a></li>
+                <li><a class="icon-cram" href="http://know.cujojs.com/downloads">cram.js</a><span></span></li>
+                <li><a class="icon-curl" href="http://know.cujojs.com/downloads">curl.js</a></li>
+                <li><a class="icon-meld" href="http://know.cujojs.com/downloads">meld.js</a></li>
+                <li><a class="icon-msgs" href="http://know.cujojs.com/downloads">msgs.js</a></li>
+                <li><a class="icon-poly" href="http://know.cujojs.com/downloads">poly.js</a></li>
+                <li><a class="icon-rest" href="http://know.cujojs.com/downloads">rest.js</a></li>
+                <li><a class="icon-when" href="http://know.cujojs.com/downloads">when.js</a></li>
+                <li><a class="icon-wire" href="http://know.cujojs.com/downloads">wire.js</a></li>
+            </ul>
+        </div>
+    </section>
 
-	<section class="lib-block backdrop">
+</section>
 
-		<dl>
+<footer class="footer box">
+    <p>&copy; Copyright 2013 Brian Cavalier &amp; John Hann</p>
+    <p>Icons: <a href="http://adamwhitcroft.com/batch/">Batch by @adamwhitcroft</a></p>
+</footer>
 
-			<dt>quickstart</dt>
-			<dd>
-				<p>A starter kit for building cujo.js apps</p>
-				<ul>
-					<li><a href="https://github.com/cujojs/quickstart">View On <strong>GitHub</strong></a></li>
-					<li><a href="https://github.com/cujojs/quickstart/zipball/master">Download <strong>ZIP File</strong></a></li>
-					<li><a href="https://github.com/cujojs/quickstart/tarball/master">Download <strong>TAR Ball</strong></a></li>
-				</ul>
-			</dd>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-			<hr/>
+    ga('create', 'UA-40625363-1', 'cujojs.com');
+    ga('send', 'pageview');
 
-			<dt>curl.js</dt>
-			<dd>
-				<p class="status">status: <strong>beta</strong></p>
-				<p>A small, fast AMD/CJS module loader with dependency management</p>
-				<ul>
-					<li><a href="https://github.com/cujojs/curl">View On <strong>GitHub</strong></a></li>
-					<li><a href="https://github.com/cujojs/curl/zipball/master">Download <strong>ZIP File</strong></a></li>
-					<li><a href="https://github.com/cujojs/curl/tarball/master">Download <strong>TAR Ball</strong></a></li>
-				</ul>
-			</dd>
-
-			<dt>meld.js</dt>
-			<dd>
-				<p class="status">status: <strong>released!</strong></p>
-				<p>AOP for JS with before, after, afterReturning, afterThrowing, around, pointcuts, and more</p>
-				<ul>
-					<li><a href="https://github.com/cujojs/meld">View On <strong>GitHub</strong></a></li>
-					<li><a href="https://github.com/cujojs/meld/zipball/master">Download <strong>ZIP File</strong></a></li>
-					<li><a href="https://github.com/cujojs/meld/tarball/master">Download <strong>TAR Ball</strong></a></li>
-				</ul>
-			</dd>
-
-			<dt>rest.js</dt>
-			<dd>
-				<p class="status">status: <strong>beta</strong></p>
-				<p>RESTful HTTP client for JavaScript</p>
-				<ul>
-					<li><a href="https://github.com/cujojs/rest">View On <strong>GitHub</strong></a></li>
-					<li><a href="https://github.com/cujojs/rest/zipball/master">Download <strong>ZIP File</strong></a></li>
-					<li><a href="https://github.com/cujojs/rest/tarball/master">Download <strong>TAR Ball</strong></a></li>
-				</ul>
-			</dd>
-
-			<dt>poly.js</dt>
-			<dd>
-				<p class="status">status: <strong>beta</strong></p>
-				<p>A modular, flexible set of ES5-ish shims</p>
-				<ul>
-					<li><a href="https://github.com/cujojs/poly">View On <strong>GitHub</strong></a></li>
-					<li><a href="https://github.com/cujojs/poly/zipball/master">Download <strong>ZIP File</strong></a></li>
-					<li><a href="https://github.com/cujojs/poly/tarball/master">Download <strong>TAR Ball</strong></a></li>
-				</ul>
-			</dd>
-
-			<dt>when.js</dt>
-			<dd>
-				<p class="status">status: <strong>released!</strong></p>
-				<p>A lightweight Promise and when() implementation, plus other async goodies</p>
-				<ul>
-					<li><a href="https://github.com/cujojs/when">View On <strong>GitHub</strong></a></li>
-					<li><a href="https://github.com/cujojs/when/zipball/master">Download <strong>ZIP File</strong></a></li>
-					<li><a href="https://github.com/cujojs/when/tarball/master">Download <strong>TAR Ball</strong></a></li>
-				</ul>
-			</dd>
-
-			<dt>wire.js</dt>
-			<dd>
-				<p class="status">status: <strong>beta</strong></p>
-				<p>A light, fast, flexible Javascript IOC container</p>
-				<ul>
-					<li><a href="https://github.com/cujojs/wire">View On <strong>GitHub</strong></a></li>
-					<li><a href="https://github.com/cujojs/wire/zipball/master">Download <strong>ZIP File</strong></a></li>
-					<li><a href="https://github.com/cujojs/wire/tarball/master">Download <strong>TAR Ball</strong></a></li>
-				</ul>
-			</dd>
-
-			<hr/>
-			
-			<dt>cram.js</dt>
-			<dd>
-				<p class="status">status: <strong>alpha</strong></p>
-				<p>A simple Javascript module concatenator</p>
-				<ul>
-					<li><a href="https://github.com/cujojs/cram">View On <strong>GitHub</strong></a></li>
-					<li><a class="not-ready" title="please fork on github" xxx-href="https://github.com/cujojs/cram/zipball/master">Download <strong>ZIP File</strong></a></li>
-					<li><a class="not-ready" title="please fork on github" xxx-href="https://github.com/cujojs/cram/tarball/master">Download <strong>TAR Ball</strong></a></li>
-				</ul>
-			</dd>
-
-			<dt>cola.js</dt>
-			<dd>
-				<p class="status">status: <strong>alpha</strong></p>
-				<p>A data synchronization toolset</p>
-				<ul>
-					<li><a href="https://github.com/cujojs/cola">View On <strong>GitHub</strong></a></li>
-					<li><a class="not-ready" title="please fork on github" xxx-href="https://github.com/cujojs/cola/zipball/master">Download <strong>ZIP File</strong></a></li>
-					<li><a class="not-ready" title="please fork on github" xxx-href="https://github.com/cujojs/cola/tarball/master">Download <strong>TAR Ball</strong></a></li>
-				</ul>
-			</dd>
-
-		</dl>
-
-	</section>
-
-	<footer class="backdrop">
-
-		<p>
-			This project is maintained by a team of <br/>
-			<a href="https://github.com/cujojs">Coders with an Unhealthy Javascript Obsession</a>
-		</p>
-		<p><small>Hosted on GitHub Pages &mdash; Original theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-
-	</footer>
-
-</div>
-<script src="javascripts/scale.fix.js"></script>
-
+</script>
 </body>
 </html>

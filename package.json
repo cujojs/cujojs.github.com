@@ -1,0 +1,45 @@
+{
+  "name": "cujoJS.com",
+  "version": "0.2.0",
+  "description": "cujoJS main site",
+  "keywords": [
+    "cujo",
+    "modules",
+    "ioc",
+    "promises",
+    "aop",
+    "rest"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/mit-license.php"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/cujojs/cujojs.github.com"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "Brian Cavalier",
+      "web": "http://hovercraftstudios.com"
+    },
+    {
+      "name": "John Hann",
+      "web": "http://unscriptable.com"
+    }
+  ],
+  "dependencies": {
+    "buster": "~0.6"
+  },
+  "devDependencies": {
+    "serv": ""
+  },
+  "scripts": {
+    "start": "serv --port 8000",
+    "test": "buster test -e node"
+  }
+}

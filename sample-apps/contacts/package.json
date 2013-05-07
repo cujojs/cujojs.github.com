@@ -1,0 +1,37 @@
+{
+	"name": "cujo-quickstart",
+	"version": "0.1.0",
+	"description": "Starter Kit for cujo.js apps",
+	"keywords": ["cujo", "modules", "ioc", "promises", "aop"],
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://www.opensource.org/licenses/mit-license.php"
+		}
+	],
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/cujojs/quickstart"
+		}
+	],
+	"maintainers": [
+		{
+			"name": "Brian Cavalier",
+			"web": "http://hovercraftstudios.com"
+		},
+		{
+			"name": "John Hann",
+			"web": "http://unscriptable.com"
+		}
+	],
+	"dependencies": {},
+	"devDependencies": {
+		"serv": "",
+		"bower": ""
+	},
+	"scripts": {
+		"postinstall": "bower install",
+		"start": "serv"
+	}
+}

@@ -1,0 +1,35 @@
+.edit-contact-view {
+	padding: 0;
+	position: absolute;
+	right: 0;
+	height: 100%;
+	width: 70%;
+}
+
+.edit-contact-view fieldset {
+	margin: .5em 1em;
+}
+
+.edit-contact-view label {
+	display: block;
+	width: 100%;
+}
+
+.edit-contact-view label span {
+    display: inline-block;
+    padding: 0 2px;
+    width: 7em;
+}
+
+.edit-contact-view input[type="text"] {
+	width: 8em;
+}
+
+.edit-contact-view input[name="id"] {
+    display: none;
+}
+
+.edit-contact-view .controls {
+    position: absolute;
+    bottom: 0;
+}

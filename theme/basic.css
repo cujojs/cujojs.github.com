@@ -1,0 +1,611 @@
+@import url("font/cujojs/font.css");
+
+html {
+	font-size: 100%;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 200;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+a {
+    transition: text-shadow .25s ease;
+    -webkit-transition: text-shadow .25s ease;
+    -moz-transition: text-shadow .25s ease;
+    -o-transition: text-shadow .25s ease;
+    -ms-transition: text-shadow .25s ease;
+}
+
+a:hover {
+    text-shadow: #ccc 0 0 8px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 8em;
+}
+
+h3 {
+    margin: 0;
+}
+
+p {
+    line-height: 1.5em;
+}
+
+code {
+    font-size: 12px;
+}
+
+section {
+    clear: both;
+}
+
+nav ul {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+nav li {
+    display: inline-block;
+    margin: 0 1em;
+    padding: 0;
+    height: 1.5em;
+}
+
+.social [class^="icon-"], .social [class*=" icon-"] {
+    width: auto;
+}
+
+.social [class^="icon-"]:before, .social [class*=" icon-"]:before {
+    font-size: 1.25em;
+    margin-right: .5em;
+    margin-top: -.25em;
+    vertical-align: middle;
+}
+/* Buttons */
+
+.button {
+    border: 1px solid;
+    border-radius: 8px;
+    color: white;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 1.5em;
+    letter-spacing: 0;
+    line-height: 1;
+    margin: 1em 0;
+    padding: .5em 1.5em;
+    opacity: .9;
+    text-decoration: none;
+    text-shadow: rgba(0,0,0,0.5) -1px -1px 0;
+}
+
+.button.icon {
+    height: 1em;
+}
+
+.button.icon:before {
+    font-weight: 200;
+}
+
+.button.primary {
+    background-color: #2b5;
+    background-image: linear-gradient(90deg, #2b5, #3e5);;
+    background-image: -webkit-linear-gradient(90deg, #2b5, #3e5);;
+    background-image: -moz-linear-gradient(90deg, #2b5, #3e5);;
+    background-image: -o-linear-gradient(90deg, #2b5, #3e5);;
+    background-image: -ms-linear-gradient(90deg, #2b5, #3e5);;
+    border-color: #4f9;
+}
+
+.button:hover {
+    opacity: 1;
+    text-shadow: none;
+}
+
+.button.secondary {
+    background-color: #26b;
+    background-image: linear-gradient(90deg, #26b, #28f);
+    background-image: -webkit-linear-gradient(90deg, #26b, #28f);
+    background-image: -moz-linear-gradient(90deg, #26b, #28f);
+    background-image: -o-linear-gradient(90deg, #26b, #28f);
+    background-image: -ms-linear-gradient(90deg, #26b, #28f);
+    border-color: #49f;
+}
+
+/* Header */
+
+.hero {
+    background-color: #222;
+    padding: 0;
+}
+
+.hero nav {
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin: 1em auto 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.hero nav .main {
+    margin-bottom: 1em;
+}
+
+.hero nav a {
+    color: #888;
+    padding-bottom: .25em;
+    text-decoration: none;
+    text-shadow: none;
+    -webkit-transition: color .5s ease;
+    -moz-transition: color .5s ease;
+    transition: color .5s ease;
+}
+
+.hero nav a:hover {
+    color: #ccc;
+}
+
+.hero nav .active {
+    border-bottom: 1px solid #888;
+    color: #666;
+    padding-bottom: .25em;
+    cursor: default;
+}
+
+.hero h1 {
+    display: inline-block;
+    letter-spacing: -.1ex;
+    line-height: 1;
+    margin-bottom: .1em;
+}
+
+.hero .button {
+    display: block;
+}
+
+.hero .button.primary {
+    box-shadow: 0 0 8px 2px #3f7;
+    -webkit-box-shadow: 0 0 8px 2px #3f7;
+    -moz-box-shadow: 0 0 8px 2px #3f7;
+}
+
+.hero .button.secondary {
+    box-shadow: 0 0 8px 2px #37f;
+    -webkit-box-shadow: 0 0 8px 2px #37f;
+    -moz-box-shadow: 0 0 8px 2px #37f;
+}
+
+.header-content {
+    color: #eee;
+    text-align: center;
+    margin: 1em auto;
+}
+
+.header-content .prefix {
+    text-shadow: #0066ff 0 0 30px;
+}
+
+.header-content .suffix {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.header-content h2, .header-content .getit {
+    display: none;
+}
+
+.box {
+    overflow: hidden;
+    height: 100%;
+    padding-left: 5%;
+    padding-right: 5%;
+    margin: 0 auto;
+    min-width: 360px;
+}
+
+.content {
+    padding-bottom: 2em;
+    padding-top: 2em;
+    border-bottom: 1px solid #ddd;
+}
+
+.content h3 {
+    font-weight: 200;
+    font-size: 2em;
+}
+
+.content article {
+    float: none;
+    margin: 0 0 1.5em 0;
+    width: auto;
+}
+
+.content article.span2 {
+    width: 63%;
+}
+
+.content h1, .content h2 {
+    font-weight: 200;
+    color: #222;
+}
+
+.content h1 {
+    font-size: 2.5em;
+}
+
+.content h2 {
+    font-size: 2em;
+}
+
+.content p {
+    font-size: 1.2em;
+    margin: 1em 0;
+}
+
+.tagline {
+    background: #28f;
+    color: #fff;
+}
+
+.intro {
+    background: #eee;
+}
+
+.app-container h1 {
+    color: #444;
+}
+
+.app-container p {
+    color: #666;
+}
+
+.app-container .app, .app-container .code {
+    margin-top: 2em;
+    width: auto;
+    max-height: 32em;
+    overflow: hidden;
+    position: relative;
+}
+
+.app-container .app {
+    border: 1px solid #ccc;
+}
+
+.app-container .app > div {
+    background: #eee;
+}
+
+.app-container .screenshot {
+    width: 100%;
+}
+
+.tabs {
+    border-bottom: 1px solid #ccc;
+}
+
+.tabs .item {
+    background: #eee;
+    margin: 0 -1px -1px 0;
+    max-width: 23%;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.tabs .item:hover {
+    background: #ddd;
+}
+
+.tabs .item a {
+    color: #666;
+    cursor: pointer;
+    display: block;
+    padding: .5em .5em;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tabs .item a:hover {
+    color: #004499;
+}
+
+.tabs .active {
+    background: #fff;
+    border-bottom: 1px solid #fff;
+    cursor: default;
+    max-width: 30%;
+}
+
+.tabs .active:hover {
+    background: #fff;
+}
+
+.tabs .active a {
+    color: #0066ff;
+}
+
+.tabs .active a:hover {
+    text-shadow: none;
+}
+
+.code .stack {
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    overflow: auto;
+    max-height: 28em;
+}
+
+.code .stack pre {
+    margin: 1em;
+}
+
+pre code {
+    line-height: 1.5; /* helps FF stack alignment */
+}
+
+.ribbon {
+    background: none;
+    overflow: hidden;
+    height: 100px;
+    position: absolute;
+    right: -38px;
+    top: 29px;
+    z-index: 1;
+}
+
+.ribbon a {
+    background-color: #26b;
+    background-image: -webkit-linear-gradient(90deg, #26b, #28f);
+    background-image: -moz-linear-gradient(90deg, #26b, #28f);
+    background-image: -o-linear-gradient(90deg, #26b, #28f);
+    background-image: -ms-linear-gradient(90deg, #26b, #28f);
+    color: #eef;
+    display: block;
+    font-size: 0.8em;
+    font-weight: bold;
+    height: 18px;
+    line-height: 1;
+    margin-top: 13px;
+    padding: .5em 3em 0;
+    text-decoration: none;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    filter:  progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=-0.70710678, M21=0.70710678, M22=0.70710678, sizingMethod='auto expand'); /* IE6, IE7 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=-0.70710678, M21=0.70710678, M22=0.70710678, sizingMethod='auto expand')"; /* IE8 */
+    zoom: 1;
+    position: relative\9; /* the \9 is intentional, @see http://paulirish.com/2009/browser-specific-css-hacks/*/
+    top: -21px\9;
+    left: -21px\9;
+}
+
+.get h2 {
+    margin: 1em 1em .25em 0;
+}
+
+.icon-grid {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.icon-grid li {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    width: 19%;
+}
+
+.icon-grid a {
+    text-decoration: none;
+    color: #666;
+    font-size: 1.25em;
+    width: 100%;
+    height: 100%;
+}
+
+.icon-grid a:before {
+    display: block;
+    font-size: 32px;
+}
+
+.footer {
+    background: #111;
+    color: #888;
+    font-size: .9em;
+}
+
+.footer a {
+    color: #999;
+}
+
+/* Embedded app overrides */
+
+.app input[type="text"], .cujo-hello-container input {
+    border: 1px solid #ccc;
+    font-size: 1em;
+    padding: .25em;
+}
+
+/* Hello overrides */
+
+.cujo-hello-container .app > div {
+    padding: 1em;
+    text-align: center;
+}
+
+/* Manifesto */
+
+.manifesto .content.box {
+    max-width: 700px;
+}
+
+.manifesto .mission {
+    font-size: 1.5em;
+    margin-bottom: 1.5em;
+}
+
+.manifesto h3 {
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+.manifesto .content li {
+    line-height: 1.5;
+    font-size: 1.2em;
+}
+
+.manifesto blockquote:before {
+    content: "\201C";
+}
+
+.manifesto blockquote:after {
+    content: "\201D";
+}
+
+.manifesto blockquote {
+    font-size: 1.2em;
+    line-height: 1.5;
+}
+
+/* Screen size breaks */
+
+@media only screen and (min-width: 640px) {
+
+    nav ul {
+        display: inline-block;
+    }
+
+    nav li {
+        margin: 0 1em 0 0;
+    }
+
+    .button {
+        font-size: 1.3em;
+    }
+
+    .hero .main {
+        float: left;
+    }
+
+    .hero .social {
+        float: right;
+    }
+
+    .hero .button {
+        display: inline-block;
+        width: 8em;
+    }
+
+    .home .header-content h1 {
+        margin-left: -.5em;
+    }
+
+    .header-content h2, .header-content .getit {
+        display: block;
+    }
+
+    .hero .button-container {
+        display: inline-block;
+        margin: 0 1em;
+        width: 10em;
+    }
+
+    .hero .button {
+        margin: .5em 0;
+    }
+
+    .header-content h2 {
+        margin: 0 0;
+        font-weight: 100;
+        font-size: 3em;
+    }
+
+    .ribbon {
+        right: -35px;
+        top: 29px;
+    }
+
+    .ribbon a {
+        font-size: 0.9em;
+        height: 20px;
+        margin-top: 20px;
+    }
+
+    .tabs .item a {
+        padding: .5em 1em;
+    }
+
+    .icon-grid a:before {
+        font-size: 40px;
+    }
+}
+
+@media only screen and (min-width: 800px) {
+    nav li {
+        margin: 0 2em 0 0;
+    }
+
+    .col2 {
+        display: inline-block;
+        float: left;
+        margin-right: 2%;
+        width: 45%;
+    }
+
+    .app-container .app {
+        width: 35%;
+    }
+
+    .app-container .code {
+        width: 60%;
+    }
+
+    .get h2, .app-container h1 {
+        margin-right: 1em;
+        display: inline-block;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    .box {
+        padding-left: 10%;
+        padding-right: 10%;
+    }
+
+    .content article {
+        float: left;
+        margin: 0 5% 1.5em 0;
+        width: 28%;
+    }
+
+    .app-container p {
+        font-size: 1.5em;
+        line-height: 1.6;
+    }
+
+    .col3 {
+        display: inline-block;
+        float: left;
+    }
+
+    .col3 {
+        width: 30%;
+    }
+}
