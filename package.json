@@ -38,7 +38,7 @@
   "devDependencies": {
     "when": "~1.8",
     "serv": "",
-    "bower": ""
+    "bower": "~0.8"
   },
   "scripts": {
     "postinstall": "bower install",
