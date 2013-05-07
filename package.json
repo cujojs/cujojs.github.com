@@ -1,7 +1,7 @@
 {
-  "name": "cujo-quickstart",
+  "name": "cujoJS.com",
   "version": "0.2.0",
-  "description": "Starter Kit for cujo.js apps",
+  "description": "cujoJS main site",
   "keywords": [
     "cujo",
     "modules",
@@ -19,7 +19,7 @@
   "repositories": [
     {
       "type": "git",
-      "url": "https://github.com/cujojs/quickstart"
+      "url": "https://github.com/cujojs/cujojs.github.com"
     }
   ],
   "maintainers": [
@@ -36,13 +36,10 @@
     "buster": "~0.6"
   },
   "devDependencies": {
-    "when": "~1.8",
-    "serv": "",
-    "bower": "~0.8"
+    "serv": ""
   },
   "scripts": {
-    "postinstall": "bower install",
     "start": "serv --port 8000",
-	"test": "buster test -e node"
+    "test": "buster test -e node"
   }
 }
