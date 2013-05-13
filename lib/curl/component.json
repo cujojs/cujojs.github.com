@@ -1,8 +1,4 @@
 {
-  "name": "curl",
-  "version": "0.7.3",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/cujojs/curl"
-  }
+	"name": "curl",
+	"version": "0.7.4"
 }
