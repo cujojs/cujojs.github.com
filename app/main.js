@@ -23,6 +23,7 @@ define({ // Wire spec
 	},
 
 	theme: { module: 'css!theme/basic.css' },
+	highlightTheme: { module: 'css!highlight/github.css' },
 
 	$plugins: [
 		{ module: 'wire/dom', classes: { init: 'loading' } },
