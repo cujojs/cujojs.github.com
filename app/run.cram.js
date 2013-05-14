@@ -61,328 +61,6 @@ define('poly/lib/_base', ['require', 'exports', 'module'], function (require, ex
 	}
 
 });
-/**
- * Function polyfill / shims
- *
- * (c) copyright 2011-2012 Brian Cavalier and John Hann
- *
- * This module is part of the cujo.js family of libraries (http://cujojs.com/).
- *
- * Licensed under the MIT License at:
- * 		http://www.opensource.org/licenses/mit-license.php
- */
-define('poly/function', ['poly/lib/_base'], function (base) {
-"use strict";
-
-	var bind,
-		slice = [].slice,
-		proto = Function.prototype,
-		featureMap;
-
-	featureMap = {
-		'function-bind': 'bind'
-	};
-
-	function has (feature) {
-		var prop = featureMap[feature];
-		return base.isFunction(proto[prop]);
-	}
-
-	// check for missing features
-	if (!has('function-bind')) {
-		// adapted from Mozilla Developer Network example at
-		// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind
-		bind = function bind (obj) {
-			var args = slice.call(arguments, 1),
-				self = this,
-				nop = function () {},
-				bound = function () {
-				  return self.apply(this instanceof nop ? this : (obj || {}), args.concat(slice.call(arguments)));
-				};
-			nop.prototype = this.prototype || {}; // Firefox cries sometimes if prototype is undefined
-			bound.prototype = new nop();
-			return bound;
-		};
-		proto.bind = bind;
-	}
-
-	return {};
-
-});
-/**
- * Object polyfill / shims
- *
- * (c) copyright 2011-2012 Brian Cavalier and John Hann
- *
- * This module is part of the cujo.js family of libraries (http://cujojs.com/).
- *
- * Licensed under the MIT License at:
- * 		http://www.opensource.org/licenses/mit-license.php
- */
-/**
- * The goal of these shims is to emulate a JavaScript 1.8.5+ environments as
- * much as possible.  While it's not feasible to fully shim Object,
- * we can try to maximize code compatibility with older js engines.
- *
- * Note: these shims cannot fix `for (var p in obj) {}`. Instead, use this:
- *     Object.keys(obj).forEach(function (p) {}); // shimmed Array
- *
- * Also, these shims can't prevent writing to object properties.
- *
- * If you want your code to fail loudly if a shim can't mimic ES5 closely
- * then set the AMD loader config option `failIfShimmed`.  Possible values
- * for `failIfShimmed` include:
- *
- * true: fail on every shimmed Object function
- * false: fail never
- * function: fail for shims whose name returns true from function (name) {}
- *
- * By default, no shims fail.
- *
- * The following functions are safely shimmed:
- * create (unless the second parameter is specified since that calls defineProperties)
- * keys
- * getOwnPropertyNames
- * getPrototypeOf
- * isExtensible
- *
- * In order to play nicely with several third-party libs (including Promises/A
- * implementations), the following functions don't fail by default even though
- * they can't be correctly shimmed:
- * freeze
- * seal
- * isFrozen
- * isSealed
- *
- * Note: this shim doesn't do anything special with IE8's minimally useful
- * Object.defineProperty(domNode).
- *
- * The poly/strict module will set failIfShimmed to fail for some shims.
- * See the documentation for more information.
- *
- * IE missing enum properties fixes copied from kangax:
- * https://github.com/kangax/protolicious/blob/master/experimental/object.for_in.js
- *
- */
-define('poly/object', ['poly/lib/_base'], function (base) {
-"use strict";
-
-	var refObj,
-		refProto,
-		getPrototypeOf,
-		keys,
-		featureMap,
-		shims,
-		undef;
-
-	refObj = Object;
-	refProto = refObj.prototype;
-
-	getPrototypeOf = typeof {}.__proto__ == 'object'
-		? function (object) { return object.__proto__; }
-		: function (object) { return object.constructor ? object.constructor.prototype : refProto; };
-
-	keys = !hasNonEnumerableProps
-		? _keys
-		: (function (masked) {
-			return function (object) {
-				var result = _keys(object), i = 0, m;
-				while (m = masked[i++]) {
-					if (hasProp(object, m)) result.push(m);
-				}
-				return result;
-			}
-		}([ 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf' ]));
-
-	featureMap = {
-		'object-create': 'create',
-		'object-freeze': 'freeze',
-		'object-isfrozen': 'isFrozen',
-		'object-seal': 'seal',
-		'object-issealed': 'isSealed',
-		'object-getprototypeof': 'getPrototypeOf',
-		'object-keys': 'keys',
-		'object-getownpropertynames': 'getOwnPropertyNames',
-		'object-defineproperty': 'defineProperty',
-		'object-defineproperties': 'defineProperties',
-		'object-isextensible': 'isExtensible',
-		'object-preventextensions': 'preventExtensions',
-		'object-getownpropertydescriptor': 'getOwnPropertyDescriptor'
-	};
-
-	shims = {};
-
-	function hasNonEnumerableProps () {
-		for (var p in { toString: 1 }) return false;
-		return true;
-	}
-
-	function createFlameThrower (feature) {
-		return function () {
-			throw new Error('poly/object: ' + feature + ' is not safely supported.');
-		}
-	}
-
-	function has (feature) {
-		var prop = featureMap[feature];
-		return prop in refObj;
-	}
-
-	function PolyBase () {}
-
-	// for better compression
-	function hasProp (object, name) {
-		return object.hasOwnProperty(name);
-	}
-
-	function _keys (object) {
-		var result = [];
-		for (var p in object) {
-			if (hasProp(object, p)) {
-				result.push(p);
-			}
-		}
-		return result;
-	}
-
-	if (!has('object-create')) {
-		Object.create = shims.create = function create (proto, props) {
-			var obj;
-
-			if (typeof proto != 'object') throw new TypeError('prototype is not of type Object or Null.');
-
-			PolyBase.prototype = proto;
-			obj = new PolyBase(props);
-			PolyBase.prototype = null;
-
-			if (arguments.length > 1) {
-				// defineProperties could throw depending on `shouldThrow`
-				Object.defineProperties(obj, props);
-			}
-
-			return obj;
-		};
-	}
-
-	if (!has('object-freeze')) {
-		Object.freeze = shims.freeze = function freeze (object) {
-			return object;
-		};
-	}
-
-	if (!has('object-isfrozen')) {
-		Object.isFrozen = shims.isFrozen = function isFrozen (object) {
-			return false;
-		};
-	}
-
-	if (!has('object-seal')) {
-		Object.seal = shims.seal = function seal (object) {
-			return object;
-		};
-	}
-
-	if (!has('object-issealed')) {
-		Object.isSealed = shims.isSealed = function isSealed (object) {
-			return false;
-		};
-	}
-
-	if (!has('object-getprototypeof')) {
-		Object.getPrototypeOf = shims.getPrototypeOf = getPrototypeOf;
-	}
-
-	if (!has('object-keys')) {
-		Object.keys = keys;
-	}
-
-	if (!has('object-getownpropertynames')) {
-		Object.getOwnPropertyNames = shims.getOwnPropertyNames = function getOwnPropertyNames (object) {
-			return keys(object);
-		};
-	}
-
-	if (!has('object-defineproperty') || !has('object-defineproperties')) {
-		Object.defineProperty = shims.defineProperty = function defineProperty (object, name, descriptor) {
-			object[name] = descriptor && descriptor.value;
-			return object;
-		};
-	}
-
-	if (!has('object-defineproperties') || !has('object-create')) {
-		Object.defineProperties = shims.defineProperties = function defineProperties (object, descriptors) {
-			var names, name;
-			names = keys(descriptors);
-			while ((name = names.pop())) {
-				Object.defineProperty(object, name, descriptors[name]);
-			}
-			return object;
-		};
-	}
-
-	if (!has('object-isextensible')) {
-		Object.isExtensible = shims.isExtensible = function isExtensible (object) {
-			var prop = '_poly_';
-			try {
-				// create unique property name
-				while (prop in object) prop += '_';
-				// try to set it
-				object[prop] = 1;
-				return hasProp(object, prop);
-			}
-			catch (ex) { return false; }
-			finally {
-				try { delete object[prop]; } catch (ex) { /* squelch */ }
-			}
-		};
-	}
-
-	if (!has('object-preventextensions')) {
-		Object.preventExtensions = shims.preventExtensions = function preventExtensions (object) {
-			return object;
-		};
-	}
-
-	if (!has('object-getownpropertydescriptor')) {
-		Object.getOwnPropertyDescriptor = shims.getOwnPropertyDescriptor = function getOwnPropertyDescriptor (object, name) {
-			return hasProp(object, name)
-				? {
-					value: object[name],
-					enumerable: true,
-					configurable: true,
-					writable: true
-				}
-				: undef;
-		};
-	}
-
-	function failIfShimmed (failTest) {
-		var shouldThrow;
-
-		if (typeof failTest == 'function') {
-			shouldThrow = failTest;
-		}
-		else {
-			// assume truthy/falsey
-			shouldThrow = function () { return failTest; };
-		}
-
-		// create throwers for some features
-		for (var feature in shims) {
-			Object[feature] = shouldThrow(feature)
-				? createFlameThrower(feature)
-				: shims[feature];
-		}
-	}
-
-	// this is effectively a no-op, so why execute it?
-	//failIfShimmed(false);
-
-	return {
-		failIfShimmed: failIfShimmed
-	};
-
-});
 /*
 	Array -- a stand-alone module for using Javascript 1.6 array features
 	in lame-o browsers that don't support Javascript 1.6
@@ -683,6 +361,328 @@ define('poly/array', ['poly/lib/_base'], function (base) {
 	}
 
 });
+/**
+ * Object polyfill / shims
+ *
+ * (c) copyright 2011-2012 Brian Cavalier and John Hann
+ *
+ * This module is part of the cujo.js family of libraries (http://cujojs.com/).
+ *
+ * Licensed under the MIT License at:
+ * 		http://www.opensource.org/licenses/mit-license.php
+ */
+/**
+ * The goal of these shims is to emulate a JavaScript 1.8.5+ environments as
+ * much as possible.  While it's not feasible to fully shim Object,
+ * we can try to maximize code compatibility with older js engines.
+ *
+ * Note: these shims cannot fix `for (var p in obj) {}`. Instead, use this:
+ *     Object.keys(obj).forEach(function (p) {}); // shimmed Array
+ *
+ * Also, these shims can't prevent writing to object properties.
+ *
+ * If you want your code to fail loudly if a shim can't mimic ES5 closely
+ * then set the AMD loader config option `failIfShimmed`.  Possible values
+ * for `failIfShimmed` include:
+ *
+ * true: fail on every shimmed Object function
+ * false: fail never
+ * function: fail for shims whose name returns true from function (name) {}
+ *
+ * By default, no shims fail.
+ *
+ * The following functions are safely shimmed:
+ * create (unless the second parameter is specified since that calls defineProperties)
+ * keys
+ * getOwnPropertyNames
+ * getPrototypeOf
+ * isExtensible
+ *
+ * In order to play nicely with several third-party libs (including Promises/A
+ * implementations), the following functions don't fail by default even though
+ * they can't be correctly shimmed:
+ * freeze
+ * seal
+ * isFrozen
+ * isSealed
+ *
+ * Note: this shim doesn't do anything special with IE8's minimally useful
+ * Object.defineProperty(domNode).
+ *
+ * The poly/strict module will set failIfShimmed to fail for some shims.
+ * See the documentation for more information.
+ *
+ * IE missing enum properties fixes copied from kangax:
+ * https://github.com/kangax/protolicious/blob/master/experimental/object.for_in.js
+ *
+ */
+define('poly/object', ['poly/lib/_base'], function (base) {
+"use strict";
+
+	var refObj,
+		refProto,
+		getPrototypeOf,
+		keys,
+		featureMap,
+		shims,
+		undef;
+
+	refObj = Object;
+	refProto = refObj.prototype;
+
+	getPrototypeOf = typeof {}.__proto__ == 'object'
+		? function (object) { return object.__proto__; }
+		: function (object) { return object.constructor ? object.constructor.prototype : refProto; };
+
+	keys = !hasNonEnumerableProps
+		? _keys
+		: (function (masked) {
+			return function (object) {
+				var result = _keys(object), i = 0, m;
+				while (m = masked[i++]) {
+					if (hasProp(object, m)) result.push(m);
+				}
+				return result;
+			}
+		}([ 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf' ]));
+
+	featureMap = {
+		'object-create': 'create',
+		'object-freeze': 'freeze',
+		'object-isfrozen': 'isFrozen',
+		'object-seal': 'seal',
+		'object-issealed': 'isSealed',
+		'object-getprototypeof': 'getPrototypeOf',
+		'object-keys': 'keys',
+		'object-getownpropertynames': 'getOwnPropertyNames',
+		'object-defineproperty': 'defineProperty',
+		'object-defineproperties': 'defineProperties',
+		'object-isextensible': 'isExtensible',
+		'object-preventextensions': 'preventExtensions',
+		'object-getownpropertydescriptor': 'getOwnPropertyDescriptor'
+	};
+
+	shims = {};
+
+	function hasNonEnumerableProps () {
+		for (var p in { toString: 1 }) return false;
+		return true;
+	}
+
+	function createFlameThrower (feature) {
+		return function () {
+			throw new Error('poly/object: ' + feature + ' is not safely supported.');
+		}
+	}
+
+	function has (feature) {
+		var prop = featureMap[feature];
+		return prop in refObj;
+	}
+
+	function PolyBase () {}
+
+	// for better compression
+	function hasProp (object, name) {
+		return object.hasOwnProperty(name);
+	}
+
+	function _keys (object) {
+		var result = [];
+		for (var p in object) {
+			if (hasProp(object, p)) {
+				result.push(p);
+			}
+		}
+		return result;
+	}
+
+	if (!has('object-create')) {
+		Object.create = shims.create = function create (proto, props) {
+			var obj;
+
+			if (typeof proto != 'object') throw new TypeError('prototype is not of type Object or Null.');
+
+			PolyBase.prototype = proto;
+			obj = new PolyBase(props);
+			PolyBase.prototype = null;
+
+			if (arguments.length > 1) {
+				// defineProperties could throw depending on `shouldThrow`
+				Object.defineProperties(obj, props);
+			}
+
+			return obj;
+		};
+	}
+
+	if (!has('object-freeze')) {
+		Object.freeze = shims.freeze = function freeze (object) {
+			return object;
+		};
+	}
+
+	if (!has('object-isfrozen')) {
+		Object.isFrozen = shims.isFrozen = function isFrozen (object) {
+			return false;
+		};
+	}
+
+	if (!has('object-seal')) {
+		Object.seal = shims.seal = function seal (object) {
+			return object;
+		};
+	}
+
+	if (!has('object-issealed')) {
+		Object.isSealed = shims.isSealed = function isSealed (object) {
+			return false;
+		};
+	}
+
+	if (!has('object-getprototypeof')) {
+		Object.getPrototypeOf = shims.getPrototypeOf = getPrototypeOf;
+	}
+
+	if (!has('object-keys')) {
+		Object.keys = keys;
+	}
+
+	if (!has('object-getownpropertynames')) {
+		Object.getOwnPropertyNames = shims.getOwnPropertyNames = function getOwnPropertyNames (object) {
+			return keys(object);
+		};
+	}
+
+	if (!has('object-defineproperty') || !has('object-defineproperties')) {
+		Object.defineProperty = shims.defineProperty = function defineProperty (object, name, descriptor) {
+			object[name] = descriptor && descriptor.value;
+			return object;
+		};
+	}
+
+	if (!has('object-defineproperties') || !has('object-create')) {
+		Object.defineProperties = shims.defineProperties = function defineProperties (object, descriptors) {
+			var names, name;
+			names = keys(descriptors);
+			while ((name = names.pop())) {
+				Object.defineProperty(object, name, descriptors[name]);
+			}
+			return object;
+		};
+	}
+
+	if (!has('object-isextensible')) {
+		Object.isExtensible = shims.isExtensible = function isExtensible (object) {
+			var prop = '_poly_';
+			try {
+				// create unique property name
+				while (prop in object) prop += '_';
+				// try to set it
+				object[prop] = 1;
+				return hasProp(object, prop);
+			}
+			catch (ex) { return false; }
+			finally {
+				try { delete object[prop]; } catch (ex) { /* squelch */ }
+			}
+		};
+	}
+
+	if (!has('object-preventextensions')) {
+		Object.preventExtensions = shims.preventExtensions = function preventExtensions (object) {
+			return object;
+		};
+	}
+
+	if (!has('object-getownpropertydescriptor')) {
+		Object.getOwnPropertyDescriptor = shims.getOwnPropertyDescriptor = function getOwnPropertyDescriptor (object, name) {
+			return hasProp(object, name)
+				? {
+					value: object[name],
+					enumerable: true,
+					configurable: true,
+					writable: true
+				}
+				: undef;
+		};
+	}
+
+	function failIfShimmed (failTest) {
+		var shouldThrow;
+
+		if (typeof failTest == 'function') {
+			shouldThrow = failTest;
+		}
+		else {
+			// assume truthy/falsey
+			shouldThrow = function () { return failTest; };
+		}
+
+		// create throwers for some features
+		for (var feature in shims) {
+			Object[feature] = shouldThrow(feature)
+				? createFlameThrower(feature)
+				: shims[feature];
+		}
+	}
+
+	// this is effectively a no-op, so why execute it?
+	//failIfShimmed(false);
+
+	return {
+		failIfShimmed: failIfShimmed
+	};
+
+});
+/**
+ * Function polyfill / shims
+ *
+ * (c) copyright 2011-2012 Brian Cavalier and John Hann
+ *
+ * This module is part of the cujo.js family of libraries (http://cujojs.com/).
+ *
+ * Licensed under the MIT License at:
+ * 		http://www.opensource.org/licenses/mit-license.php
+ */
+define('poly/function', ['poly/lib/_base'], function (base) {
+"use strict";
+
+	var bind,
+		slice = [].slice,
+		proto = Function.prototype,
+		featureMap;
+
+	featureMap = {
+		'function-bind': 'bind'
+	};
+
+	function has (feature) {
+		var prop = featureMap[feature];
+		return base.isFunction(proto[prop]);
+	}
+
+	// check for missing features
+	if (!has('function-bind')) {
+		// adapted from Mozilla Developer Network example at
+		// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind
+		bind = function bind (obj) {
+			var args = slice.call(arguments, 1),
+				self = this,
+				nop = function () {},
+				bound = function () {
+				  return self.apply(this instanceof nop ? this : (obj || {}), args.concat(slice.call(arguments)));
+				};
+			nop.prototype = this.prototype || {}; // Firefox cries sometimes if prototype is undefined
+			bound.prototype = new nop();
+			return bound;
+		};
+		proto.bind = bind;
+	}
+
+	return {};
+
+});
 
 ;define('curl/plugin/i18n!app/subheader/strings', function () {
 	return {"phrases":["The <em>un</em>framework: Free your code","Create, modify, and <em>test</em> with ease","Scale your team as your app grows","Use the web. Don't circumvent it"]};
@@ -958,6 +958,10 @@ define('app/subheader/selectText', function () {
 	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// Wire spec</span>\n\n  controller: {\n    create: <span class=\"string\">'hello/app/controller'</span>,\n    properties: {\n      node: { $ref: <span class=\"string\">'first!span'</span>, at: <span class=\"string\">'view'</span> }\n    },\n    on: { view: { <span class=\"string\">'input'</span>: <span class=\"string\">'update'</span> } }\n  },\n\n  view: {\n    render: {\n      template: { module: <span class=\"string\">'text!hello/app/template.html'</span> },\n      replace: { module: <span class=\"string\">'i18n!hello/app/strings.js'</span> }\n    },\n    insert: { last: <span class=\"string\">'root'</span> }\n  },\n\n  $plugins: [<span class=\"string\">'wire/dom'</span>, <span class=\"string\">'wire/dom/render'</span>, <span class=\"string\">'wire/on'</span>]\n});</code></pre>";
 });
 
+;define('curl/plugin/text!app/contacts-sample/template.html', function () {
+	return "<div class=\"cujo-contacts\">\n    <div class=\"contacts-view-container\"></div>\n</div>";
+});
+
 ;define('contacts/app/main', {// Wire spec
 
 	contactsCollection: { wire: 'contacts/app/collection/spec' },
@@ -1033,7 +1037,7 @@ define('app/subheader/selectText', function () {
 });
 
 ;define('highlight/amd!app/main.js', function () {
-	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// Wire spec</span>\n\n  helloSample: { wire: <span class=\"string\">'app/hello-sample/spec'</span> },\n\n  contactsSample: { wire: <span class=\"string\">'app/contacts-sample/spec'</span> },\n\n  homepageSample: { wire: <span class=\"string\">'app/homepage-sample/spec'</span> },\n\n  subheaderStrings: { module: <span class=\"string\">'i18n!app/subheader/strings'</span> },\n  subheaderText: {\n    create: {\n      module: <span class=\"string\">'app/subheader/selectText'</span>,\n      args: { $ref: <span class=\"string\">'subheaderStrings.phrases'</span> }\n    }\n  },\n\n  subheader: {\n    render: {\n      template: { module: <span class=\"string\">'text!app/subheader/template.html'</span> },\n      replace: { text: { $ref: <span class=\"string\">'subheaderText'</span> } },\n      at: { $ref: <span class=\"string\">'first!.subheader'</span> }\n    }\n  },\n\n  highlightTheme: { module: <span class=\"string\">'css!highlight/github.css'</span> },\n\n  $plugins: [\n    { module: <span class=\"string\">'wire/dom'</span>, classes: { init: <span class=\"string\">'loading'</span> } },\n    <span class=\"string\">'wire/dom/render'</span>\n  ]\n});</code></pre>";
+	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// Wire spec</span>\n\n  helloSample: { wire: <span class=\"string\">'app/hello-sample/spec'</span> },\n\n  contactsSample: { wire: <span class=\"string\">'app/contacts-sample/spec'</span> },\n\n  homepageSample: { wire: <span class=\"string\">'app/homepage-sample/spec'</span> },\n\n  subheaderStrings: { module: <span class=\"string\">'i18n!app/subheader/strings'</span> },\n  subheaderText: {\n    create: {\n      module: <span class=\"string\">'app/subheader/selectText'</span>,\n      args: { $ref: <span class=\"string\">'subheaderStrings.phrases'</span> }\n    }\n  },\n\n  subheader: {\n    element: { $ref: <span class=\"string\">'first!.subheader'</span> },\n    properties: { innerHTML: { $ref: <span class=\"string\">'subheaderText'</span> } }\n  },\n\n  highlightTheme: { module: <span class=\"string\">'css!highlight/github.css'</span> },\n\n  $plugins: [{ module: <span class=\"string\">'wire/dom'</span>, classes: { init: <span class=\"string\">'loading'</span> } }]\n});</code></pre>";
 });
 
 ;define('highlight/amd!app/subheader/selectText.js', function () {
@@ -1116,8 +1120,12 @@ define('app/tabs/controller', function () {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-;define('curl/plugin/text!app/subheader/template.html', function () {
-	return "<h2>${text}</h2>\n";
+;define('curl/plugin/text!app/tabs/tabs.html', function () {
+	return "<ul class=\"tabs\">\n    <li class=\"item\"><a href=\"#\" class=\"tab-title\"></a></li>\n</ul>";
+});
+
+;define('curl/plugin/text!app/tabs/stack.html', function () {
+	return "<ul class=\"stack\">\n    <li class=\"item\"></li>\n</ul>";
 });
 
 ;define('contacts/app/collection/spec', {
@@ -1485,59 +1493,6 @@ define('cola/dom/form', function () {
 	}
 
 });
-
-;define('curl/plugin/_fetchText', function () {
-
-	var xhr, progIds;
-
-	progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
-
-	xhr = function () {
-		if (typeof XMLHttpRequest !== "undefined") {
-			// rewrite the getXhr method to always return the native implementation
-			xhr = function () {
-				return new XMLHttpRequest();
-			};
-		}
-		else {
-			// keep trying progIds until we find the correct one, then rewrite the getXhr method
-			// to always return that one.
-			var noXhr = xhr = function () {
-				throw new Error("getXhr(): XMLHttpRequest not available");
-			};
-			while (progIds.length > 0 && xhr === noXhr) (function (id) {
-				try {
-					new ActiveXObject(id);
-					xhr = function () {
-						return new ActiveXObject(id);
-					};
-				}
-				catch (ex) {
-				}
-			}(progIds.shift()));
-		}
-		return xhr();
-	};
-
-	function fetchText (url, callback, errback) {
-		var x = xhr();
-		x.open('GET', url, true);
-		x.onreadystatechange = function (e) {
-			if (x.readyState === 4) {
-				if (x.status < 400) {
-					callback(x.responseText);
-				}
-				else {
-					errback(new Error('fetchText() failed. status: ' + x.statusText));
-				}
-			}
-		};
-		x.send(null);
-	}
-
-	return fetchText;
-
-});
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -1674,16 +1629,204 @@ define('cola/dom/form', function () {
 
 }(this, this.document));
 
-;define('curl/plugin/text!app/contacts-sample/template.html', function () {
-	return "<div class=\"cujo-contacts\">\n    <div class=\"contacts-view-container\"></div>\n</div>";
-});
+;define('curl/plugin/_fetchText', function () {
 
-;define('curl/plugin/text!app/tabs/tabs.html', function () {
-	return "<ul class=\"tabs\">\n    <li class=\"item\"><a href=\"#\" class=\"tab-title\"></a></li>\n</ul>";
-});
+	var xhr, progIds;
 
-;define('curl/plugin/text!app/tabs/stack.html', function () {
-	return "<ul class=\"stack\">\n    <li class=\"item\"></li>\n</ul>";
+	progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
+
+	xhr = function () {
+		if (typeof XMLHttpRequest !== "undefined") {
+			// rewrite the getXhr method to always return the native implementation
+			xhr = function () {
+				return new XMLHttpRequest();
+			};
+		}
+		else {
+			// keep trying progIds until we find the correct one, then rewrite the getXhr method
+			// to always return that one.
+			var noXhr = xhr = function () {
+				throw new Error("getXhr(): XMLHttpRequest not available");
+			};
+			while (progIds.length > 0 && xhr === noXhr) (function (id) {
+				try {
+					new ActiveXObject(id);
+					xhr = function () {
+						return new ActiveXObject(id);
+					};
+				}
+				catch (ex) {
+				}
+			}(progIds.shift()));
+		}
+		return xhr();
+	};
+
+	function fetchText (url, callback, errback) {
+		var x = xhr();
+		x.open('GET', url, true);
+		x.onreadystatechange = function (e) {
+			if (x.readyState === 4) {
+				if (x.status < 400) {
+					callback(x.responseText);
+				}
+				else {
+					errback(new Error('fetchText() failed. status: ' + x.statusText));
+				}
+			}
+		};
+		x.send(null);
+	}
+
+	return fetchText;
+
+});
+/** MIT License (c) copyright B Cavalier & J Hann */
+
+/**
+ * curl style! plugin
+ */
+
+define('curl/plugin/style', function () {
+
+	var nonRelUrlRe, findUrlRx, undef, doc, head;
+
+	if (typeof window != 'undefined') {
+		doc = window.document;
+		head = doc.head || doc.getElementsByTagName('head')[0];
+	}
+
+	// tests for absolute urls and root-relative urls
+	nonRelUrlRe = /^\/|^[^:]*:\/\//;
+	// Note: this will fail if there are parentheses in the url
+	findUrlRx = /url\s*\(['"]?([^'"\)]*)['"]?\)/g;
+
+	function translateUrls (cssText, baseUrl) {
+		return cssText.replace(findUrlRx, function (all, url) {
+			return 'url("' + translateUrl(url, baseUrl) + '")';
+		});
+	}
+
+	function translateUrl (url, parentPath) {
+		// if this is a relative url
+		if (!nonRelUrlRe.test(url)) {
+			// append path onto it
+			url = parentPath + url;
+		}
+		return url;
+	}
+
+	/***** style element functions *****/
+
+	var currentStyle, callbacks = [];
+
+	function createStyle (cssText, callback, errback) {
+
+		try {
+			clearTimeout(createStyle.debouncer);
+			if (createStyle.accum) {
+				createStyle.accum.push(cssText);
+			}
+			else {
+				createStyle.accum = [cssText];
+				currentStyle = doc.createStyleSheet ? doc.createStyleSheet() :
+					head.appendChild(doc.createElement('style'));
+			}
+
+			callbacks.push({
+				callback: callback,
+				errback: errback,
+				sheet: currentStyle
+			});
+
+			createStyle.debouncer = setTimeout(function () {
+				var style, allCssText;
+
+				try {
+					style = currentStyle;
+					currentStyle = undef;
+
+					allCssText = createStyle.accum.join('\n');
+					createStyle.accum = undef;
+
+					// for safari which chokes on @charset "UTF-8";
+					// TODO: see if Safari 5.x and up still complain
+					allCssText = allCssText.replace(/.+charset[^;]+;/g, '');
+
+					// IE 6-8 won't accept the W3C method for inserting css text
+					'cssText' in style ? style.cssText = allCssText :
+						style.appendChild(doc.createTextNode(allCssText));
+
+					waitForDocumentComplete(notify);
+				}
+				catch (ex) {
+					// just notify most recent errback. no need to spam
+					errback(ex);
+				}
+
+			}, 0);
+
+		}
+		catch (ex) {
+			errback(ex);
+		}
+
+	}
+
+	function notify () {
+		var list = callbacks;
+		callbacks = [];
+		for (var i = 0, len = list.length; i < len; i++) {
+			list[i].callback(list[i].sheet);
+		}
+	}
+
+	/**
+	 * Keep checking for the document readyState to be "complete" since
+	 * Chrome doesn't apply the styles to the document until that time.
+	 * If we return before readyState == 'complete', Chrome may not have
+	 * applied the styles, yet.
+	 * Chrome only.
+	 * @private
+	 * @param cb
+	 */
+	function waitForDocumentComplete (cb) {
+		// this isn't exactly the same as domReady (when dom can be
+		// manipulated). it's later (when styles are applied).
+		// chrome needs this (and opera?)
+		function complete () {
+			if (isDocumentComplete()) {
+				cb();
+			}
+			else {
+				setTimeout(complete, 10);
+			}
+		}
+		complete();
+	}
+
+	/**
+	 * Returns true if the documents' readyState == 'complete' or the
+	 * document doesn't implement readyState.
+	 * Chrome only.
+	 * @private
+	 * @return {Boolean}
+	 */
+	function isDocumentComplete () {
+		return !doc.readyState || doc.readyState == 'complete';
+	}
+
+	createStyle.load = function (absId, req, loaded, config) {
+		// get css text
+		req([absId], function (cssText) {
+			// TODO: translate urls?
+			createStyle(cssText, loaded, loaded.error);
+		});
+	};
+	
+	createStyle.translateUrls = translateUrls;
+
+	return createStyle;
 });
 /** @license MIT License (c) copyright 2011-2013 original author or authors */
 
@@ -2474,153 +2617,6 @@ define('when/when', function () {
 );
 /** MIT License (c) copyright B Cavalier & J Hann */
 
-/**
- * curl style! plugin
- */
-
-define('curl/plugin/style', function () {
-
-	var nonRelUrlRe, findUrlRx, undef, doc, head;
-
-	if (typeof window != 'undefined') {
-		doc = window.document;
-		head = doc.head || doc.getElementsByTagName('head')[0];
-	}
-
-	// tests for absolute urls and root-relative urls
-	nonRelUrlRe = /^\/|^[^:]*:\/\//;
-	// Note: this will fail if there are parentheses in the url
-	findUrlRx = /url\s*\(['"]?([^'"\)]*)['"]?\)/g;
-
-	function translateUrls (cssText, baseUrl) {
-		return cssText.replace(findUrlRx, function (all, url) {
-			return 'url("' + translateUrl(url, baseUrl) + '")';
-		});
-	}
-
-	function translateUrl (url, parentPath) {
-		// if this is a relative url
-		if (!nonRelUrlRe.test(url)) {
-			// append path onto it
-			url = parentPath + url;
-		}
-		return url;
-	}
-
-	/***** style element functions *****/
-
-	var currentStyle, callbacks = [];
-
-	function createStyle (cssText, callback, errback) {
-
-		try {
-			clearTimeout(createStyle.debouncer);
-			if (createStyle.accum) {
-				createStyle.accum.push(cssText);
-			}
-			else {
-				createStyle.accum = [cssText];
-				currentStyle = doc.createStyleSheet ? doc.createStyleSheet() :
-					head.appendChild(doc.createElement('style'));
-			}
-
-			callbacks.push({
-				callback: callback,
-				errback: errback,
-				sheet: currentStyle
-			});
-
-			createStyle.debouncer = setTimeout(function () {
-				var style, allCssText;
-
-				try {
-					style = currentStyle;
-					currentStyle = undef;
-
-					allCssText = createStyle.accum.join('\n');
-					createStyle.accum = undef;
-
-					// for safari which chokes on @charset "UTF-8";
-					// TODO: see if Safari 5.x and up still complain
-					allCssText = allCssText.replace(/.+charset[^;]+;/g, '');
-
-					// IE 6-8 won't accept the W3C method for inserting css text
-					'cssText' in style ? style.cssText = allCssText :
-						style.appendChild(doc.createTextNode(allCssText));
-
-					waitForDocumentComplete(notify);
-				}
-				catch (ex) {
-					// just notify most recent errback. no need to spam
-					errback(ex);
-				}
-
-			}, 0);
-
-		}
-		catch (ex) {
-			errback(ex);
-		}
-
-	}
-
-	function notify () {
-		var list = callbacks;
-		callbacks = [];
-		for (var i = 0, len = list.length; i < len; i++) {
-			list[i].callback(list[i].sheet);
-		}
-	}
-
-	/**
-	 * Keep checking for the document readyState to be "complete" since
-	 * Chrome doesn't apply the styles to the document until that time.
-	 * If we return before readyState == 'complete', Chrome may not have
-	 * applied the styles, yet.
-	 * Chrome only.
-	 * @private
-	 * @param cb
-	 */
-	function waitForDocumentComplete (cb) {
-		// this isn't exactly the same as domReady (when dom can be
-		// manipulated). it's later (when styles are applied).
-		// chrome needs this (and opera?)
-		function complete () {
-			if (isDocumentComplete()) {
-				cb();
-			}
-			else {
-				setTimeout(complete, 10);
-			}
-		}
-		complete();
-	}
-
-	/**
-	 * Returns true if the documents' readyState == 'complete' or the
-	 * document doesn't implement readyState.
-	 * Chrome only.
-	 * @private
-	 * @return {Boolean}
-	 */
-	function isDocumentComplete () {
-		return !doc.readyState || doc.readyState == 'complete';
-	}
-
-	createStyle.load = function (absId, req, loaded, config) {
-		// get css text
-		req([absId], function (cssText) {
-			// TODO: translate urls?
-			createStyle(cssText, loaded, loaded.error);
-		});
-	};
-	
-	createStyle.translateUrls = translateUrls;
-
-	return createStyle;
-});
-/** MIT License (c) copyright B Cavalier & J Hann */
-
 (function (define) {
 define('cola/relational/propertiesKey', function () {
 	"use strict";
@@ -3338,6 +3334,46 @@ define('curl/plugin/text', ['curl/plugin/_fetchText'], function (fetchText) {
 	}
 
 });
+/** @license MIT License (c) copyright 2010-2013 original author or authors */
+
+/**
+ * Licensed under the MIT License at:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * @author: Brian Cavalier
+ * @author: John Hann
+ */
+
+(function(define) { 'use strict';
+define('wire/lib/plugin/priority', function () {
+
+	var basePriority, defaultPriority;
+
+	basePriority = -99;
+	defaultPriority = 0;
+
+	return {
+		basePriority: basePriority,
+		sortReverse: prioritizeReverse
+	};
+
+	function prioritizeReverse(list) {
+		return list.sort(byReversePriority);
+	}
+
+	function byReversePriority(a, b) {
+		var aPriority, bPriority;
+
+		aPriority = a.priority || defaultPriority;
+		bPriority = b.priority || defaultPriority;
+
+		return aPriority < bPriority ? -1
+			: aPriority > bPriority ? 1 : 0;
+	}
+
+
+});
+}(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -3435,46 +3471,6 @@ define('wire/lib/object', function () {
 	// CommonJS
 	: function(factory) { module.exports = factory(); }
 );
-/** @license MIT License (c) copyright 2010-2013 original author or authors */
-
-/**
- * Licensed under the MIT License at:
- * http://www.opensource.org/licenses/mit-license.php
- *
- * @author: Brian Cavalier
- * @author: John Hann
- */
-
-(function(define) { 'use strict';
-define('wire/lib/plugin/priority', function () {
-
-	var basePriority, defaultPriority;
-
-	basePriority = -99;
-	defaultPriority = 0;
-
-	return {
-		basePriority: basePriority,
-		sortReverse: prioritizeReverse
-	};
-
-	function prioritizeReverse(list) {
-		return list.sort(byReversePriority);
-	}
-
-	function byReversePriority(a, b) {
-		var aPriority, bPriority;
-
-		aPriority = a.priority || defaultPriority;
-		bPriority = b.priority || defaultPriority;
-
-		return aPriority < bPriority ? -1
-			: aPriority > bPriority ? 1 : 0;
-	}
-
-
-});
-}(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6198,8 +6194,6 @@ define('wire/lib/dom/base', ['require', 'wire/lib/WireProxy', 'wire/lib/plugin/p
 
 ;define('app/tabs/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".tabs {\n    position: relative;\n    padding: 0;\n    margin: 0;\n    line-height: 1;\n}\n\n.tabs .item {\n    display: inline-block;\n    list-style-type: none;\n}\n\n.stack {\n    height: 100%;\n    position: relative;\n    padding: 0;\n    margin: 0;\n    clear: both;\n}\n\n.stack .item {\n    display: none;\n    list-style-type: none;\n    position: relative;\n    left: 0;\n    top: 0;\n    right: 0;\n}\n\n.stack .item.active {\n    display: block;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
 define('curl/plugin/css!app/tabs/structure.css', ['curl/plugin/style!app/tabs/structure.css'], function (sheet) { return sheet; });
-
-;
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6234,6 +6228,8 @@ define('curl/plugin/css!app/tabs/structure.css', ['curl/plugin/style!app/tabs/st
 
 	});
 }(typeof define === 'function' ? define : function(factory) { module.exports = factory(require); }));
+
+;
 
 ;define('contacts/app/edit/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".edit-contact-view {\n\tpadding: 0;\n\tposition: absolute;\n\tright: 0;\n\theight: 100%;\n\twidth: 70%;\n}\n\n.edit-contact-view fieldset {\n\tmargin: .5em 1em;\n}\n\n.edit-contact-view label {\n\tdisplay: block;\n\twidth: 100%;\n}\n\n.edit-contact-view label span {\n    display: inline-block;\n    padding: 0 2px;\n    width: 7em;\n}\n\n.edit-contact-view input[type=\"text\"] {\n\twidth: 8em;\n}\n\n.edit-contact-view input[name=\"id\"] {\n    display: none;\n}\n\n.edit-contact-view .controls {\n    position: absolute;\n    bottom: 0;\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
 define('curl/plugin/css!contacts/app/edit/structure.css', ['curl/plugin/style!contacts/app/edit/structure.css'], function (sheet) { return sheet; });
@@ -11699,7 +11695,7 @@ define('wire/wire', ['require', 'wire/lib/context'], function (require, $cram_r0
 		? define : function(factory) { module.exports = factory(require); }
 );
 
-;define('app/main', ['wire/wire', 'wire/dom', 'wire/dom/render', 'app/hello-sample/spec', 'app/contacts-sample/spec', 'app/homepage-sample/spec', 'curl/plugin/i18n!app/subheader/strings', 'app/subheader/selectText', 'curl/plugin/text!app/subheader/template.html', 'curl/plugin/css!highlight/github.css', 'wire/on', 'cola/cola', 'hello/app/main', 'app/tabs/spec', 'cola/Collection', 'cola/adapter/Array', 'highlight/amd!hello/app/template.html', 'highlight/amd!hello/app/controller.js', 'highlight/amd!hello/app/strings.js', 'highlight/amd!hello/app/main.js', 'curl/plugin/text!app/contacts-sample/template.html', 'contacts/app/main', 'highlight/amd!contacts/app/controller.js', 'highlight/amd!contacts/app/list/template.html', 'highlight/amd!contacts/app/edit/template.html', 'highlight/amd!contacts/app/main.js', 'highlight/amd!app/main.js', 'highlight/amd!app/subheader/selectText.js', 'highlight/amd!test/subheader/selectText-test.js', 'hello/app/controller', 'curl/plugin/text!hello/app/template.html', 'curl/plugin/i18n!hello/app/strings.js', 'wire/aop', 'app/tabs/controller', 'curl/plugin/text!app/tabs/tabs.html', 'curl/plugin/css!app/tabs/structure.css', 'curl/plugin/text!app/tabs/stack.html', 'wire/connect', 'contacts/app/collection/spec', 'contacts/app/controller', 'curl/plugin/text!contacts/app/edit/template.html', 'curl/plugin/i18n!contacts/app/edit/strings', 'curl/plugin/css!contacts/app/edit/structure.css', 'curl/plugin/text!contacts/app/list/template.html', 'curl/plugin/css!contacts/app/list/structure.css', 'contacts/app/list/compareByLastFirst', 'curl/plugin/css!contacts/theme/basic.css', 'cola/dom/form', 'contacts/app/collection/validateContact', 'cola/adapter/LocalStorage', 'contacts/app/collection/cleanContact', 'contacts/app/collection/generateMetadata'], { 
+;define('app/main', ['wire/wire', 'wire/dom', 'app/hello-sample/spec', 'app/contacts-sample/spec', 'app/homepage-sample/spec', 'curl/plugin/i18n!app/subheader/strings', 'app/subheader/selectText', 'curl/plugin/css!highlight/github.css', 'wire/dom/render', 'wire/on', 'cola/cola', 'hello/app/main', 'app/tabs/spec', 'cola/Collection', 'cola/adapter/Array', 'highlight/amd!hello/app/template.html', 'highlight/amd!hello/app/controller.js', 'highlight/amd!hello/app/strings.js', 'highlight/amd!hello/app/main.js', 'curl/plugin/text!app/contacts-sample/template.html', 'contacts/app/main', 'highlight/amd!contacts/app/controller.js', 'highlight/amd!contacts/app/list/template.html', 'highlight/amd!contacts/app/edit/template.html', 'highlight/amd!contacts/app/main.js', 'highlight/amd!app/main.js', 'highlight/amd!app/subheader/selectText.js', 'highlight/amd!test/subheader/selectText-test.js', 'hello/app/controller', 'curl/plugin/text!hello/app/template.html', 'curl/plugin/i18n!hello/app/strings.js', 'wire/aop', 'app/tabs/controller', 'curl/plugin/text!app/tabs/tabs.html', 'curl/plugin/css!app/tabs/structure.css', 'curl/plugin/text!app/tabs/stack.html', 'wire/connect', 'contacts/app/collection/spec', 'contacts/app/controller', 'curl/plugin/text!contacts/app/edit/template.html', 'curl/plugin/i18n!contacts/app/edit/strings', 'curl/plugin/css!contacts/app/edit/structure.css', 'curl/plugin/text!contacts/app/list/template.html', 'curl/plugin/css!contacts/app/list/structure.css', 'contacts/app/list/compareByLastFirst', 'curl/plugin/css!contacts/theme/basic.css', 'cola/dom/form', 'contacts/app/collection/validateContact', 'cola/adapter/LocalStorage', 'contacts/app/collection/cleanContact', 'contacts/app/collection/generateMetadata'], { 
 	helloSample: { wire: 'app/hello-sample/spec' },
 
 	contactsSample: { wire: 'app/contacts-sample/spec' },
@@ -11715,17 +11711,11 @@ define('wire/wire', ['require', 'wire/lib/context'], function (require, $cram_r0
 	},
 
 	subheader: {
-		render: {
-			template: { module: 'text!app/subheader/template.html' },
-			replace: { text: { $ref: 'subheaderText' } },
-			at: { $ref: 'first!.subheader' }
-		}
+		element: { $ref: 'first!.subheader' },
+		properties: { innerHTML: { $ref: 'subheaderText' } }
 	},
 
 	highlightTheme: { module: 'css!highlight/github.css' },
 
-	$plugins: [
-		{ module: 'wire/dom', classes: { init: 'loading' } },
-		'wire/dom/render'
-	]
+	$plugins: [{ module: 'wire/dom', classes: { init: 'loading' } }]
 });
