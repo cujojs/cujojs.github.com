@@ -10,6 +10,11 @@ define({
 		}
 	},
 
+	homepageImage: {
+		element: { $ref: 'dom.first!.cujo-homepage-container .screenshot' },
+		properties: { src: 'assets/img/cujojs-com.png' }
+	},
+
 	homepageSources: { create: 'cola/Collection' },
 	homepageSourcesData: {
 		create: {
