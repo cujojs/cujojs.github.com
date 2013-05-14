@@ -335,54 +335,6 @@ define('poly/object', ['poly/lib/_base'], function (base) {
 	};
 
 });
-/**
- * Function polyfill / shims
- *
- * (c) copyright 2011-2012 Brian Cavalier and John Hann
- *
- * This module is part of the cujo.js family of libraries (http://cujojs.com/).
- *
- * Licensed under the MIT License at:
- * 		http://www.opensource.org/licenses/mit-license.php
- */
-define('poly/function', ['poly/lib/_base'], function (base) {
-"use strict";
-
-	var bind,
-		slice = [].slice,
-		proto = Function.prototype,
-		featureMap;
-
-	featureMap = {
-		'function-bind': 'bind'
-	};
-
-	function has (feature) {
-		var prop = featureMap[feature];
-		return base.isFunction(proto[prop]);
-	}
-
-	// check for missing features
-	if (!has('function-bind')) {
-		// adapted from Mozilla Developer Network example at
-		// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind
-		bind = function bind (obj) {
-			var args = slice.call(arguments, 1),
-				self = this,
-				nop = function () {},
-				bound = function () {
-				  return self.apply(this instanceof nop ? this : (obj || {}), args.concat(slice.call(arguments)));
-				};
-			nop.prototype = this.prototype || {}; // Firefox cries sometimes if prototype is undefined
-			bound.prototype = new nop();
-			return bound;
-		};
-		proto.bind = bind;
-	}
-
-	return {};
-
-});
 /*
 	Array -- a stand-alone module for using Javascript 1.6 array features
 	in lame-o browsers that don't support Javascript 1.6
@@ -683,6 +635,54 @@ define('poly/array', ['poly/lib/_base'], function (base) {
 	}
 
 });
+/**
+ * Function polyfill / shims
+ *
+ * (c) copyright 2011-2012 Brian Cavalier and John Hann
+ *
+ * This module is part of the cujo.js family of libraries (http://cujojs.com/).
+ *
+ * Licensed under the MIT License at:
+ * 		http://www.opensource.org/licenses/mit-license.php
+ */
+define('poly/function', ['poly/lib/_base'], function (base) {
+"use strict";
+
+	var bind,
+		slice = [].slice,
+		proto = Function.prototype,
+		featureMap;
+
+	featureMap = {
+		'function-bind': 'bind'
+	};
+
+	function has (feature) {
+		var prop = featureMap[feature];
+		return base.isFunction(proto[prop]);
+	}
+
+	// check for missing features
+	if (!has('function-bind')) {
+		// adapted from Mozilla Developer Network example at
+		// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind
+		bind = function bind (obj) {
+			var args = slice.call(arguments, 1),
+				self = this,
+				nop = function () {},
+				bound = function () {
+				  return self.apply(this instanceof nop ? this : (obj || {}), args.concat(slice.call(arguments)));
+				};
+			nop.prototype = this.prototype || {}; // Firefox cries sometimes if prototype is undefined
+			bound.prototype = new nop();
+			return bound;
+		};
+		proto.bind = bind;
+	}
+
+	return {};
+
+});
 
 ;define('curl/plugin/i18n!app/subheader/strings', function () {
 	return {"phrases":["The <em>un</em>framework: Free your code","Create, modify, and <em>test</em> with ease","Scale your team as your app grows","Use the web. Don't circumvent it"]};
@@ -851,10 +851,6 @@ define('poly/array', ['poly/lib/_base'], function (base) {
 	$plugins: ['wire/dom', 'wire/on', 'cola']
 });
 
-;define('curl/plugin/text!app/subheader/template.html', function () {
-	return "<h2>${text}</h2>\n";
-});
-
 ;(function(define) {
 define('app/subheader/selectText', function () {
 
@@ -872,6 +868,10 @@ define('app/subheader/selectText', function () {
 
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
+
+;define('curl/plugin/text!app/subheader/template.html', function () {
+	return "<h2>${text}</h2>\n";
+});
 
 ;define('hello/app/main', { // Wire spec
 
@@ -941,12 +941,24 @@ define('app/subheader/selectText', function () {
 	plugins: ['wire/dom', 'wire/dom/render', 'wire/on', 'wire/aop', 'cola']
 });
 
+;define('highlight/amd!hello/app/template.html', function () {
+	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">div</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>${name} <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">placeholder</span>=<span class=\"value\">\"${hint}\"</span>/&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">p</span>&gt;</span>${hello} <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>!<span class=\"tag\">&lt;/<span class=\"title\">p</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">div</span>&gt;</span></code></pre>";
+});
+
+;define('highlight/amd!hello/app/controller.js', function () {
+	return "<pre><code class=\"javascript\">define(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n  <span class=\"keyword\">return</span> {\n    update: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(e)</span> {</span>\n      <span class=\"keyword\">this</span>.node.innerHTML = e.target.value;\n    }\n  };\n});</code></pre>";
+});
+
 ;define('highlight/amd!hello/app/strings.js', function () {
 	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// i18n</span>\n  name: <span class=\"string\">'What\'s your name?'</span>,\n  hint: <span class=\"string\">'Type your name'</span>,\n  hello: <span class=\"string\">'Hello'</span>\n});</code></pre>";
 });
 
 ;define('highlight/amd!hello/app/main.js', function () {
 	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// Wire spec</span>\n\n  controller: {\n    create: <span class=\"string\">'hello/app/controller'</span>,\n    properties: {\n      node: { $ref: <span class=\"string\">'first!span'</span>, at: <span class=\"string\">'view'</span> }\n    },\n    on: { view: { <span class=\"string\">'input'</span>: <span class=\"string\">'update'</span> } }\n  },\n\n  view: {\n    render: {\n      template: { module: <span class=\"string\">'text!hello/app/template.html'</span> },\n      replace: { module: <span class=\"string\">'i18n!hello/app/strings.js'</span> }\n    },\n    insert: { last: <span class=\"string\">'root'</span> }\n  },\n\n  $plugins: [<span class=\"string\">'wire/dom'</span>, <span class=\"string\">'wire/dom/render'</span>, <span class=\"string\">'wire/on'</span>]\n});</code></pre>";
+});
+
+;define('curl/plugin/text!app/contacts-sample/template.html', function () {
+	return "<div class=\"cujo-contacts\">\n    <div class=\"contacts-view-container\"></div>\n</div>";
 });
 
 ;define('contacts/app/main', {// Wire spec
@@ -1007,16 +1019,16 @@ define('app/subheader/selectText', function () {
 	$plugins: ['wire/dom','wire/dom/render','wire/on','wire/connect','cola']
 });
 
-;define('highlight/amd!hello/app/template.html', function () {
-	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">div</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>${name} <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">placeholder</span>=<span class=\"value\">\"${hint}\"</span>/&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">p</span>&gt;</span>${hello} <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>!<span class=\"tag\">&lt;/<span class=\"title\">p</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">div</span>&gt;</span></code></pre>";
+;define('highlight/amd!contacts/app/controller.js', function () {
+	return "<pre><code class=\"javascript\">define(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n\n  <span class=\"keyword\">return</span> {\n    editContact: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(contact)</span> {</span>\n      <span class=\"keyword\">this</span>._updateForm(<span class=\"keyword\">this</span>._form, contact);\n    }\n  };\n\n});</code></pre>";
 });
 
-;define('highlight/amd!hello/app/controller.js', function () {
-	return "<pre><code class=\"javascript\">define(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n  <span class=\"keyword\">return</span> {\n    update: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(e)</span> {</span>\n      <span class=\"keyword\">this</span>.node.innerHTML = e.target.value;\n    }\n  };\n});</code></pre>";
+;define('highlight/amd!contacts/app/list/template.html', function () {
+	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">ul</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"contact-list-view\"</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">li</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"contact\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"remove\"</span>&gt;</span>&amp;times;<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"first-name\"</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"last-name\"</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">li</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">ul</span>&gt;</span></code></pre>";
 });
 
-;define('curl/plugin/text!app/contacts-sample/template.html', function () {
-	return "<div class=\"cujo-contacts\">\n    <div class=\"contacts-view-container\"></div>\n</div>";
+;define('highlight/amd!contacts/app/edit/template.html', function () {
+	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">form</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"edit-contact-view\"</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">fieldset</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${firstName}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"first-name\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"firstName\"</span>/&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${lastName}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"last-name\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"lastName\"</span>/&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${phone}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"phone\"</span>&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${email}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"email\"</span>&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">fieldset</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"id\"</span>/&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">fieldset</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"controls\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"submit\"</span> <span class=\"attribute\">value</span>=<span class=\"value\">\"${save}\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"reset\"</span> <span class=\"attribute\">value</span>=<span class=\"value\">\"${clear}\"</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">fieldset</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">form</span>&gt;</span></code></pre>";
 });
 
 ;define('highlight/amd!contacts/app/main.js', function () {
@@ -1024,15 +1036,15 @@ define('app/subheader/selectText', function () {
 });
 
 ;define('highlight/amd!app/main.js', function () {
-	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// Wire spec</span>\n\n  helloSample: { wire: <span class=\"string\">'app/hello-sample/spec'</span> },\n\n  contactsSample: { wire: <span class=\"string\">'app/contacts-sample/spec'</span> },\n\n  homepageSample: { wire: <span class=\"string\">'app/homepage-sample/spec'</span> },\n\n  subheaderStrings: { module: <span class=\"string\">'i18n!app/subheader/strings'</span> },\n  subheaderText: {\n    create: {\n      module: <span class=\"string\">'app/subheader/selectText'</span>,\n      args: { $ref: <span class=\"string\">'subheaderStrings.phrases'</span> }\n    }\n  },\n\n  subheader: {\n    render: {\n      template: { module: <span class=\"string\">'text!app/subheader/template.html'</span> },\n      replace: { text: { $ref: <span class=\"string\">'subheaderText'</span> } },\n      at: { $ref: <span class=\"string\">'first!.subheader'</span> }\n    }\n  },\n\n  theme: { module: <span class=\"string\">'css!theme/basic.css'</span> },\n  highlightTheme: { module: <span class=\"string\">'css!highlight/github.css'</span> },\n\n  $plugins: [\n    { module: <span class=\"string\">'wire/dom'</span>, classes: { init: <span class=\"string\">'loading'</span> } },\n    <span class=\"string\">'wire/dom/render'</span>\n  ]\n});</code></pre>";
+	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// Wire spec</span>\n\n  helloSample: { wire: <span class=\"string\">'app/hello-sample/spec'</span> },\n\n  contactsSample: { wire: <span class=\"string\">'app/contacts-sample/spec'</span> },\n\n  homepageSample: { wire: <span class=\"string\">'app/homepage-sample/spec'</span> },\n\n  subheaderStrings: { module: <span class=\"string\">'i18n!app/subheader/strings'</span> },\n  subheaderText: {\n    create: {\n      module: <span class=\"string\">'app/subheader/selectText'</span>,\n      args: { $ref: <span class=\"string\">'subheaderStrings.phrases'</span> }\n    }\n  },\n\n  subheader: {\n    render: {\n      template: { module: <span class=\"string\">'text!app/subheader/template.html'</span> },\n      replace: { text: { $ref: <span class=\"string\">'subheaderText'</span> } },\n      at: { $ref: <span class=\"string\">'first!.subheader'</span> }\n    }\n  },\n\n  highlightTheme: { module: <span class=\"string\">'css!highlight/github.css'</span> },\n\n  $plugins: [\n    { module: <span class=\"string\">'wire/dom'</span>, classes: { init: <span class=\"string\">'loading'</span> } },\n    <span class=\"string\">'wire/dom/render'</span>\n  ]\n});</code></pre>";
 });
 
 ;define('highlight/amd!app/subheader/selectText.js', function () {
 	return "<pre><code class=\"javascript\">(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(define)</span> {</span>\ndefine(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n\n  <span class=\"comment\">/**\n   * Selects a text string from the provided strings array\n   */</span>\n  <span class=\"keyword\">return</span> <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(strings, selector)</span> {</span>\n    <span class=\"keyword\">var</span> len = strings &amp;&amp; strings.length;\n    <span class=\"keyword\">return</span> len ? strings[(selector || defaultSelector)(len)] : <span class=\"string\">''</span>;\n  };\n\n  <span class=\"function\"><span class=\"keyword\">function</span> <span class=\"title\">defaultSelector</span><span class=\"params\">(n)</span> {</span>\n    <span class=\"keyword\">return</span> Math.floor(Math.random() * n);\n  }\n\n});\n}(<span class=\"keyword\">typeof</span> define === <span class=\"string\">'function'</span> &amp;&amp; define.amd ? define : <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(factory)</span> {</span> module.exports = factory(); }));\n</code></pre>";
 });
 
-;define('highlight/amd!contacts/app/controller.js', function () {
-	return "<pre><code class=\"javascript\">define(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n\n  <span class=\"keyword\">return</span> {\n    editContact: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(contact)</span> {</span>\n      <span class=\"keyword\">this</span>._updateForm(<span class=\"keyword\">this</span>._form, contact);\n    }\n  };\n\n});</code></pre>";
+;define('highlight/amd!test/subheader/selectText-test.js', function () {
+	return "<pre><code class=\"javascript\">(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(define)</span> {</span>\ndefine(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(require)</span> {</span>\n\n  <span class=\"keyword\">var</span> buster, selectText;\n\n  buster = require(<span class=\"string\">'buster'</span>);\n  selectText = require(<span class=\"string\">'../../app/subheader/selectText'</span>);\n\n  buster.testCase(<span class=\"string\">'subheader/selectText'</span>, {\n    <span class=\"string\">'should return empty string when input is empty'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      assert.equals(selectText([]), <span class=\"string\">''</span>);\n    },\n\n    <span class=\"string\">'should return empty string when input not provided'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      assert.equals(selectText(), <span class=\"string\">''</span>);\n    },\n\n    <span class=\"string\">'should call provided selector function'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      <span class=\"keyword\">var</span> spy, input;\n\n      input = [<span class=\"string\">'a'</span>, <span class=\"string\">'b'</span>, <span class=\"string\">'c'</span>];\n      spy = <span class=\"keyword\">this</span>.stub().returns(<span class=\"number\">1</span>);\n\n      selectText(input, spy);\n      assert.calledOnceWith(spy, input.length);\n    },\n\n    <span class=\"string\">'should return selected string'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      <span class=\"keyword\">var</span> spy, input;\n\n      input = [<span class=\"string\">'a'</span>, <span class=\"string\">'b'</span>, <span class=\"string\">'c'</span>];\n      spy = <span class=\"keyword\">this</span>.stub().returns(<span class=\"number\">1</span>);\n\n      assert.equals(selectText(input, spy), <span class=\"string\">'b'</span>);\n    }\n  });\n\n});\n}(<span class=\"keyword\">typeof</span> define === <span class=\"string\">'function'</span> &amp;&amp; define.amd ? define : <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(factory)</span> {</span> module.exports = factory(require); }));\n\n</code></pre>";
 });
 
 ;define('hello/app/controller', function () {
@@ -1045,18 +1057,6 @@ define('app/subheader/selectText', function () {
 
 ;define('curl/plugin/text!hello/app/template.html', function () {
 	return "<div>\n    <label>${name} <input placeholder=\"${hint}\"/></label>\n    <p>${hello} <span></span>!</p>\n</div>";
-});
-
-;define('highlight/amd!contacts/app/list/template.html', function () {
-	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">ul</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"contact-list-view\"</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">li</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"contact\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"remove\"</span>&gt;</span>&amp;times;<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"first-name\"</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"last-name\"</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">li</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">ul</span>&gt;</span></code></pre>";
-});
-
-;define('highlight/amd!contacts/app/edit/template.html', function () {
-	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">form</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"edit-contact-view\"</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">fieldset</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${firstName}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"first-name\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"firstName\"</span>/&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${lastName}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"last-name\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"lastName\"</span>/&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${phone}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"phone\"</span>&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${email}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"email\"</span>&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">fieldset</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"id\"</span>/&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">fieldset</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"controls\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"submit\"</span> <span class=\"attribute\">value</span>=<span class=\"value\">\"${save}\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"reset\"</span> <span class=\"attribute\">value</span>=<span class=\"value\">\"${clear}\"</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">fieldset</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">form</span>&gt;</span></code></pre>";
-});
-
-;define('highlight/amd!test/subheader/selectText-test.js', function () {
-	return "<pre><code class=\"javascript\">(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(define)</span> {</span>\ndefine(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(require)</span> {</span>\n\n  <span class=\"keyword\">var</span> buster, selectText;\n\n  buster = require(<span class=\"string\">'buster'</span>);\n  selectText = require(<span class=\"string\">'../../app/subheader/selectText'</span>);\n\n  buster.testCase(<span class=\"string\">'subheader/selectText'</span>, {\n    <span class=\"string\">'should return empty string when input is empty'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      assert.equals(selectText([]), <span class=\"string\">''</span>);\n    },\n\n    <span class=\"string\">'should return empty string when input not provided'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      assert.equals(selectText(), <span class=\"string\">''</span>);\n    },\n\n    <span class=\"string\">'should call provided selector function'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      <span class=\"keyword\">var</span> spy, input;\n\n      input = [<span class=\"string\">'a'</span>, <span class=\"string\">'b'</span>, <span class=\"string\">'c'</span>];\n      spy = <span class=\"keyword\">this</span>.stub().returns(<span class=\"number\">1</span>);\n\n      selectText(input, spy);\n      assert.calledOnceWith(spy, input.length);\n    },\n\n    <span class=\"string\">'should return selected string'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      <span class=\"keyword\">var</span> spy, input;\n\n      input = [<span class=\"string\">'a'</span>, <span class=\"string\">'b'</span>, <span class=\"string\">'c'</span>];\n      spy = <span class=\"keyword\">this</span>.stub().returns(<span class=\"number\">1</span>);\n\n      assert.equals(selectText(input, spy), <span class=\"string\">'b'</span>);\n    }\n  });\n\n});\n}(<span class=\"keyword\">typeof</span> define === <span class=\"string\">'function'</span> &amp;&amp; define.amd ? define : <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(factory)</span> {</span> module.exports = factory(require); }));\n\n</code></pre>";
 });
 
 ;(function(define) {
@@ -1123,6 +1123,10 @@ define('app/tabs/controller', function () {
 	return "<ul class=\"tabs\">\n    <li class=\"item\"><a href=\"#\" class=\"tab-title\"></a></li>\n</ul>";
 });
 
+;define('curl/plugin/text!app/tabs/stack.html', function () {
+	return "<ul class=\"stack\">\n    <li class=\"item\"></li>\n</ul>";
+});
+
 ;define('contacts/app/collection/spec', {
 
 	$exports: { $ref: 'contacts' },
@@ -1173,10 +1177,6 @@ define('app/tabs/controller', function () {
 
 ;define('curl/plugin/text!contacts/app/list/template.html', function () {
 	return "<ul class=\"contact-list-view\">\n    <li class=\"contact\">\n        <span class=\"remove\">&times;</span>\n        <span class=\"first-name\"></span>\n        <span class=\"last-name\"></span>\n    </li>\n</ul>";
-});
-
-;define('curl/plugin/text!app/tabs/stack.html', function () {
-	return "<ul class=\"stack\">\n    <li class=\"item\"></li>\n</ul>";
 });
 
 ;define('contacts/app/list/compareByLastFirst', function () {
@@ -1453,6 +1453,18 @@ define('cola/dom/form', function () {
 
 });
 
+;define('contacts/app/collection/cleanContact', function () {
+
+	return function(contact) {
+		contact.firstName = contact.firstName && contact.firstName.trim() || '';
+		contact.lastName = contact.lastName && contact.lastName.trim() || '';
+		contact.phone = contact.phone && contact.phone.trim() || '';
+		contact.email = contact.email && contact.email.trim() || '';
+		return contact;
+	}
+
+});
+
 ;define('contacts/app/collection/generateMetadata', function () {
 
 	/**
@@ -1477,18 +1489,6 @@ define('cola/dom/form', function () {
 
 	function guidLike() {
 		return (s4()+s4()+"-"+s4()+"-"+s4()+"-"+s4()+"-"+s4()+s4()+s4());
-	}
-
-});
-
-;define('contacts/app/collection/cleanContact', function () {
-
-	return function(contact) {
-		contact.firstName = contact.firstName && contact.firstName.trim() || '';
-		contact.lastName = contact.lastName && contact.lastName.trim() || '';
-		contact.phone = contact.phone && contact.phone.trim() || '';
-		contact.email = contact.email && contact.email.trim() || '';
-		return contact;
 	}
 
 });
@@ -1827,6 +1827,56 @@ define('curl/plugin/style', function () {
 
 	return createStyle;
 });
+/** MIT License (c) copyright B Cavalier & J Hann */
+
+(function (define) {
+define('cola/relational/propertiesKey', function () {
+	"use strict";
+
+	var defaultSeparator, undef;
+
+	defaultSeparator = '|';
+
+	/**
+	 * Creates a transform whose input is an object and whose output
+	 * is the value of object[propName] if propName is a String, or
+	 * if propName is an Array, the Array.prototype.join()ed values
+	 * of all the property names in the Array.
+	 * @param propName {String|Array} name(s) of the property(ies) on the input object to return
+	 * @return {Function} transform function(object) returns any
+	 */
+	return function(propName, separator) {
+
+		if (typeof propName == 'string') {
+			return function (object) {
+				return object && object[propName];
+			};
+
+		} else {
+			if (arguments.length === 1) separator = defaultSeparator;
+
+			return function (object) {
+				if (!object) return undef;
+
+				var values, i, len, val;
+
+				values = [];
+				for (i = 0, len = propName.length; i < len; i++) {
+					val = object[propName[i]];
+					if (val != null) values.push(val);
+				}
+
+				return values.join( separator);
+			};
+		}
+	};
+
+});
+}(
+typeof define == 'function'
+	? define
+	: function (factory) { module.exports = factory(); }
+));
 /** @license MIT License (c) copyright 2011-2013 original author or authors */
 
 /**
@@ -2614,56 +2664,6 @@ define('when/when', function () {
 })(
 	typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(); }
 );
-/** MIT License (c) copyright B Cavalier & J Hann */
-
-(function (define) {
-define('cola/relational/propertiesKey', function () {
-	"use strict";
-
-	var defaultSeparator, undef;
-
-	defaultSeparator = '|';
-
-	/**
-	 * Creates a transform whose input is an object and whose output
-	 * is the value of object[propName] if propName is a String, or
-	 * if propName is an Array, the Array.prototype.join()ed values
-	 * of all the property names in the Array.
-	 * @param propName {String|Array} name(s) of the property(ies) on the input object to return
-	 * @return {Function} transform function(object) returns any
-	 */
-	return function(propName, separator) {
-
-		if (typeof propName == 'string') {
-			return function (object) {
-				return object && object[propName];
-			};
-
-		} else {
-			if (arguments.length === 1) separator = defaultSeparator;
-
-			return function (object) {
-				if (!object) return undef;
-
-				var values, i, len, val;
-
-				values = [];
-				for (i = 0, len = propName.length; i < len; i++) {
-					val = object[propName[i]];
-					if (val != null) values.push(val);
-				}
-
-				return values.join( separator);
-			};
-		}
-	};
-
-});
-}(
-typeof define == 'function'
-	? define
-	: function (factory) { module.exports = factory(); }
-));
 /** @license MIT License (c) copyright 2011-2013 original author or authors */
 
 /**
@@ -3262,6 +3262,157 @@ define('meld/meld', function () {
 });
 })(typeof define == 'function' && define.amd ? define : function (factory) { module.exports = factory(); }
 );
+/** MIT License (c) copyright B Cavalier & J Hann */
+
+/**
+ * curl domReady loader plugin
+ *
+ * Licensed under the MIT License at:
+ * 		http://www.opensource.org/licenses/mit-license.php
+ *
+ */
+
+/**
+ *
+ * allows the curl/domReady module to be used like a plugin
+ * this is for better compatibility with other loaders.
+ *
+ * Usage:
+ *
+ * curl(["domReady!"]).then(doSomething);
+ *
+ * TODO: use "../domReady" instead of "curl/domReady" when curl's make.sh is updated to use cram
+ */
+
+define('curl/plugin/domReady', ['curl/domReady'], function (domReady) {
+
+	return {
+
+		'load': function (name, req, cb, cfg) {
+			domReady(cb);
+		}
+
+	};
+
+});
+/** MIT License (c) copyright B Cavalier & J Hann */
+
+/**
+ * curl text! loader plugin
+ *
+ * Licensed under the MIT License at:
+ * 		http://www.opensource.org/licenses/mit-license.php
+ */
+
+/**
+ * TODO: load xdomain text, too, somehow
+ *
+ */
+
+define('curl/plugin/text', ['curl/plugin/_fetchText'], function (fetchText) {
+
+	return {
+
+		'normalize': function (resourceId, toAbsId) {
+			// remove options
+			return resourceId ? toAbsId(resourceId.split("!")[0]) : resourceId;
+		},
+
+		load: function (resourceName, req, callback, config) {
+			// remove suffixes (future)
+			// get the text
+			fetchText(req['toUrl'](resourceName), callback, callback['error'] || error);
+		},
+
+		'cramPlugin': '../cram/text'
+
+	};
+
+	function error (ex) {
+		throw ex;
+	}
+
+});
+/** @license MIT License (c) copyright 2010-2013 original author or authors */
+
+/**
+ * Licensed under the MIT License at:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * @author: Brian Cavalier
+ * @author: John Hann
+ */
+
+(function(define) { 'use strict';
+define('wire/lib/plugin/priority', function () {
+
+	var basePriority, defaultPriority;
+
+	basePriority = -99;
+	defaultPriority = 0;
+
+	return {
+		basePriority: basePriority,
+		sortReverse: prioritizeReverse
+	};
+
+	function prioritizeReverse(list) {
+		return list.sort(byReversePriority);
+	}
+
+	function byReversePriority(a, b) {
+		var aPriority, bPriority;
+
+		aPriority = a.priority || defaultPriority;
+		bPriority = b.priority || defaultPriority;
+
+		return aPriority < bPriority ? -1
+			: aPriority > bPriority ? 1 : 0;
+	}
+
+
+});
+}(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
+/** @license MIT License (c) copyright B Cavalier & J Hann */
+
+/**
+ * wire/domReady plugin
+ * A base wire/domReady module that plugins can use if they need domReady.  Simply
+ * add 'wire/domReady' to your plugin module dependencies
+ * (e.g. require(['wire/domReady', ...], function(domReady, ...) { ... })) and you're
+ * set.
+ *
+ * wire is part of the cujo.js family of libraries (http://cujojs.com/)
+ *
+ * Licensed under the MIT License at:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * Returns a function that accepts a callback to be called when the DOM is ready.
+ *
+ * You can also use your AMD loader's paths config to map wire/domReady to whatever
+ * domReady function you might want to use.  See documentation for your AMD loader
+ * for specific instructions.  For curl.js and requirejs, it will be something like:
+ *
+ *  paths: {
+ *      'wire/domReady': 'path/to/my/domReady'
+ *  }
+ */
+
+(function(global) {
+define('wire/domReady', ['require'], function (req) {
+
+	// Try require.ready first
+	return (global.require && global.require.ready) || function (cb) {
+		// If it's not available, assume a domReady! plugin is available
+		req(['domReady!'], function () {
+			// Using domReady! as a plugin will automatically wait for domReady
+			// so we can just call the callback.
+			cb();
+		});
+	};
+
+});
+})(this);
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -3319,119 +3470,6 @@ define('wire/lib/object', function () {
 	// CommonJS
 	: function(factory) { module.exports = factory(); }
 );
-/** MIT License (c) copyright B Cavalier & J Hann */
-
-/**
- * curl domReady loader plugin
- *
- * Licensed under the MIT License at:
- * 		http://www.opensource.org/licenses/mit-license.php
- *
- */
-
-/**
- *
- * allows the curl/domReady module to be used like a plugin
- * this is for better compatibility with other loaders.
- *
- * Usage:
- *
- * curl(["domReady!"]).then(doSomething);
- *
- * TODO: use "../domReady" instead of "curl/domReady" when curl's make.sh is updated to use cram
- */
-
-define('curl/plugin/domReady', ['curl/domReady'], function (domReady) {
-
-	return {
-
-		'load': function (name, req, cb, cfg) {
-			domReady(cb);
-		}
-
-	};
-
-});
-/** @license MIT License (c) copyright B Cavalier & J Hann */
-
-/**
- * wire/domReady plugin
- * A base wire/domReady module that plugins can use if they need domReady.  Simply
- * add 'wire/domReady' to your plugin module dependencies
- * (e.g. require(['wire/domReady', ...], function(domReady, ...) { ... })) and you're
- * set.
- *
- * wire is part of the cujo.js family of libraries (http://cujojs.com/)
- *
- * Licensed under the MIT License at:
- * http://www.opensource.org/licenses/mit-license.php
- *
- * Returns a function that accepts a callback to be called when the DOM is ready.
- *
- * You can also use your AMD loader's paths config to map wire/domReady to whatever
- * domReady function you might want to use.  See documentation for your AMD loader
- * for specific instructions.  For curl.js and requirejs, it will be something like:
- *
- *  paths: {
- *      'wire/domReady': 'path/to/my/domReady'
- *  }
- */
-
-(function(global) {
-define('wire/domReady', ['require'], function (req) {
-
-	// Try require.ready first
-	return (global.require && global.require.ready) || function (cb) {
-		// If it's not available, assume a domReady! plugin is available
-		req(['domReady!'], function () {
-			// Using domReady! as a plugin will automatically wait for domReady
-			// so we can just call the callback.
-			cb();
-		});
-	};
-
-});
-})(this);
-/** @license MIT License (c) copyright 2010-2013 original author or authors */
-
-/**
- * Licensed under the MIT License at:
- * http://www.opensource.org/licenses/mit-license.php
- *
- * @author: Brian Cavalier
- * @author: John Hann
- */
-
-(function(define) { 'use strict';
-define('wire/lib/plugin/priority', function () {
-
-	var basePriority, defaultPriority;
-
-	basePriority = -99;
-	defaultPriority = 0;
-
-	return {
-		basePriority: basePriority,
-		sortReverse: prioritizeReverse
-	};
-
-	function prioritizeReverse(list) {
-		return list.sort(byReversePriority);
-	}
-
-	function byReversePriority(a, b) {
-		var aPriority, bPriority;
-
-		aPriority = a.priority || defaultPriority;
-		bPriority = b.priority || defaultPriority;
-
-		return aPriority < bPriority ? -1
-			: aPriority > bPriority ? 1 : 0;
-	}
-
-
-});
-}(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -3703,106 +3741,6 @@ define('cola/network/strategy/collectThenDeliver', function () {
 		? define
 		: function (factory) { module.exports = factory(); }
 ));
-/** MIT License (c) copyright B Cavalier & J Hann */
-
-/**
- * curl text! loader plugin
- *
- * Licensed under the MIT License at:
- * 		http://www.opensource.org/licenses/mit-license.php
- */
-
-/**
- * TODO: load xdomain text, too, somehow
- *
- */
-
-define('curl/plugin/text', ['curl/plugin/_fetchText'], function (fetchText) {
-
-	return {
-
-		'normalize': function (resourceId, toAbsId) {
-			// remove options
-			return resourceId ? toAbsId(resourceId.split("!")[0]) : resourceId;
-		},
-
-		load: function (resourceName, req, callback, config) {
-			// remove suffixes (future)
-			// get the text
-			fetchText(req['toUrl'](resourceName), callback, callback['error'] || error);
-		},
-
-		'cramPlugin': '../cram/text'
-
-	};
-
-	function error (ex) {
-		throw ex;
-	}
-
-});
-/** @license MIT License (c) copyright B Cavalier & J Hann */
-
-/**
- * Licensed under the MIT License at:
- * http://www.opensource.org/licenses/mit-license.php
- */
-
-(function(define){ 'use strict';
-define('wire/lib/array', function () {
-
-
-	var slice = [].slice;
-
-	return {
-		delegate: delegateArray,
-		fromArguments: fromArguments,
-		union: union
-	};
-
-	/**
-	 * Creates a new {Array} with the same contents as array
-	 * @param array {Array}
-	 * @return {Array} a new {Array} with the same contents as array. If array is falsey,
-	 *  returns a new empty {Array}
-	 */
-	function delegateArray(array) {
-		return array ? [].concat(array) : [];
-	}
-
-	function fromArguments(args, index) {
-		return slice.call(args, index||0);
-	}
-
-	/**
-	 * Returns a new set that is the union of the two supplied sets
-	 * @param {Array} a1 set
-	 * @param {Array} a2 set
-	 * @returns {Array} union of a1 and a2
-	 */
-	function union(a1, a2) {
-		// If either is empty, return the other
-		if(!a1.length) {
-			return a2.slice();
-		} else if(!a2.length) {
-			return a1.slice();
-		}
-
-		return a2.reduce(function(union, a2item) {
-			if(union.indexOf(a2item) === -1) {
-				union.push(a2item);
-			}
-			return union;
-		}, a1.slice());
-	}
-
-});
-})(typeof define == 'function'
-	// AMD
-	? define
-	// CommonJS
-	: function(factory) { module.exports = factory(); }
-);
 
 ;(function (define) {
 define('cola/network/strategy/validate', function () {
@@ -3881,6 +3819,68 @@ define('cola/network/strategy/changeEvent', function () {
 		? define
 		: function (factory) { module.exports = factory(); }
 ));
+/** @license MIT License (c) copyright B Cavalier & J Hann */
+
+/**
+ * Licensed under the MIT License at:
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+(function(define){ 'use strict';
+define('wire/lib/array', function () {
+
+
+	var slice = [].slice;
+
+	return {
+		delegate: delegateArray,
+		fromArguments: fromArguments,
+		union: union
+	};
+
+	/**
+	 * Creates a new {Array} with the same contents as array
+	 * @param array {Array}
+	 * @return {Array} a new {Array} with the same contents as array. If array is falsey,
+	 *  returns a new empty {Array}
+	 */
+	function delegateArray(array) {
+		return array ? [].concat(array) : [];
+	}
+
+	function fromArguments(args, index) {
+		return slice.call(args, index||0);
+	}
+
+	/**
+	 * Returns a new set that is the union of the two supplied sets
+	 * @param {Array} a1 set
+	 * @param {Array} a2 set
+	 * @returns {Array} union of a1 and a2
+	 */
+	function union(a1, a2) {
+		// If either is empty, return the other
+		if(!a1.length) {
+			return a2.slice();
+		} else if(!a2.length) {
+			return a1.slice();
+		}
+
+		return a2.reduce(function(union, a2item) {
+			if(union.indexOf(a2item) === -1) {
+				union.push(a2item);
+			}
+			return union;
+		}, a1.slice());
+	}
+
+});
+})(typeof define == 'function'
+	// AMD
+	? define
+	// CommonJS
+	: function(factory) { module.exports = factory(); }
+);
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 (function (define) {
@@ -4000,6 +4000,66 @@ define('wire/lib/graph/DirectedGraph', function () {
 
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
+
+;(function (define) {
+define('cola/enqueue', function () {
+	"use strict";
+
+	var enqueue;
+
+	if (typeof process !== "undefined") {
+		// node
+		enqueue = process.nextTick;
+	} else if (typeof msSetImmediate === "function") {
+		// IE 10. From http://github.com/kriskowal/q
+		// bind is necessary
+		enqueue = msSetImmediate.bind(window);
+	} else if (typeof setImmediate === "function") {
+		enqueue = setImmediate;
+	} else if (typeof MessageChannel !== "undefined") {
+		enqueue = initMessageChannel();
+	} else {
+		// older envs w/only setTimeout
+		enqueue = function (task) {
+			setTimeout(task, 0);
+		};
+	}
+
+	return enqueue;
+
+	/**
+	 * MessageChannel for browsers that support it
+	 * From http://www.nonblocking.io/2011/06/windownexttick.html
+	 */
+	function initMessageChannel() {
+		var channel, head, tail;
+
+		channel = new MessageChannel();
+		head = {};
+		tail = head;
+
+		channel.port1.onmessage = function () {
+			var task;
+
+			head = head.next;
+			task = head.task;
+			delete head.task;
+
+			task();
+		};
+
+		return function (task) {
+			tail = tail.next = {task: task};
+			channel.port2.postMessage(0);
+		};
+	}
+});
+}(
+	typeof define == 'function' && define.amd
+		? define
+		: function (factory) { module.exports = factory(); }
+));
+
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 (function (define) {
@@ -4274,66 +4334,6 @@ define('cola/SortedMap', function () {
 		? define
 		: function (factory) { module.exports = factory(require); }
 ));
-
-;(function (define) {
-define('cola/enqueue', function () {
-	"use strict";
-
-	var enqueue;
-
-	if (typeof process !== "undefined") {
-		// node
-		enqueue = process.nextTick;
-	} else if (typeof msSetImmediate === "function") {
-		// IE 10. From http://github.com/kriskowal/q
-		// bind is necessary
-		enqueue = msSetImmediate.bind(window);
-	} else if (typeof setImmediate === "function") {
-		enqueue = setImmediate;
-	} else if (typeof MessageChannel !== "undefined") {
-		enqueue = initMessageChannel();
-	} else {
-		// older envs w/only setTimeout
-		enqueue = function (task) {
-			setTimeout(task, 0);
-		};
-	}
-
-	return enqueue;
-
-	/**
-	 * MessageChannel for browsers that support it
-	 * From http://www.nonblocking.io/2011/06/windownexttick.html
-	 */
-	function initMessageChannel() {
-		var channel, head, tail;
-
-		channel = new MessageChannel();
-		head = {};
-		tail = head;
-
-		channel.port1.onmessage = function () {
-			var task;
-
-			head = head.next;
-			task = head.task;
-			delete head.task;
-
-			task();
-		};
-
-		return function (task) {
-			tail = tail.next = {task: task};
-			channel.port2.postMessage(0);
-		};
-	}
-});
-}(
-	typeof define == 'function' && define.amd
-		? define
-		: function (factory) { module.exports = factory(); }
-));
-
 
 ;(function (define) {
 define('cola/dom/classList', ['require', 'exports'], function (require, exports) {
@@ -4781,6 +4781,22 @@ define('cola/comparator/byProperty', ['require', 'cola/comparator/naturalOrder']
 		? define
 		: function (factory) { module.exports = factory(require); }
 ));
+/** MIT License (c) copyright B Cavalier & J Hann */
+
+(function (define) {
+define('cola/identifier/default', ['require', 'cola/identifier/property'], function (require, $cram_r0) {
+	"use strict";
+
+	var property = $cram_r0;
+
+	return property('id');
+
+});
+}(
+	typeof define == 'function'
+		? define
+		: function (factory) { module.exports = factory(require); }
+));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -5169,22 +5185,6 @@ define('cola/adapter/Array', ['require', 'when/when'], function (require, $cram_
 		? define
 		: function(factory) { module.exports = factory(require); }
 );
-/** MIT License (c) copyright B Cavalier & J Hann */
-
-(function (define) {
-define('cola/identifier/default', ['require', 'cola/identifier/property'], function (require, $cram_r0) {
-	"use strict";
-
-	var property = $cram_r0;
-
-	return property('id');
-
-});
-}(
-	typeof define == 'function'
-		? define
-		: function (factory) { module.exports = factory(require); }
-));
 /** @license MIT License (c) copyright original author or authors */
 
 /**
@@ -5325,9 +5325,6 @@ define('cola/dom/has', function () {
 	this,
 	this.document
 ));
-
-;define('theme/basic.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = "@import url(\"theme/font/cujojs/font.css\");\n\nhtml {\n\tfont-size: 100%;\n\t-webkit-text-size-adjust: 100%;\n\t-ms-text-size-adjust: 100%;\n    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\n    font-weight: 200;\n    color: #222;\n    margin: 0;\n    padding: 0;\n}\n\nbody {\n    margin: 0;\n    padding: 0;\n    font-size: 14px;\n    line-height: 1.4;\n}\n\na {\n    transition: text-shadow .25s ease;\n    -webkit-transition: text-shadow .25s ease;\n    -moz-transition: text-shadow .25s ease;\n    -o-transition: text-shadow .25s ease;\n    -ms-transition: text-shadow .25s ease;\n}\n\na:hover {\n    text-shadow: #ccc 0 0 8px;\n}\n\nh1 {\n    margin: 0;\n    font-size: 8em;\n}\n\nh3 {\n    margin: 0;\n}\n\np {\n    line-height: 1.5em;\n}\n\ncode {\n    font-size: 12px;\n}\n\nsection {\n    clear: both;\n}\n\nnav ul {\n    padding: 0;\n    margin: 0;\n    text-align: center;\n}\n\nnav li {\n    display: inline-block;\n    margin: 0 1em;\n    padding: 0;\n    height: 1.5em;\n}\n\n.async {\n    transition: opacity .5s ease;\n    -webkit-transition: opacity .5s ease;\n    -moz-transition: opacity .5s ease;\n    -o-transition: opacity .5s ease;\n    -ms-transition: opacity .5s ease;\n}\n\n.social [class^=\"icon-\"], .social [class*=\" icon-\"] {\n    width: auto;\n}\n\n.social [class^=\"icon-\"]:before, .social [class*=\" icon-\"]:before {\n    font-size: 1.25em;\n    margin-right: .5em;\n    margin-top: -.25em;\n    vertical-align: middle;\n}\n/* Buttons */\n\n.button {\n    border: 1px solid;\n    border-radius: 8px;\n    color: white;\n    display: inline-block;\n    font-weight: bold;\n    font-size: 1.5em;\n    letter-spacing: 0;\n    line-height: 1;\n    margin: 1em 0;\n    padding: .5em 1.5em;\n    opacity: .9;\n    text-decoration: none;\n    text-shadow: rgba(0,0,0,0.5) -1px -1px 0;\n}\n\n.button.icon {\n    height: 1em;\n}\n\n.button.icon:before {\n    font-weight: 200;\n}\n\n.button.primary {\n    background-color: #2b5;\n    background-image: linear-gradient(90deg, #2b5, #3e5);;\n    background-image: -webkit-linear-gradient(90deg, #2b5, #3e5);;\n    background-image: -moz-linear-gradient(90deg, #2b5, #3e5);;\n    background-image: -o-linear-gradient(90deg, #2b5, #3e5);;\n    background-image: -ms-linear-gradient(90deg, #2b5, #3e5);;\n    border-color: #4f9;\n}\n\n.button:hover {\n    opacity: 1;\n    text-shadow: none;\n}\n\n.button.secondary {\n    background-color: #26b;\n    background-image: linear-gradient(90deg, #26b, #28f);\n    background-image: -webkit-linear-gradient(90deg, #26b, #28f);\n    background-image: -moz-linear-gradient(90deg, #26b, #28f);\n    background-image: -o-linear-gradient(90deg, #26b, #28f);\n    background-image: -ms-linear-gradient(90deg, #26b, #28f);\n    border-color: #49f;\n}\n\n/* Header */\n\n.hero {\n    background-color: #222;\n    padding: 0;\n}\n\n.hero nav {\n    letter-spacing: .1em;\n    text-transform: uppercase;\n    margin: 1em auto 0;\n    height: 100%;\n    overflow: hidden;\n}\n\n.hero nav .main {\n    margin-bottom: 1em;\n}\n\n.hero nav a {\n    color: #888;\n    padding-bottom: .25em;\n    text-decoration: none;\n    text-shadow: none;\n    -webkit-transition: color .5s ease;\n    -moz-transition: color .5s ease;\n    transition: color .5s ease;\n}\n\n.hero nav a:hover {\n    color: #ccc;\n}\n\n.hero nav .active {\n    border-bottom: 1px solid #888;\n    color: #666;\n    padding-bottom: .25em;\n    cursor: default;\n}\n\n.hero h1 {\n    display: inline-block;\n    letter-spacing: -.1ex;\n    line-height: 1;\n    margin-bottom: .1em;\n}\n\n.hero .button {\n    display: block;\n}\n\n.hero .button.primary {\n    box-shadow: 0 0 8px 2px #3f7;\n    -webkit-box-shadow: 0 0 8px 2px #3f7;\n    -moz-box-shadow: 0 0 8px 2px #3f7;\n}\n\n.hero .button.secondary {\n    box-shadow: 0 0 8px 2px #37f;\n    -webkit-box-shadow: 0 0 8px 2px #37f;\n    -moz-box-shadow: 0 0 8px 2px #37f;\n}\n\n.header-content {\n    color: #eee;\n    text-align: center;\n    margin: 1em auto;\n}\n\n.header-content .prefix {\n    text-shadow: #0066ff 0 0 30px;\n}\n\n.header-content .suffix {\n    color: rgba(255, 255, 255, 0.3);\n}\n\n.header-content h2, .header-content .getit {\n    display: none;\n}\n\n.box {\n    overflow: hidden;\n    height: 100%;\n    padding-left: 5%;\n    padding-right: 5%;\n    margin: 0 auto;\n    min-width: 360px;\n}\n\n.content {\n    padding-bottom: 2em;\n    padding-top: 2em;\n    border-bottom: 1px solid #ddd;\n}\n\n.content h3 {\n    font-weight: 200;\n    font-size: 2em;\n}\n\n.content article {\n    float: none;\n    margin: 0 0 1.5em 0;\n    width: auto;\n}\n\n.content article.span2 {\n    width: 63%;\n}\n\n.content h1, .content h2 {\n    font-weight: 200;\n    color: #222;\n}\n\n.content h1 {\n    font-size: 2.5em;\n}\n\n.content h2 {\n    font-size: 2em;\n}\n\n.content p {\n    font-size: 1.2em;\n    margin: 1em 0;\n}\n\n.tagline {\n    background: #28f;\n    color: #fff;\n}\n\n.intro {\n    background: #eee;\n}\n\n.app-container h1 {\n    color: #444;\n}\n\n.app-container p {\n    color: #666;\n}\n\n.app-container .app, .app-container .code {\n    margin-top: 2em;\n    width: auto;\n    max-height: 32em;\n    overflow: hidden;\n    position: relative;\n}\n\n.app-container .app {\n    border: 1px solid #ccc;\n}\n\n.app-container .app > div {\n    background: #eee;\n}\n\n.app-container .screenshot {\n    width: 100%;\n}\n\n.tabs {\n    border-bottom: 1px solid #ccc;\n}\n\n.tabs .item {\n    background: #eee;\n    margin: 0 -1px -1px 0;\n    max-width: 23%;\n    border: 1px solid #ccc;\n    cursor: pointer;\n}\n\n.tabs .item:hover {\n    background: #ddd;\n}\n\n.tabs .item a {\n    color: #666;\n    cursor: pointer;\n    display: block;\n    padding: .5em .5em;\n    text-decoration: none;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n}\n\n.tabs .item a:hover {\n    color: #004499;\n}\n\n.tabs .active {\n    background: #fff;\n    border-bottom: 1px solid #fff;\n    cursor: default;\n    max-width: 30%;\n}\n\n.tabs .active:hover {\n    background: #fff;\n}\n\n.tabs .active a {\n    color: #0066ff;\n}\n\n.tabs .active a:hover {\n    text-shadow: none;\n}\n\n.code .stack {\n    border-left: 1px solid #ccc;\n    border-right: 1px solid #ccc;\n    border-bottom: 1px solid #ccc;\n    overflow: auto;\n    max-height: 28em;\n}\n\n.code .stack pre {\n    margin: 1em;\n}\n\npre code {\n    line-height: 1.5; /* helps FF stack alignment */\n}\n\n.ribbon {\n    background: none;\n    overflow: hidden;\n    height: 100px;\n    position: absolute;\n    right: -38px;\n    top: 29px;\n    z-index: 1;\n}\n\n.ribbon a {\n    background-color: #26b;\n    background-image: -webkit-linear-gradient(90deg, #26b, #28f);\n    background-image: -moz-linear-gradient(90deg, #26b, #28f);\n    background-image: -o-linear-gradient(90deg, #26b, #28f);\n    background-image: -ms-linear-gradient(90deg, #26b, #28f);\n    color: #eef;\n    display: block;\n    font-size: 0.8em;\n    font-weight: bold;\n    height: 18px;\n    line-height: 1;\n    margin-top: 13px;\n    padding: .5em 3em 0;\n    text-decoration: none;\n    transform: rotate(45deg);\n    -webkit-transform: rotate(45deg);\n    -moz-transform: rotate(45deg);\n    -o-transform: rotate(45deg);\n    filter:  progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=-0.70710678, M21=0.70710678, M22=0.70710678, sizingMethod='auto expand'); /* IE6, IE7 */\n    -ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=-0.70710678, M21=0.70710678, M22=0.70710678, sizingMethod='auto expand')\"; /* IE8 */\n    zoom: 1;\n    position: relative\9; /* the \9 is intentional, @see http://paulirish.com/2009/browser-specific-css-hacks/*/\n    top: -21px\9;\n    left: -21px\9;\n}\n\n.get h2 {\n    margin: 1em 1em .25em 0;\n}\n\n.icon-grid {\n    list-style-type: none;\n    margin: 0;\n    padding: 0;\n    text-align: center;\n}\n\n.icon-grid li {\n    display: inline-block;\n    margin: 0;\n    padding: 0;\n    text-align: center;\n    width: 19%;\n}\n\n.icon-grid a {\n    text-decoration: none;\n    color: #666;\n    font-size: 1.25em;\n    width: 100%;\n    height: 100%;\n}\n\n.icon-grid a:before {\n    display: block;\n    font-size: 32px;\n}\n\n.footer {\n    background: #111;\n    color: #888;\n    font-size: .9em;\n}\n\n.footer a {\n    color: #999;\n}\n\n/* Embedded app overrides */\n\n.app input[type=\"text\"], .cujo-hello-container input {\n    border: 1px solid #ccc;\n    font-size: 1em;\n    padding: .25em;\n}\n\n/* Hello overrides */\n\n.cujo-hello-container .app > div {\n    padding: 1em;\n    text-align: center;\n}\n\n/* Manifesto */\n\n.manifesto .content.box {\n    max-width: 700px;\n}\n\n.manifesto .mission {\n    font-size: 1.5em;\n    margin-bottom: 1.5em;\n}\n\n.manifesto h3 {\n    font-size: 1.25em;\n    font-weight: bold;\n}\n\n.manifesto .content li {\n    line-height: 1.5;\n    font-size: 1.2em;\n}\n\n.manifesto blockquote:before {\n    content: \"\201C\";\n}\n\n.manifesto blockquote:after {\n    content: \"\201D\";\n}\n\n.manifesto blockquote {\n    font-size: 1.2em;\n    line-height: 1.5;\n}\n\n/* Screen size breaks */\n\n@media only screen and (min-width: 640px) {\n\n    nav ul {\n        display: inline-block;\n    }\n\n    nav li {\n        margin: 0 1em 0 0;\n    }\n\n    .button {\n        font-size: 1.3em;\n    }\n\n    .hero .main {\n        float: left;\n    }\n\n    .hero .social {\n        float: right;\n    }\n\n    .hero .button {\n        display: inline-block;\n        width: 8em;\n    }\n\n    .home .header-content h1 {\n        margin-left: -.5em;\n    }\n\n    .header-content h2, .header-content .getit {\n        display: block;\n    }\n\n    .hero .button-container {\n        display: inline-block;\n        margin: 0 1em;\n        width: 10em;\n    }\n\n    .hero .button {\n        margin: .5em 0;\n    }\n\n    .subheader {\n        margin: 0 0;\n        font-weight: 100;\n        font-size: 3em;\n        height: 1em;\n        line-height: 1;\n    }\n\n    .ribbon {\n        right: -35px;\n        top: 29px;\n    }\n\n    .ribbon a {\n        font-size: 0.9em;\n        height: 20px;\n        margin-top: 20px;\n    }\n\n    .tabs .item a {\n        padding: .5em 1em;\n    }\n\n    .icon-grid a:before {\n        font-size: 40px;\n    }\n}\n\n@media only screen and (min-width: 800px) {\n    nav li {\n        margin: 0 2em 0 0;\n    }\n\n    .col2 {\n        display: inline-block;\n        float: left;\n        margin-right: 2%;\n        width: 45%;\n    }\n\n    .app-container .app {\n        width: 35%;\n    }\n\n    .app-container .code {\n        width: 60%;\n    }\n\n    .get h2, .app-container h1 {\n        margin-right: 1em;\n        display: inline-block;\n    }\n}\n\n@media only screen and (min-width: 1024px) {\n    .box {\n        padding-left: 10%;\n        padding-right: 10%;\n    }\n\n    .content article {\n        float: left;\n        margin: 0 5% 1.5em 0;\n        width: 28%;\n    }\n\n    .app-container p {\n        font-size: 1.5em;\n        line-height: 1.6;\n    }\n\n    .col3 {\n        display: inline-block;\n        float: left;\n    }\n\n    .col3 {\n        width: 30%;\n    }\n}\n"; if (1) text = injector.translateUrls(text, require.toUrl("")); return text; });
-define('curl/plugin/css!theme/basic.css', ['curl/plugin/style!theme/basic.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -5485,6 +5482,9 @@ define('wire/lib/WireProxy', ['require', 'wire/lib/object', 'wire/lib/array'], f
 	// CommonJS
 	: function(factory) { module.exports = factory(require); }
 );
+
+;define('highlight/github.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = "/*\n\ngithub.com style (c) Vasily Polovnyov <vast@whiteants.net>\n\n*/\n\npre code {\n  display: block; padding: 0.5em;\n  color: #333;\n  background: #fff\n  /*background: #f8f8ff*/\n}\n\npre .comment,\npre .template_comment,\npre .diff .header,\npre .javadoc {\n  color: #998;\n  font-style: italic\n}\n\npre .keyword,\npre .css .rule .keyword,\npre .winutils,\npre .javascript .title,\npre .nginx .title,\npre .subst,\npre .request,\npre .status {\n  color: #333;\n  font-weight: bold\n}\n\npre .number,\npre .hexcolor,\npre .ruby .constant {\n  color: #099;\n}\n\npre .string,\npre .tag .value,\npre .phpdoc,\npre .tex .formula {\n  color: #d14\n}\n\npre .title,\npre .id,\npre .coffeescript .params,\npre .scss .preprocessor {\n  color: #900;\n  font-weight: bold\n}\n\npre .javascript .title,\npre .lisp .title,\npre .clojure .title,\npre .subst {\n  font-weight: normal\n}\n\npre .class .title,\npre .haskell .type,\npre .vhdl .literal,\npre .tex .command {\n  color: #458;\n  font-weight: bold\n}\n\npre .tag,\npre .tag .title,\npre .rules .property,\npre .django .tag .keyword {\n  color: #000080;\n  font-weight: normal\n}\n\npre .attribute,\npre .variable,\npre .lisp .body {\n  color: #008080\n}\n\npre .regexp {\n  color: #009926\n}\n\npre .class {\n  color: #458;\n  font-weight: bold\n}\n\npre .symbol,\npre .ruby .symbol .string,\npre .lisp .keyword,\npre .tex .special,\npre .prompt {\n  color: #990073\n}\n\npre .built_in,\npre .lisp .title,\npre .clojure .built_in {\n  color: #0086b3\n}\n\npre .preprocessor,\npre .pi,\npre .doctype,\npre .shebang,\npre .cdata {\n  color: #999;\n  font-weight: bold\n}\n\npre .deletion {\n  background: #fdd\n}\n\npre .addition {\n  background: #dfd\n}\n\npre .diff .change {\n  background: #0086b3\n}\n\npre .chunk {\n  color: #aaa\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
+define('curl/plugin/css!highlight/github.css', ['curl/plugin/style!highlight/github.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -5733,9 +5733,6 @@ define('cola/adapter/LocalStorage', ['require', 'cola/identifier/default', 'when
 );
 
 ;
-
-;define('highlight/github.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = "/*\n\ngithub.com style (c) Vasily Polovnyov <vast@whiteants.net>\n\n*/\n\npre code {\n  display: block; padding: 0.5em;\n  color: #333;\n  background: #fff\n  /*background: #f8f8ff*/\n}\n\npre .comment,\npre .template_comment,\npre .diff .header,\npre .javadoc {\n  color: #998;\n  font-style: italic\n}\n\npre .keyword,\npre .css .rule .keyword,\npre .winutils,\npre .javascript .title,\npre .nginx .title,\npre .subst,\npre .request,\npre .status {\n  color: #333;\n  font-weight: bold\n}\n\npre .number,\npre .hexcolor,\npre .ruby .constant {\n  color: #099;\n}\n\npre .string,\npre .tag .value,\npre .phpdoc,\npre .tex .formula {\n  color: #d14\n}\n\npre .title,\npre .id,\npre .coffeescript .params,\npre .scss .preprocessor {\n  color: #900;\n  font-weight: bold\n}\n\npre .javascript .title,\npre .lisp .title,\npre .clojure .title,\npre .subst {\n  font-weight: normal\n}\n\npre .class .title,\npre .haskell .type,\npre .vhdl .literal,\npre .tex .command {\n  color: #458;\n  font-weight: bold\n}\n\npre .tag,\npre .tag .title,\npre .rules .property,\npre .django .tag .keyword {\n  color: #000080;\n  font-weight: normal\n}\n\npre .attribute,\npre .variable,\npre .lisp .body {\n  color: #008080\n}\n\npre .regexp {\n  color: #009926\n}\n\npre .class {\n  color: #458;\n  font-weight: bold\n}\n\npre .symbol,\npre .ruby .symbol .string,\npre .lisp .keyword,\npre .tex .special,\npre .prompt {\n  color: #990073\n}\n\npre .built_in,\npre .lisp .title,\npre .clojure .built_in {\n  color: #0086b3\n}\n\npre .preprocessor,\npre .pi,\npre .doctype,\npre .shebang,\npre .cdata {\n  color: #999;\n  font-weight: bold\n}\n\npre .deletion {\n  background: #fdd\n}\n\npre .addition {\n  background: #dfd\n}\n\npre .diff .change {\n  background: #0086b3\n}\n\npre .chunk {\n  color: #aaa\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
-define('curl/plugin/css!highlight/github.css', ['curl/plugin/style!highlight/github.css'], function (sheet) { return sheet; });
 
 ;(function (define) {
 define('cola/dom/guess', ['require', 'cola/dom/has', 'cola/dom/classList'], function (require, $cram_r0, $cram_r1) {
@@ -6193,6 +6190,9 @@ define('wire/lib/dom/base', ['require', 'wire/lib/WireProxy', 'wire/lib/plugin/p
 		? define
 		: function (factory) { module.exports = factory(require); }
 ));
+
+;define('app/tabs/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".tabs {\n    position: relative;\n    padding: 0;\n    margin: 0;\n    line-height: 1;\n}\n\n.tabs .item {\n    display: inline-block;\n    list-style-type: none;\n}\n\n.stack {\n    height: 100%;\n    position: relative;\n    padding: 0;\n    margin: 0;\n    clear: both;\n}\n\n.stack .item {\n    display: none;\n    list-style-type: none;\n    position: relative;\n    left: 0;\n    top: 0;\n    right: 0;\n}\n\n.stack .item.active {\n    display: block;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
+define('curl/plugin/css!app/tabs/structure.css', ['curl/plugin/style!app/tabs/structure.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6230,173 +6230,8 @@ define('wire/lib/dom/base', ['require', 'wire/lib/WireProxy', 'wire/lib/plugin/p
 
 ;
 
-;define('app/tabs/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".tabs {\n    position: relative;\n    padding: 0;\n    margin: 0;\n    line-height: 1;\n}\n\n.tabs .item {\n    display: inline-block;\n    list-style-type: none;\n}\n\n.stack {\n    height: 100%;\n    position: relative;\n    padding: 0;\n    margin: 0;\n    clear: both;\n}\n\n.stack .item {\n    display: none;\n    list-style-type: none;\n    position: relative;\n    left: 0;\n    top: 0;\n    right: 0;\n}\n\n.stack .item.active {\n    display: block;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
-define('curl/plugin/css!app/tabs/structure.css', ['curl/plugin/style!app/tabs/structure.css'], function (sheet) { return sheet; });
-/** @license MIT License (c) copyright B Cavalier & J Hann */
-
-/**
- * functional
- * Helper library for working with pure functions in wire and wire plugins
- *
- * NOTE: This lib assumes Function.prototype.bind is available
- *
- * wire is part of the cujo.js family of libraries (http://cujojs.com/)
- *
- * Licensed under the MIT License at:
- * http://www.opensource.org/licenses/mit-license.php
- */
-(function (define) { 'use strict';
-define('wire/lib/functional', ['require', 'when/when'], function (require, $cram_r0) {
-
-	var when, slice;
-
-	when = $cram_r0;
-	slice = [].slice;
-
-	/**
-	 * Create a partial function
-	 * @param f {Function}
-	 * @param [args] {*} additional arguments will be bound to the returned partial
-	 * @return {Function}
-	 */
-	function partial(f, args/*...*/) {
-		// What we want here is to allow the partial function to be called in
-		// any context, by attaching it to an object, or using partialed.call/apply
-		// That's why we're not using Function.bind() here.  It has no way to bind
-		// arguments but allow the context to default.  In other words, you MUST bind
-		// the the context to something with Function.bind().
-
-		// Optimization: return f if no args provided
-		if(arguments.length == 1) {
-			return f;
-		}
-
-		args = slice.call(arguments, 1);
-
-		return function() {
-			return f.apply(this, args.concat(slice.call(arguments)));
-		};
-	}
-
-	/**
-	 * Compose functions
-	 * @param funcs {Array} array of functions to compose
-	 * @return {Function} composed function
-	 */
-	function compose(funcs) {
-
-		var first;
-		first = funcs[0];
-		funcs = funcs.slice(1);
-
-		return function composed() {
-			var context = this;
-			return funcs.reduce(function(result, f) {
-				return conditionalWhen(result, function(result) {
-					return f.call(context, result);
-				});
-			}, first.apply(this, arguments));
-		};
-	}
-
-	/**
-	 * Parses the function composition string, resolving references as needed, and
-	 * composes a function from the resolved refs.
-	 * @param proxy {Object} wire proxy on which to invoke the final method of the composition
-	 * @param composeString {String} function composition string
-	 *  of the form: 'transform1 | transform2 | ... | methodOnProxyTarget"
-	 *  @param {function} wire
-	 * @param {function} wire.resolveRef function to use is resolving references, returns a promise
-	 * @param {function} wire.getProxy function used to obtain a proxy for a component
-	 * @return {Promise} a promise for the composed function
-	 */
-	compose.parse = function parseCompose(proxy, composeString, wire) {
-
-		var bindSpecs, resolveRef, getProxy;
-
-		if(typeof composeString != 'string') {
-			return wire(composeString).then(function(func) {
-				return createProxyInvoker(proxy, func);
-			});
-		}
-
-		bindSpecs = composeString.split(/\s*\|\s*/);
-		resolveRef = wire.resolveRef;
-		getProxy = wire.getProxy;
-
-		function createProxyInvoker(proxy, method) {
-			return function() {
-				return proxy.invoke(method, arguments);
-			};
-		}
-
-		function createBound(proxy, bindSpec) {
-			var target, method;
-
-			target = bindSpec.split('.');
-
-			if(target.length > 2) {
-				throw new Error('Only 1 "." is allowed in refs: ' + bindSpec);
-			}
-
-			if(target.length > 1) {
-				method = target[1];
-				target = target[0];
-				if(!target) {
-					return function(target) {
-						return target[method].apply(target, slice.call(arguments, 1));
-					};
-				}
-				return when(getProxy(target), function(proxy) {
-					return createProxyInvoker(proxy, method);
-				});
-			} else {
-				if(proxy && typeof proxy.get(bindSpec) == 'function') {
-					return createProxyInvoker(proxy, bindSpec);
-				} else {
-					return resolveRef(bindSpec);
-				}
-			}
-
-		}
-
-		// First, resolve each transform function, stuffing it into an array
-		// The result of this reduce will an array of concrete functions
-		// Then add the final context[method] to the array of funcs and
-		// return the composition.
-		return when.reduce(bindSpecs, function(funcs, bindSpec) {
-			return when(createBound(proxy, bindSpec), function(func) {
-				funcs.push(func);
-				return funcs;
-			});
-		}, []).then(
-			function(funcs) {
-				var context = proxy && proxy.target;
-				return (funcs.length == 1 ? funcs[0] : compose(funcs)).bind(context);
-			}
-		);
-	};
-
-	function conditionalWhen(promiseOrValue, onFulfill, onReject) {
-		return when.isPromise(promiseOrValue)
-			? when(promiseOrValue, onFulfill, onReject)
-			: onFulfill(promiseOrValue);
-	}
-
-	return {
-		compose: compose,
-		partial: partial
-	};
-
-});
-})(typeof define == 'function'
-	// AMD
-	? define
-	// CommonJS
-	: function(factory) { module.exports = factory(require); }
-);
-
-;
+;define('contacts/app/edit/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".edit-contact-view {\n\tpadding: 0;\n\tposition: absolute;\n\tright: 0;\n\theight: 100%;\n\twidth: 70%;\n}\n\n.edit-contact-view fieldset {\n\tmargin: .5em 1em;\n}\n\n.edit-contact-view label {\n\tdisplay: block;\n\twidth: 100%;\n}\n\n.edit-contact-view label span {\n    display: inline-block;\n    padding: 0 2px;\n    width: 7em;\n}\n\n.edit-contact-view input[type=\"text\"] {\n\twidth: 8em;\n}\n\n.edit-contact-view input[name=\"id\"] {\n    display: none;\n}\n\n.edit-contact-view .controls {\n    position: absolute;\n    bottom: 0;\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
+define('curl/plugin/css!contacts/app/edit/structure.css', ['curl/plugin/style!contacts/app/edit/structure.css'], function (sheet) { return sheet; });
 
 ;(function (define) {
 define('cola/dom/bindingHandler', ['require', 'cola/dom/guess', 'cola/dom/form'], function (require, $cram_r0, $cram_r1) {
@@ -6673,6 +6508,8 @@ define('when/sequence', ['require', 'when/when'], function (require, $cram_r0) {
 );
 
 
+
+;
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6897,10 +6734,171 @@ define('wire/dom/render', ['wire/lib/dom/base', 'when/when'], function (base, wh
 
 });
 
-;define('contacts/app/edit/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".edit-contact-view {\n\tpadding: 0;\n\tposition: absolute;\n\tright: 0;\n\theight: 100%;\n\twidth: 70%;\n}\n\n.edit-contact-view fieldset {\n\tmargin: .5em 1em;\n}\n\n.edit-contact-view label {\n\tdisplay: block;\n\twidth: 100%;\n}\n\n.edit-contact-view label span {\n    display: inline-block;\n    padding: 0 2px;\n    width: 7em;\n}\n\n.edit-contact-view input[type=\"text\"] {\n\twidth: 8em;\n}\n\n.edit-contact-view input[name=\"id\"] {\n    display: none;\n}\n\n.edit-contact-view .controls {\n    position: absolute;\n    bottom: 0;\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
-define('curl/plugin/css!contacts/app/edit/structure.css', ['curl/plugin/style!contacts/app/edit/structure.css'], function (sheet) { return sheet; });
+;define('contacts/app/list/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".contact-list-view {\n\tposition: absolute;\n\theight: 100%;\n\twidth: 30%;\n    margin: 0;\n    padding: 0;\n}\n\n.contact-list-view .contact {\n    padding: .25em;\n\tlist-style: none;\n}\n\n.contact-list-view {\n\toverflow-y: auto;\n}\n\n.contact-list-view .remove {\n    color: #aaa;\n    opacity: 0;\n}\n\n.contact-list-view .contact:hover .remove {\n    opacity: 1;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
+define('curl/plugin/css!contacts/app/list/structure.css', ['curl/plugin/style!contacts/app/list/structure.css'], function (sheet) { return sheet; });
+/** @license MIT License (c) copyright B Cavalier & J Hann */
 
-;
+/**
+ * functional
+ * Helper library for working with pure functions in wire and wire plugins
+ *
+ * NOTE: This lib assumes Function.prototype.bind is available
+ *
+ * wire is part of the cujo.js family of libraries (http://cujojs.com/)
+ *
+ * Licensed under the MIT License at:
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+(function (define) { 'use strict';
+define('wire/lib/functional', ['require', 'when/when'], function (require, $cram_r0) {
+
+	var when, slice;
+
+	when = $cram_r0;
+	slice = [].slice;
+
+	/**
+	 * Create a partial function
+	 * @param f {Function}
+	 * @param [args] {*} additional arguments will be bound to the returned partial
+	 * @return {Function}
+	 */
+	function partial(f, args/*...*/) {
+		// What we want here is to allow the partial function to be called in
+		// any context, by attaching it to an object, or using partialed.call/apply
+		// That's why we're not using Function.bind() here.  It has no way to bind
+		// arguments but allow the context to default.  In other words, you MUST bind
+		// the the context to something with Function.bind().
+
+		// Optimization: return f if no args provided
+		if(arguments.length == 1) {
+			return f;
+		}
+
+		args = slice.call(arguments, 1);
+
+		return function() {
+			return f.apply(this, args.concat(slice.call(arguments)));
+		};
+	}
+
+	/**
+	 * Compose functions
+	 * @param funcs {Array} array of functions to compose
+	 * @return {Function} composed function
+	 */
+	function compose(funcs) {
+
+		var first;
+		first = funcs[0];
+		funcs = funcs.slice(1);
+
+		return function composed() {
+			var context = this;
+			return funcs.reduce(function(result, f) {
+				return conditionalWhen(result, function(result) {
+					return f.call(context, result);
+				});
+			}, first.apply(this, arguments));
+		};
+	}
+
+	/**
+	 * Parses the function composition string, resolving references as needed, and
+	 * composes a function from the resolved refs.
+	 * @param proxy {Object} wire proxy on which to invoke the final method of the composition
+	 * @param composeString {String} function composition string
+	 *  of the form: 'transform1 | transform2 | ... | methodOnProxyTarget"
+	 *  @param {function} wire
+	 * @param {function} wire.resolveRef function to use is resolving references, returns a promise
+	 * @param {function} wire.getProxy function used to obtain a proxy for a component
+	 * @return {Promise} a promise for the composed function
+	 */
+	compose.parse = function parseCompose(proxy, composeString, wire) {
+
+		var bindSpecs, resolveRef, getProxy;
+
+		if(typeof composeString != 'string') {
+			return wire(composeString).then(function(func) {
+				return createProxyInvoker(proxy, func);
+			});
+		}
+
+		bindSpecs = composeString.split(/\s*\|\s*/);
+		resolveRef = wire.resolveRef;
+		getProxy = wire.getProxy;
+
+		function createProxyInvoker(proxy, method) {
+			return function() {
+				return proxy.invoke(method, arguments);
+			};
+		}
+
+		function createBound(proxy, bindSpec) {
+			var target, method;
+
+			target = bindSpec.split('.');
+
+			if(target.length > 2) {
+				throw new Error('Only 1 "." is allowed in refs: ' + bindSpec);
+			}
+
+			if(target.length > 1) {
+				method = target[1];
+				target = target[0];
+				if(!target) {
+					return function(target) {
+						return target[method].apply(target, slice.call(arguments, 1));
+					};
+				}
+				return when(getProxy(target), function(proxy) {
+					return createProxyInvoker(proxy, method);
+				});
+			} else {
+				if(proxy && typeof proxy.get(bindSpec) == 'function') {
+					return createProxyInvoker(proxy, bindSpec);
+				} else {
+					return resolveRef(bindSpec);
+				}
+			}
+
+		}
+
+		// First, resolve each transform function, stuffing it into an array
+		// The result of this reduce will an array of concrete functions
+		// Then add the final context[method] to the array of funcs and
+		// return the composition.
+		return when.reduce(bindSpecs, function(funcs, bindSpec) {
+			return when(createBound(proxy, bindSpec), function(func) {
+				funcs.push(func);
+				return funcs;
+			});
+		}, []).then(
+			function(funcs) {
+				var context = proxy && proxy.target;
+				return (funcs.length == 1 ? funcs[0] : compose(funcs)).bind(context);
+			}
+		);
+	};
+
+	function conditionalWhen(promiseOrValue, onFulfill, onReject) {
+		return when.isPromise(promiseOrValue)
+			? when(promiseOrValue, onFulfill, onReject)
+			: onFulfill(promiseOrValue);
+	}
+
+	return {
+		compose: compose,
+		partial: partial
+	};
+
+});
+})(typeof define == 'function'
+	// AMD
+	? define
+	// CommonJS
+	: function(factory) { module.exports = factory(require); }
+);
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 
@@ -7298,8 +7296,8 @@ define('wire/lib/plugin-base/dom', ['wire/domReady', 'when/when', 'wire/lib/dom/
 	};
 });
 
-;define('contacts/app/list/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".contact-list-view {\n\tposition: absolute;\n\theight: 100%;\n\twidth: 30%;\n    margin: 0;\n    padding: 0;\n}\n\n.contact-list-view .contact {\n    padding: .25em;\n\tlist-style: none;\n}\n\n.contact-list-view {\n\toverflow-y: auto;\n}\n\n.contact-list-view .remove {\n    color: #aaa;\n    opacity: 0;\n}\n\n.contact-list-view .contact:hover .remove {\n    opacity: 1;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
-define('curl/plugin/css!contacts/app/list/structure.css', ['curl/plugin/style!contacts/app/list/structure.css'], function (sheet) { return sheet; });
+;define('contacts/theme/basic.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".cujo-contacts fieldset {\n\tborder: none;\n}\n\n.cujo-contacts input[type=\"text\"] {\n    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\n    font-size: 1em;\n    margin: .5em 0 1em 0;\n}\n\n::-webkit-input-placeholder {\n    color: #acacac;\n}\n:-moz-placeholder {\n    color: #acacac;\n}\n::-moz-placeholder {\n    color: #acacac;\n}\n:-ms-input-placeholder {\n    color: #acacac;\n}\n\n.cujo-contacts label {\n    color: #acacac;\n    font-weight: normal;\n}\n\n.cujo-contacts {\n\twidth: auto;\n    margin: 0 auto;\n\toverflow: visible;\n}\n\n.cujo-contacts  .contacts-view-container {\n\tposition: relative;\n\theight: 100%;\n\twidth: auto;\n\tmin-height: 400px;\n\toverflow: hidden;\n\tclear: both;\n}\n\n.cujo-contacts .contact-list-view {\n    background-color: #fafafa;\n    cursor: pointer;\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
+define('curl/plugin/css!contacts/theme/basic.css', ['curl/plugin/style!contacts/theme/basic.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -7374,9 +7372,6 @@ define('wire/lib/loader', ['require', 'when/when', 'wire/lib/object'], function 
 });
 }(typeof define === 'function' ? define : function(factory) { module.exports = factory(require); }));
 
-
-;define('contacts/theme/basic.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".cujo-contacts fieldset {\n\tborder: none;\n}\n\n.cujo-contacts input[type=\"text\"] {\n    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\n    font-size: 1em;\n    margin: .5em 0 1em 0;\n}\n\n::-webkit-input-placeholder {\n    color: #acacac;\n}\n:-moz-placeholder {\n    color: #acacac;\n}\n::-moz-placeholder {\n    color: #acacac;\n}\n:-ms-input-placeholder {\n    color: #acacac;\n}\n\n.cujo-contacts label {\n    color: #acacac;\n    font-weight: normal;\n}\n\n.cujo-contacts {\n\twidth: auto;\n    margin: 0 auto;\n\toverflow: visible;\n}\n\n.cujo-contacts  .contacts-view-container {\n\tposition: relative;\n\theight: 100%;\n\twidth: auto;\n\tmin-height: 400px;\n\toverflow: hidden;\n\tclear: both;\n}\n\n.cujo-contacts .contact-list-view {\n    background-color: #fafafa;\n    cursor: pointer;\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
-define('curl/plugin/css!contacts/theme/basic.css', ['curl/plugin/style!contacts/theme/basic.css'], function (sheet) { return sheet; });
 
 ;(function (define) {
 define('cola/dom/adapter/NodeList', ['require', 'cola/SortedMap', 'cola/dom/classList', 'cola/dom/adapter/Node'], function (require, $cram_r0, $cram_r1, $cram_r2) {
@@ -8388,6 +8383,88 @@ define('wire/lib/connection', ['require', 'when/when', 'wire/lib/array', 'wire/l
 	// CommonJS
 	: function(factory) { module.exports = factory(require); }
 );
+/** @license MIT License (c) copyright 2010-2013 original author or authors */
+
+/**
+ * Licensed under the MIT License at:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * @author: Brian Cavalier
+ * @author: John Hann
+ */
+
+(function(define) { 'use strict';
+define('wire/lib/advice', ['require', 'when/when'], function (require, $cram_r0) {
+
+	var when;
+
+	when = $cram_r0;
+
+	// Very simple advice functions for internal wire use only.
+	// This is NOT a replacement for meld.  These advices stack
+	// differently and will not be as efficient.
+	return {
+		after: after,
+		beforeAsync: beforeAsync,
+		afterAsync: afterAsync
+	};
+
+	/**
+	 * Execute advice after f, passing f's return value to advice
+	 * @param {function} f function to advise
+	 * @param {function} advice function to execute after f
+	 * @returns {function} advised function
+	 */
+	function after(f, advice) {
+		return function() {
+			return advice.call(this, f.apply(this, arguments));
+		}
+	}
+
+	/**
+	 * Execute f after a promise returned by advice fulfills. The same args
+	 * will be passed to both advice and f.
+	 * @param {function} f function to advise
+	 * @param {function} advice function to execute before f
+	 * @returns {function} advised function which always returns a promise
+	 */
+	function beforeAsync(f, advice) {
+		return function() {
+			var self, args;
+
+			self = this;
+			args = arguments;
+
+			return when(args, function() {
+				return advice.apply(self, args);
+			}).then(function() {
+				return f.apply(self, args);
+			});
+		}
+	}
+
+	/**
+	 * Execute advice after a promise returned by f fulfills. The same args
+	 * will be passed to both advice and f.
+	 * @param {function} f function to advise
+	 * @param {function} advice function to execute after f
+	 * @returns {function} advised function which always returns a promise
+	 */
+	function afterAsync(f, advice) {
+		return function() {
+			var self = this;
+
+			return when(arguments, function(args) {
+				return f.apply(self, args);
+			}).then(function(result) {
+				return advice.call(self, result);
+			});
+		}
+	}
+
+
+});
+}(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -8653,88 +8730,6 @@ define('wire/aop', ['require', 'meld/meld', 'when/when', 'when/sequence', 'wire/
 	? define
     : function(factory) { module.exports = factory(require); }
 );
-/** @license MIT License (c) copyright 2010-2013 original author or authors */
-
-/**
- * Licensed under the MIT License at:
- * http://www.opensource.org/licenses/mit-license.php
- *
- * @author: Brian Cavalier
- * @author: John Hann
- */
-
-(function(define) { 'use strict';
-define('wire/lib/advice', ['require', 'when/when'], function (require, $cram_r0) {
-
-	var when;
-
-	when = $cram_r0;
-
-	// Very simple advice functions for internal wire use only.
-	// This is NOT a replacement for meld.  These advices stack
-	// differently and will not be as efficient.
-	return {
-		after: after,
-		beforeAsync: beforeAsync,
-		afterAsync: afterAsync
-	};
-
-	/**
-	 * Execute advice after f, passing f's return value to advice
-	 * @param {function} f function to advise
-	 * @param {function} advice function to execute after f
-	 * @returns {function} advised function
-	 */
-	function after(f, advice) {
-		return function() {
-			return advice.call(this, f.apply(this, arguments));
-		}
-	}
-
-	/**
-	 * Execute f after a promise returned by advice fulfills. The same args
-	 * will be passed to both advice and f.
-	 * @param {function} f function to advise
-	 * @param {function} advice function to execute before f
-	 * @returns {function} advised function which always returns a promise
-	 */
-	function beforeAsync(f, advice) {
-		return function() {
-			var self, args;
-
-			self = this;
-			args = arguments;
-
-			return when(args, function() {
-				return advice.apply(self, args);
-			}).then(function() {
-				return f.apply(self, args);
-			});
-		}
-	}
-
-	/**
-	 * Execute advice after a promise returned by f fulfills. The same args
-	 * will be passed to both advice and f.
-	 * @param {function} f function to advise
-	 * @param {function} advice function to execute after f
-	 * @returns {function} advised function which always returns a promise
-	 */
-	function afterAsync(f, advice) {
-		return function() {
-			var self = this;
-
-			return when(arguments, function(args) {
-				return f.apply(self, args);
-			}).then(function(result) {
-				return advice.call(self, result);
-			});
-		}
-	}
-
-
-});
-}(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(require); }));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -11699,7 +11694,7 @@ define('wire/wire', ['require', 'wire/lib/context'], function (require, $cram_r0
 		? define : function(factory) { module.exports = factory(require); }
 );
 
-;define('app/main', ['wire/wire', 'wire/dom', 'wire/dom/render', 'app/hello-sample/spec', 'app/contacts-sample/spec', 'app/homepage-sample/spec', 'curl/plugin/i18n!app/subheader/strings', 'app/subheader/selectText', 'curl/plugin/text!app/subheader/template.html', 'curl/plugin/css!theme/basic.css', 'curl/plugin/css!highlight/github.css', 'wire/on', 'cola/cola', 'hello/app/main', 'app/tabs/spec', 'cola/Collection', 'cola/adapter/Array', 'highlight/amd!hello/app/template.html', 'highlight/amd!hello/app/controller.js', 'highlight/amd!hello/app/strings.js', 'highlight/amd!hello/app/main.js', 'curl/plugin/text!app/contacts-sample/template.html', 'contacts/app/main', 'highlight/amd!contacts/app/controller.js', 'highlight/amd!contacts/app/list/template.html', 'highlight/amd!contacts/app/edit/template.html', 'highlight/amd!contacts/app/main.js', 'highlight/amd!app/main.js', 'highlight/amd!app/subheader/selectText.js', 'highlight/amd!test/subheader/selectText-test.js', 'hello/app/controller', 'curl/plugin/text!hello/app/template.html', 'curl/plugin/i18n!hello/app/strings.js', 'wire/aop', 'app/tabs/controller', 'curl/plugin/text!app/tabs/tabs.html', 'curl/plugin/css!app/tabs/structure.css', 'curl/plugin/text!app/tabs/stack.html', 'wire/connect', 'contacts/app/collection/spec', 'contacts/app/controller', 'curl/plugin/text!contacts/app/edit/template.html', 'curl/plugin/i18n!contacts/app/edit/strings', 'curl/plugin/css!contacts/app/edit/structure.css', 'curl/plugin/text!contacts/app/list/template.html', 'curl/plugin/css!contacts/app/list/structure.css', 'contacts/app/list/compareByLastFirst', 'curl/plugin/css!contacts/theme/basic.css', 'cola/dom/form', 'contacts/app/collection/validateContact', 'cola/adapter/LocalStorage', 'contacts/app/collection/cleanContact', 'contacts/app/collection/generateMetadata'], { 
+;define('app/main', ['wire/wire', 'wire/dom', 'wire/dom/render', 'app/hello-sample/spec', 'app/contacts-sample/spec', 'app/homepage-sample/spec', 'curl/plugin/i18n!app/subheader/strings', 'app/subheader/selectText', 'curl/plugin/text!app/subheader/template.html', 'curl/plugin/css!highlight/github.css', 'wire/on', 'cola/cola', 'hello/app/main', 'app/tabs/spec', 'cola/Collection', 'cola/adapter/Array', 'highlight/amd!hello/app/template.html', 'highlight/amd!hello/app/controller.js', 'highlight/amd!hello/app/strings.js', 'highlight/amd!hello/app/main.js', 'curl/plugin/text!app/contacts-sample/template.html', 'contacts/app/main', 'highlight/amd!contacts/app/controller.js', 'highlight/amd!contacts/app/list/template.html', 'highlight/amd!contacts/app/edit/template.html', 'highlight/amd!contacts/app/main.js', 'highlight/amd!app/main.js', 'highlight/amd!app/subheader/selectText.js', 'highlight/amd!test/subheader/selectText-test.js', 'hello/app/controller', 'curl/plugin/text!hello/app/template.html', 'curl/plugin/i18n!hello/app/strings.js', 'wire/aop', 'app/tabs/controller', 'curl/plugin/text!app/tabs/tabs.html', 'curl/plugin/css!app/tabs/structure.css', 'curl/plugin/text!app/tabs/stack.html', 'wire/connect', 'contacts/app/collection/spec', 'contacts/app/controller', 'curl/plugin/text!contacts/app/edit/template.html', 'curl/plugin/i18n!contacts/app/edit/strings', 'curl/plugin/css!contacts/app/edit/structure.css', 'curl/plugin/text!contacts/app/list/template.html', 'curl/plugin/css!contacts/app/list/structure.css', 'contacts/app/list/compareByLastFirst', 'curl/plugin/css!contacts/theme/basic.css', 'cola/dom/form', 'contacts/app/collection/validateContact', 'cola/adapter/LocalStorage', 'contacts/app/collection/cleanContact', 'contacts/app/collection/generateMetadata'], { 
 	helloSample: { wire: 'app/hello-sample/spec' },
 
 	contactsSample: { wire: 'app/contacts-sample/spec' },
@@ -11722,7 +11717,6 @@ define('wire/wire', ['require', 'wire/lib/context'], function (require, $cram_r0
 		}
 	},
 
-	theme: { module: 'css!theme/basic.css' },
 	highlightTheme: { module: 'css!highlight/github.css' },
 
 	$plugins: [
