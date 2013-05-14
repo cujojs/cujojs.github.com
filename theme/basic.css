@@ -65,6 +65,9 @@ nav li {
 }
 
 .async {
+    overflow: hidden;
+    opacity: 1;
+    /*height: 100%;*/
     transition: opacity .5s ease;
     -webkit-transition: opacity .5s ease;
     -moz-transition: opacity .5s ease;
@@ -458,6 +461,23 @@ pre code {
     text-align: center;
 }
 
+.cujo-hello-container .async {
+    min-height: 317px;
+}
+
+/* Contacts overrides */
+
+.cujo-contacts-container .async {
+    min-height: 691px;
+}
+
+/* cujoJS.com overrides */
+
+.cujo-homepage-container .async {
+    min-height: 929px;
+}
+
+
 /* Page variants */
 
 .constrain .content.box {
@@ -597,6 +617,18 @@ pre code {
 
     .app-container .code {
         width: 60%;
+    }
+
+    .cujo-hello-container .async {
+        min-height: 171px;
+    }
+
+    .cujo-contacts-container .async {
+        min-height: 430px;
+    }
+
+    .cujo-homepage-container .async {
+        min-height: 478px;
     }
 
     .get h2, .app-container h1 {
