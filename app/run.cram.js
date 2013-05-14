@@ -62,6 +62,54 @@ define('poly/lib/_base', ['require', 'exports', 'module'], function (require, ex
 
 });
 /**
+ * Function polyfill / shims
+ *
+ * (c) copyright 2011-2012 Brian Cavalier and John Hann
+ *
+ * This module is part of the cujo.js family of libraries (http://cujojs.com/).
+ *
+ * Licensed under the MIT License at:
+ * 		http://www.opensource.org/licenses/mit-license.php
+ */
+define('poly/function', ['poly/lib/_base'], function (base) {
+"use strict";
+
+	var bind,
+		slice = [].slice,
+		proto = Function.prototype,
+		featureMap;
+
+	featureMap = {
+		'function-bind': 'bind'
+	};
+
+	function has (feature) {
+		var prop = featureMap[feature];
+		return base.isFunction(proto[prop]);
+	}
+
+	// check for missing features
+	if (!has('function-bind')) {
+		// adapted from Mozilla Developer Network example at
+		// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind
+		bind = function bind (obj) {
+			var args = slice.call(arguments, 1),
+				self = this,
+				nop = function () {},
+				bound = function () {
+				  return self.apply(this instanceof nop ? this : (obj || {}), args.concat(slice.call(arguments)));
+				};
+			nop.prototype = this.prototype || {}; // Firefox cries sometimes if prototype is undefined
+			bound.prototype = new nop();
+			return bound;
+		};
+		proto.bind = bind;
+	}
+
+	return {};
+
+});
+/**
  * Object polyfill / shims
  *
  * (c) copyright 2011-2012 Brian Cavalier and John Hann
@@ -635,54 +683,6 @@ define('poly/array', ['poly/lib/_base'], function (base) {
 	}
 
 });
-/**
- * Function polyfill / shims
- *
- * (c) copyright 2011-2012 Brian Cavalier and John Hann
- *
- * This module is part of the cujo.js family of libraries (http://cujojs.com/).
- *
- * Licensed under the MIT License at:
- * 		http://www.opensource.org/licenses/mit-license.php
- */
-define('poly/function', ['poly/lib/_base'], function (base) {
-"use strict";
-
-	var bind,
-		slice = [].slice,
-		proto = Function.prototype,
-		featureMap;
-
-	featureMap = {
-		'function-bind': 'bind'
-	};
-
-	function has (feature) {
-		var prop = featureMap[feature];
-		return base.isFunction(proto[prop]);
-	}
-
-	// check for missing features
-	if (!has('function-bind')) {
-		// adapted from Mozilla Developer Network example at
-		// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind
-		bind = function bind (obj) {
-			var args = slice.call(arguments, 1),
-				self = this,
-				nop = function () {},
-				bound = function () {
-				  return self.apply(this instanceof nop ? this : (obj || {}), args.concat(slice.call(arguments)));
-				};
-			nop.prototype = this.prototype || {}; // Firefox cries sometimes if prototype is undefined
-			bound.prototype = new nop();
-			return bound;
-		};
-		proto.bind = bind;
-	}
-
-	return {};
-
-});
 
 ;define('curl/plugin/i18n!app/subheader/strings', function () {
 	return {"phrases":["The <em>un</em>framework: Free your code","Create, modify, and <em>test</em> with ease","Scale your team as your app grows","Use the web. Don't circumvent it"]};
@@ -823,6 +823,11 @@ define('poly/function', ['poly/lib/_base'], function (base) {
 		}
 	},
 
+	homepageImage: {
+		element: { $ref: 'dom.first!.cujo-homepage-container .screenshot' },
+		properties: { src: 'assets/img/cujojs-com.png' }
+	},
+
 	homepageSources: { create: 'cola/Collection' },
 	homepageSourcesData: {
 		create: {
@@ -868,10 +873,6 @@ define('app/subheader/selectText', function () {
 
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
-
-;define('curl/plugin/text!app/subheader/template.html', function () {
-	return "<h2>${text}</h2>\n";
-});
 
 ;define('hello/app/main', { // Wire spec
 
@@ -955,10 +956,6 @@ define('app/subheader/selectText', function () {
 
 ;define('highlight/amd!hello/app/main.js', function () {
 	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// Wire spec</span>\n\n  controller: {\n    create: <span class=\"string\">'hello/app/controller'</span>,\n    properties: {\n      node: { $ref: <span class=\"string\">'first!span'</span>, at: <span class=\"string\">'view'</span> }\n    },\n    on: { view: { <span class=\"string\">'input'</span>: <span class=\"string\">'update'</span> } }\n  },\n\n  view: {\n    render: {\n      template: { module: <span class=\"string\">'text!hello/app/template.html'</span> },\n      replace: { module: <span class=\"string\">'i18n!hello/app/strings.js'</span> }\n    },\n    insert: { last: <span class=\"string\">'root'</span> }\n  },\n\n  $plugins: [<span class=\"string\">'wire/dom'</span>, <span class=\"string\">'wire/dom/render'</span>, <span class=\"string\">'wire/on'</span>]\n});</code></pre>";
-});
-
-;define('curl/plugin/text!app/contacts-sample/template.html', function () {
-	return "<div class=\"cujo-contacts\">\n    <div class=\"contacts-view-container\"></div>\n</div>";
 });
 
 ;define('contacts/app/main', {// Wire spec
@@ -1119,12 +1116,8 @@ define('app/tabs/controller', function () {
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 
-;define('curl/plugin/text!app/tabs/tabs.html', function () {
-	return "<ul class=\"tabs\">\n    <li class=\"item\"><a href=\"#\" class=\"tab-title\"></a></li>\n</ul>";
-});
-
-;define('curl/plugin/text!app/tabs/stack.html', function () {
-	return "<ul class=\"stack\">\n    <li class=\"item\"></li>\n</ul>";
+;define('curl/plugin/text!app/subheader/template.html', function () {
+	return "<h2>${text}</h2>\n";
 });
 
 ;define('contacts/app/collection/spec', {
@@ -1492,6 +1485,59 @@ define('cola/dom/form', function () {
 	}
 
 });
+
+;define('curl/plugin/_fetchText', function () {
+
+	var xhr, progIds;
+
+	progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
+
+	xhr = function () {
+		if (typeof XMLHttpRequest !== "undefined") {
+			// rewrite the getXhr method to always return the native implementation
+			xhr = function () {
+				return new XMLHttpRequest();
+			};
+		}
+		else {
+			// keep trying progIds until we find the correct one, then rewrite the getXhr method
+			// to always return that one.
+			var noXhr = xhr = function () {
+				throw new Error("getXhr(): XMLHttpRequest not available");
+			};
+			while (progIds.length > 0 && xhr === noXhr) (function (id) {
+				try {
+					new ActiveXObject(id);
+					xhr = function () {
+						return new ActiveXObject(id);
+					};
+				}
+				catch (ex) {
+				}
+			}(progIds.shift()));
+		}
+		return xhr();
+	};
+
+	function fetchText (url, callback, errback) {
+		var x = xhr();
+		x.open('GET', url, true);
+		x.onreadystatechange = function (e) {
+			if (x.readyState === 4) {
+				if (x.status < 400) {
+					callback(x.responseText);
+				}
+				else {
+					errback(new Error('fetchText() failed. status: ' + x.statusText));
+				}
+			}
+		};
+		x.send(null);
+	}
+
+	return fetchText;
+
+});
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -1628,255 +1674,17 @@ define('cola/dom/form', function () {
 
 }(this, this.document));
 
-;define('curl/plugin/_fetchText', function () {
-
-	var xhr, progIds;
-
-	progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
-
-	xhr = function () {
-		if (typeof XMLHttpRequest !== "undefined") {
-			// rewrite the getXhr method to always return the native implementation
-			xhr = function () {
-				return new XMLHttpRequest();
-			};
-		}
-		else {
-			// keep trying progIds until we find the correct one, then rewrite the getXhr method
-			// to always return that one.
-			var noXhr = xhr = function () {
-				throw new Error("getXhr(): XMLHttpRequest not available");
-			};
-			while (progIds.length > 0 && xhr === noXhr) (function (id) {
-				try {
-					new ActiveXObject(id);
-					xhr = function () {
-						return new ActiveXObject(id);
-					};
-				}
-				catch (ex) {
-				}
-			}(progIds.shift()));
-		}
-		return xhr();
-	};
-
-	function fetchText (url, callback, errback) {
-		var x = xhr();
-		x.open('GET', url, true);
-		x.onreadystatechange = function (e) {
-			if (x.readyState === 4) {
-				if (x.status < 400) {
-					callback(x.responseText);
-				}
-				else {
-					errback(new Error('fetchText() failed. status: ' + x.statusText));
-				}
-			}
-		};
-		x.send(null);
-	}
-
-	return fetchText;
-
+;define('curl/plugin/text!app/contacts-sample/template.html', function () {
+	return "<div class=\"cujo-contacts\">\n    <div class=\"contacts-view-container\"></div>\n</div>";
 });
-/** MIT License (c) copyright B Cavalier & J Hann */
 
-/**
- * curl style! plugin
- */
-
-define('curl/plugin/style', function () {
-
-	var nonRelUrlRe, findUrlRx, undef, doc, head;
-
-	if (typeof window != 'undefined') {
-		doc = window.document;
-		head = doc.head || doc.getElementsByTagName('head')[0];
-	}
-
-	// tests for absolute urls and root-relative urls
-	nonRelUrlRe = /^\/|^[^:]*:\/\//;
-	// Note: this will fail if there are parentheses in the url
-	findUrlRx = /url\s*\(['"]?([^'"\)]*)['"]?\)/g;
-
-	function translateUrls (cssText, baseUrl) {
-		return cssText.replace(findUrlRx, function (all, url) {
-			return 'url("' + translateUrl(url, baseUrl) + '")';
-		});
-	}
-
-	function translateUrl (url, parentPath) {
-		// if this is a relative url
-		if (!nonRelUrlRe.test(url)) {
-			// append path onto it
-			url = parentPath + url;
-		}
-		return url;
-	}
-
-	/***** style element functions *****/
-
-	var currentStyle, callbacks = [];
-
-	function createStyle (cssText, callback, errback) {
-
-		try {
-			clearTimeout(createStyle.debouncer);
-			if (createStyle.accum) {
-				createStyle.accum.push(cssText);
-			}
-			else {
-				createStyle.accum = [cssText];
-				currentStyle = doc.createStyleSheet ? doc.createStyleSheet() :
-					head.appendChild(doc.createElement('style'));
-			}
-
-			callbacks.push({
-				callback: callback,
-				errback: errback,
-				sheet: currentStyle
-			});
-
-			createStyle.debouncer = setTimeout(function () {
-				var style, allCssText;
-
-				try {
-					style = currentStyle;
-					currentStyle = undef;
-
-					allCssText = createStyle.accum.join('\n');
-					createStyle.accum = undef;
-
-					// for safari which chokes on @charset "UTF-8";
-					// TODO: see if Safari 5.x and up still complain
-					allCssText = allCssText.replace(/.+charset[^;]+;/g, '');
-
-					// IE 6-8 won't accept the W3C method for inserting css text
-					'cssText' in style ? style.cssText = allCssText :
-						style.appendChild(doc.createTextNode(allCssText));
-
-					waitForDocumentComplete(notify);
-				}
-				catch (ex) {
-					// just notify most recent errback. no need to spam
-					errback(ex);
-				}
-
-			}, 0);
-
-		}
-		catch (ex) {
-			errback(ex);
-		}
-
-	}
-
-	function notify () {
-		var list = callbacks;
-		callbacks = [];
-		for (var i = 0, len = list.length; i < len; i++) {
-			list[i].callback(list[i].sheet);
-		}
-	}
-
-	/**
-	 * Keep checking for the document readyState to be "complete" since
-	 * Chrome doesn't apply the styles to the document until that time.
-	 * If we return before readyState == 'complete', Chrome may not have
-	 * applied the styles, yet.
-	 * Chrome only.
-	 * @private
-	 * @param cb
-	 */
-	function waitForDocumentComplete (cb) {
-		// this isn't exactly the same as domReady (when dom can be
-		// manipulated). it's later (when styles are applied).
-		// chrome needs this (and opera?)
-		function complete () {
-			if (isDocumentComplete()) {
-				cb();
-			}
-			else {
-				setTimeout(complete, 10);
-			}
-		}
-		complete();
-	}
-
-	/**
-	 * Returns true if the documents' readyState == 'complete' or the
-	 * document doesn't implement readyState.
-	 * Chrome only.
-	 * @private
-	 * @return {Boolean}
-	 */
-	function isDocumentComplete () {
-		return !doc.readyState || doc.readyState == 'complete';
-	}
-
-	createStyle.load = function (absId, req, loaded, config) {
-		// get css text
-		req([absId], function (cssText) {
-			// TODO: translate urls?
-			createStyle(cssText, loaded, loaded.error);
-		});
-	};
-	
-	createStyle.translateUrls = translateUrls;
-
-	return createStyle;
+;define('curl/plugin/text!app/tabs/tabs.html', function () {
+	return "<ul class=\"tabs\">\n    <li class=\"item\"><a href=\"#\" class=\"tab-title\"></a></li>\n</ul>";
 });
-/** MIT License (c) copyright B Cavalier & J Hann */
 
-(function (define) {
-define('cola/relational/propertiesKey', function () {
-	"use strict";
-
-	var defaultSeparator, undef;
-
-	defaultSeparator = '|';
-
-	/**
-	 * Creates a transform whose input is an object and whose output
-	 * is the value of object[propName] if propName is a String, or
-	 * if propName is an Array, the Array.prototype.join()ed values
-	 * of all the property names in the Array.
-	 * @param propName {String|Array} name(s) of the property(ies) on the input object to return
-	 * @return {Function} transform function(object) returns any
-	 */
-	return function(propName, separator) {
-
-		if (typeof propName == 'string') {
-			return function (object) {
-				return object && object[propName];
-			};
-
-		} else {
-			if (arguments.length === 1) separator = defaultSeparator;
-
-			return function (object) {
-				if (!object) return undef;
-
-				var values, i, len, val;
-
-				values = [];
-				for (i = 0, len = propName.length; i < len; i++) {
-					val = object[propName[i]];
-					if (val != null) values.push(val);
-				}
-
-				return values.join( separator);
-			};
-		}
-	};
-
+;define('curl/plugin/text!app/tabs/stack.html', function () {
+	return "<ul class=\"stack\">\n    <li class=\"item\"></li>\n</ul>";
 });
-}(
-typeof define == 'function'
-	? define
-	: function (factory) { module.exports = factory(); }
-));
 /** @license MIT License (c) copyright 2011-2013 original author or authors */
 
 /**
@@ -2664,6 +2472,203 @@ define('when/when', function () {
 })(
 	typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(); }
 );
+/** MIT License (c) copyright B Cavalier & J Hann */
+
+/**
+ * curl style! plugin
+ */
+
+define('curl/plugin/style', function () {
+
+	var nonRelUrlRe, findUrlRx, undef, doc, head;
+
+	if (typeof window != 'undefined') {
+		doc = window.document;
+		head = doc.head || doc.getElementsByTagName('head')[0];
+	}
+
+	// tests for absolute urls and root-relative urls
+	nonRelUrlRe = /^\/|^[^:]*:\/\//;
+	// Note: this will fail if there are parentheses in the url
+	findUrlRx = /url\s*\(['"]?([^'"\)]*)['"]?\)/g;
+
+	function translateUrls (cssText, baseUrl) {
+		return cssText.replace(findUrlRx, function (all, url) {
+			return 'url("' + translateUrl(url, baseUrl) + '")';
+		});
+	}
+
+	function translateUrl (url, parentPath) {
+		// if this is a relative url
+		if (!nonRelUrlRe.test(url)) {
+			// append path onto it
+			url = parentPath + url;
+		}
+		return url;
+	}
+
+	/***** style element functions *****/
+
+	var currentStyle, callbacks = [];
+
+	function createStyle (cssText, callback, errback) {
+
+		try {
+			clearTimeout(createStyle.debouncer);
+			if (createStyle.accum) {
+				createStyle.accum.push(cssText);
+			}
+			else {
+				createStyle.accum = [cssText];
+				currentStyle = doc.createStyleSheet ? doc.createStyleSheet() :
+					head.appendChild(doc.createElement('style'));
+			}
+
+			callbacks.push({
+				callback: callback,
+				errback: errback,
+				sheet: currentStyle
+			});
+
+			createStyle.debouncer = setTimeout(function () {
+				var style, allCssText;
+
+				try {
+					style = currentStyle;
+					currentStyle = undef;
+
+					allCssText = createStyle.accum.join('\n');
+					createStyle.accum = undef;
+
+					// for safari which chokes on @charset "UTF-8";
+					// TODO: see if Safari 5.x and up still complain
+					allCssText = allCssText.replace(/.+charset[^;]+;/g, '');
+
+					// IE 6-8 won't accept the W3C method for inserting css text
+					'cssText' in style ? style.cssText = allCssText :
+						style.appendChild(doc.createTextNode(allCssText));
+
+					waitForDocumentComplete(notify);
+				}
+				catch (ex) {
+					// just notify most recent errback. no need to spam
+					errback(ex);
+				}
+
+			}, 0);
+
+		}
+		catch (ex) {
+			errback(ex);
+		}
+
+	}
+
+	function notify () {
+		var list = callbacks;
+		callbacks = [];
+		for (var i = 0, len = list.length; i < len; i++) {
+			list[i].callback(list[i].sheet);
+		}
+	}
+
+	/**
+	 * Keep checking for the document readyState to be "complete" since
+	 * Chrome doesn't apply the styles to the document until that time.
+	 * If we return before readyState == 'complete', Chrome may not have
+	 * applied the styles, yet.
+	 * Chrome only.
+	 * @private
+	 * @param cb
+	 */
+	function waitForDocumentComplete (cb) {
+		// this isn't exactly the same as domReady (when dom can be
+		// manipulated). it's later (when styles are applied).
+		// chrome needs this (and opera?)
+		function complete () {
+			if (isDocumentComplete()) {
+				cb();
+			}
+			else {
+				setTimeout(complete, 10);
+			}
+		}
+		complete();
+	}
+
+	/**
+	 * Returns true if the documents' readyState == 'complete' or the
+	 * document doesn't implement readyState.
+	 * Chrome only.
+	 * @private
+	 * @return {Boolean}
+	 */
+	function isDocumentComplete () {
+		return !doc.readyState || doc.readyState == 'complete';
+	}
+
+	createStyle.load = function (absId, req, loaded, config) {
+		// get css text
+		req([absId], function (cssText) {
+			// TODO: translate urls?
+			createStyle(cssText, loaded, loaded.error);
+		});
+	};
+	
+	createStyle.translateUrls = translateUrls;
+
+	return createStyle;
+});
+/** MIT License (c) copyright B Cavalier & J Hann */
+
+(function (define) {
+define('cola/relational/propertiesKey', function () {
+	"use strict";
+
+	var defaultSeparator, undef;
+
+	defaultSeparator = '|';
+
+	/**
+	 * Creates a transform whose input is an object and whose output
+	 * is the value of object[propName] if propName is a String, or
+	 * if propName is an Array, the Array.prototype.join()ed values
+	 * of all the property names in the Array.
+	 * @param propName {String|Array} name(s) of the property(ies) on the input object to return
+	 * @return {Function} transform function(object) returns any
+	 */
+	return function(propName, separator) {
+
+		if (typeof propName == 'string') {
+			return function (object) {
+				return object && object[propName];
+			};
+
+		} else {
+			if (arguments.length === 1) separator = defaultSeparator;
+
+			return function (object) {
+				if (!object) return undef;
+
+				var values, i, len, val;
+
+				values = [];
+				for (i = 0, len = propName.length; i < len; i++) {
+					val = object[propName[i]];
+					if (val != null) values.push(val);
+				}
+
+				return values.join( separator);
+			};
+		}
+	};
+
+});
+}(
+typeof define == 'function'
+	? define
+	: function (factory) { module.exports = factory(); }
+));
 /** @license MIT License (c) copyright 2011-2013 original author or authors */
 
 /**
@@ -3333,46 +3338,6 @@ define('curl/plugin/text', ['curl/plugin/_fetchText'], function (fetchText) {
 	}
 
 });
-/** @license MIT License (c) copyright 2010-2013 original author or authors */
-
-/**
- * Licensed under the MIT License at:
- * http://www.opensource.org/licenses/mit-license.php
- *
- * @author: Brian Cavalier
- * @author: John Hann
- */
-
-(function(define) { 'use strict';
-define('wire/lib/plugin/priority', function () {
-
-	var basePriority, defaultPriority;
-
-	basePriority = -99;
-	defaultPriority = 0;
-
-	return {
-		basePriority: basePriority,
-		sortReverse: prioritizeReverse
-	};
-
-	function prioritizeReverse(list) {
-		return list.sort(byReversePriority);
-	}
-
-	function byReversePriority(a, b) {
-		var aPriority, bPriority;
-
-		aPriority = a.priority || defaultPriority;
-		bPriority = b.priority || defaultPriority;
-
-		return aPriority < bPriority ? -1
-			: aPriority > bPriority ? 1 : 0;
-	}
-
-
-});
-}(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -3470,6 +3435,46 @@ define('wire/lib/object', function () {
 	// CommonJS
 	: function(factory) { module.exports = factory(); }
 );
+/** @license MIT License (c) copyright 2010-2013 original author or authors */
+
+/**
+ * Licensed under the MIT License at:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * @author: Brian Cavalier
+ * @author: John Hann
+ */
+
+(function(define) { 'use strict';
+define('wire/lib/plugin/priority', function () {
+
+	var basePriority, defaultPriority;
+
+	basePriority = -99;
+	defaultPriority = 0;
+
+	return {
+		basePriority: basePriority,
+		sortReverse: prioritizeReverse
+	};
+
+	function prioritizeReverse(list) {
+		return list.sort(byReversePriority);
+	}
+
+	function byReversePriority(a, b) {
+		var aPriority, bPriority;
+
+		aPriority = a.priority || defaultPriority;
+		bPriority = b.priority || defaultPriority;
+
+		return aPriority < bPriority ? -1
+			: aPriority > bPriority ? 1 : 0;
+	}
+
+
+});
+}(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6193,6 +6198,8 @@ define('wire/lib/dom/base', ['require', 'wire/lib/WireProxy', 'wire/lib/plugin/p
 
 ;define('app/tabs/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".tabs {\n    position: relative;\n    padding: 0;\n    margin: 0;\n    line-height: 1;\n}\n\n.tabs .item {\n    display: inline-block;\n    list-style-type: none;\n}\n\n.stack {\n    height: 100%;\n    position: relative;\n    padding: 0;\n    margin: 0;\n    clear: both;\n}\n\n.stack .item {\n    display: none;\n    list-style-type: none;\n    position: relative;\n    left: 0;\n    top: 0;\n    right: 0;\n}\n\n.stack .item.active {\n    display: block;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
 define('curl/plugin/css!app/tabs/structure.css', ['curl/plugin/style!app/tabs/structure.css'], function (sheet) { return sheet; });
+
+;
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6228,10 +6235,51 @@ define('curl/plugin/css!app/tabs/structure.css', ['curl/plugin/style!app/tabs/st
 	});
 }(typeof define === 'function' ? define : function(factory) { module.exports = factory(require); }));
 
-;
-
 ;define('contacts/app/edit/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".edit-contact-view {\n\tpadding: 0;\n\tposition: absolute;\n\tright: 0;\n\theight: 100%;\n\twidth: 70%;\n}\n\n.edit-contact-view fieldset {\n\tmargin: .5em 1em;\n}\n\n.edit-contact-view label {\n\tdisplay: block;\n\twidth: 100%;\n}\n\n.edit-contact-view label span {\n    display: inline-block;\n    padding: 0 2px;\n    width: 7em;\n}\n\n.edit-contact-view input[type=\"text\"] {\n\twidth: 8em;\n}\n\n.edit-contact-view input[name=\"id\"] {\n    display: none;\n}\n\n.edit-contact-view .controls {\n    position: absolute;\n    bottom: 0;\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
 define('curl/plugin/css!contacts/app/edit/structure.css', ['curl/plugin/style!contacts/app/edit/structure.css'], function (sheet) { return sheet; });
+/** @license MIT License (c) copyright B Cavalier & J Hann */
+
+/**
+ * sequence.js
+ *
+ * Run a set of task functions in sequence.  All tasks will
+ * receive the same args.
+ *
+ * @author brian@hovercraftstudios.com
+ */
+
+(function(define) {
+define('when/sequence', ['require', 'when/when'], function (require, $cram_r0) {
+
+	var when;
+
+	when = $cram_r0;
+
+	/**
+	 * Run array of tasks in sequence with no overlap
+	 * @param tasks {Array|Promise} array or promiseForArray of task functions
+	 * @param [args] {*} arguments to be passed to all tasks
+	 * @return {Promise} promise for an array containing
+	 * the result of each task in the array position corresponding
+	 * to position of the task in the tasks array
+	 */
+	return function sequence(tasks /*, args... */) {
+		var args = Array.prototype.slice.call(arguments, 1);
+		return when.reduce(tasks, function(results, task) {
+			return when(task.apply(null, args), function(result) {
+				results.push(result);
+				return results;
+			});
+		}, []);
+	};
+
+});
+})(
+	typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); }
+	// Boilerplate for AMD and Node
+);
+
+
 
 ;(function (define) {
 define('cola/dom/bindingHandler', ['require', 'cola/dom/guess', 'cola/dom/form'], function (require, $cram_r0, $cram_r1) {
@@ -6465,49 +6513,6 @@ define('cola/dom/bindingHandler', ['require', 'cola/dom/guess', 'cola/dom/form']
 		? define
 		: function (factory) { module.exports = factory(require); }
 ));
-/** @license MIT License (c) copyright B Cavalier & J Hann */
-
-/**
- * sequence.js
- *
- * Run a set of task functions in sequence.  All tasks will
- * receive the same args.
- *
- * @author brian@hovercraftstudios.com
- */
-
-(function(define) {
-define('when/sequence', ['require', 'when/when'], function (require, $cram_r0) {
-
-	var when;
-
-	when = $cram_r0;
-
-	/**
-	 * Run array of tasks in sequence with no overlap
-	 * @param tasks {Array|Promise} array or promiseForArray of task functions
-	 * @param [args] {*} arguments to be passed to all tasks
-	 * @return {Promise} promise for an array containing
-	 * the result of each task in the array position corresponding
-	 * to position of the task in the tasks array
-	 */
-	return function sequence(tasks /*, args... */) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		return when.reduce(tasks, function(results, task) {
-			return when(task.apply(null, args), function(result) {
-				results.push(result);
-				return results;
-			});
-		}, []);
-	};
-
-});
-})(
-	typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); }
-	// Boilerplate for AMD and Node
-);
-
-
 
 ;
 /** @license MIT License (c) copyright B Cavalier & J Hann */
@@ -8733,104 +8738,6 @@ define('wire/aop', ['require', 'meld/meld', 'when/when', 'when/sequence', 'wire/
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
- * wire/connect plugin
- * wire plugin that can connect synthetic events (method calls) on one
- * component to methods of another object.  For example, connecting a
- * view's onClick event (method) to a controller's _handleViewClick method:
- *
- * view: {
- *     create: 'myView',
- *     ...
- * },
- * controller: {
- *     create: 'myController',
- *     connect: {
- *         'view.onClick': '_handleViewClick'
- *     }
- * }
- *
- * It also supports arbitrary transforms on the data that flows over the
- * connection.
- *
- * transformer: {
- *     module: 'myTransformFunction'
- * },
- * view: {
- *     create: 'myView',
- *     ...
- * },
- * controller: {
- *     create: 'myController',
- *     connect: {
- *         'view.onClick': 'transformer | _handleViewClick'
- *     }
- * }
- *
- * wire is part of the cujo.js family of libraries (http://cujojs.com/)
- *
- * Licensed under the MIT License at:
- * http://www.opensource.org/licenses/mit-license.php
- */
-
-(function(define) {
-define('wire/connect', ['when/when', 'meld/meld', 'wire/lib/functional', 'wire/lib/connection'], function (when, meld, functional, connection) {
-
-	return function eventsPlugin(/* options */) {
-
-		var connectHandles = [];
-
-		function handleConnection(instance, methodName, handler) {
-			connectHandles.push(meld.on(instance, methodName, handler));
-		}
-
-		function doConnect(proxy, connect, options, wire) {
-			return connection.parse(proxy, connect, options, wire, handleConnection);
-		}
-
-		function connectFacet(wire, facet) {
-			var promises, connects;
-
-			connects = facet.options;
-			promises = Object.keys(connects).map(function(key) {
-				return doConnect(facet, key, connects[key], wire);
-			});
-
-			return when.all(promises);
-		}
-
-		return {
-			context: {
-				destroy: function(resolver) {
-					connectHandles.forEach(function(handle) {
-						handle.remove();
-					});
-					resolver.resolve();
-				}
-			},
-			facets: {
-				// A facet named "connect" that runs during the connect
-				// lifecycle phase
-				connect: {
-					connect: function(resolver, facet, wire) {
-						resolver.resolve(connectFacet(wire, facet));
-					}
-				}
-			}
-		};
-    };
-});
-})(typeof define == 'function'
-	? define
-	: function(deps, factory) {
-		module.exports = factory.apply(this, deps.map(function(x) {
-			return require(x);
-		}));
-	}
-);
-
-/** @license MIT License (c) copyright B Cavalier & J Hann */
-
-/**
  * plugins
  * Licensed under the MIT License at:
  * http://www.opensource.org/licenses/mit-license.php
@@ -8961,6 +8868,104 @@ define('wire/lib/plugin/registry', ['require', 'when/when', 'wire/lib/array', 'w
 	}
 });
 }(typeof define === 'function' ? define : function(factory) { module.exports = factory(require); }));
+/** @license MIT License (c) copyright B Cavalier & J Hann */
+
+/**
+ * wire/connect plugin
+ * wire plugin that can connect synthetic events (method calls) on one
+ * component to methods of another object.  For example, connecting a
+ * view's onClick event (method) to a controller's _handleViewClick method:
+ *
+ * view: {
+ *     create: 'myView',
+ *     ...
+ * },
+ * controller: {
+ *     create: 'myController',
+ *     connect: {
+ *         'view.onClick': '_handleViewClick'
+ *     }
+ * }
+ *
+ * It also supports arbitrary transforms on the data that flows over the
+ * connection.
+ *
+ * transformer: {
+ *     module: 'myTransformFunction'
+ * },
+ * view: {
+ *     create: 'myView',
+ *     ...
+ * },
+ * controller: {
+ *     create: 'myController',
+ *     connect: {
+ *         'view.onClick': 'transformer | _handleViewClick'
+ *     }
+ * }
+ *
+ * wire is part of the cujo.js family of libraries (http://cujojs.com/)
+ *
+ * Licensed under the MIT License at:
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+(function(define) {
+define('wire/connect', ['when/when', 'meld/meld', 'wire/lib/functional', 'wire/lib/connection'], function (when, meld, functional, connection) {
+
+	return function eventsPlugin(/* options */) {
+
+		var connectHandles = [];
+
+		function handleConnection(instance, methodName, handler) {
+			connectHandles.push(meld.on(instance, methodName, handler));
+		}
+
+		function doConnect(proxy, connect, options, wire) {
+			return connection.parse(proxy, connect, options, wire, handleConnection);
+		}
+
+		function connectFacet(wire, facet) {
+			var promises, connects;
+
+			connects = facet.options;
+			promises = Object.keys(connects).map(function(key) {
+				return doConnect(facet, key, connects[key], wire);
+			});
+
+			return when.all(promises);
+		}
+
+		return {
+			context: {
+				destroy: function(resolver) {
+					connectHandles.forEach(function(handle) {
+						handle.remove();
+					});
+					resolver.resolve();
+				}
+			},
+			facets: {
+				// A facet named "connect" that runs during the connect
+				// lifecycle phase
+				connect: {
+					connect: function(resolver, facet, wire) {
+						resolver.resolve(connectFacet(wire, facet));
+					}
+				}
+			}
+		};
+    };
+});
+})(typeof define == 'function'
+	? define
+	: function(deps, factory) {
+		module.exports = factory.apply(this, deps.map(function(x) {
+			return require(x);
+		}));
+	}
+);
+
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
