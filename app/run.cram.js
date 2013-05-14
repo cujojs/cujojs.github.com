@@ -696,60 +696,6 @@ define('poly/function', ['poly/lib/_base'], function (base) {
 	return {"firstName":"First Name","lastName":"Last Name","phone":"Phone Number","email":"E-Mail","save":"Save","clear":"Clear"};
 });
 
-;define('app/hello-sample/spec', {
-
-	helloApp: {
-		wire: {
-			spec: 'hello/app/main',
-			provide: {
-				root: { $ref: 'dom.first!.cujo-hello-container .app' }
-			}
-		}
-	},
-
-	helloCode: {
-		wire: {
-			spec: 'app/tabs/spec',
-			provide: {
-				root: { $ref: 'dom.first!.cujo-hello-container .code' },
-				collection: { $ref: 'helloSources' }
-			}
-		}
-	},
-
-	helloSources: { create: 'cola/Collection' },
-	helloSourcesData: {
-		create: {
-			module: 'cola/adapter/Array',
-			args: [[
-				{
-					id: 1,
-					name: 'template.html',
-					content: { module: 'highlight!hello/app/template.html' }
-				},
-				{
-					id: 2,
-					name: 'controller.js',
-					content: { module: 'highlight!hello/app/controller.js' }
-				},
-				{
-					id: 3,
-					name: 'strings.js',
-					content: { module: 'highlight!hello/app/strings.js' }
-				},
-				{
-					id: 4,
-					name: 'main.js',
-					content: { module: 'highlight!hello/app/main.js' }
-				}
-			]]
-		},
-		bind: { $ref: 'helloSources' }
-	},
-
-	$plugins: ['wire/dom', 'wire/dom/render', 'wire/on', 'cola']
-});
-
 ;define('app/contacts-sample/spec', {
 
 	contactsContainer: { $ref: 'dom.first!.cujo-contacts-container' },
@@ -806,6 +752,60 @@ define('poly/function', ['poly/lib/_base'], function (base) {
 			]]
 		},
 		bind: { $ref: 'contactsSources' }
+	},
+
+	$plugins: ['wire/dom', 'wire/dom/render', 'wire/on', 'cola']
+});
+
+;define('app/hello-sample/spec', {
+
+	helloApp: {
+		wire: {
+			spec: 'hello/app/main',
+			provide: {
+				root: { $ref: 'dom.first!.cujo-hello-container .app' }
+			}
+		}
+	},
+
+	helloCode: {
+		wire: {
+			spec: 'app/tabs/spec',
+			provide: {
+				root: { $ref: 'dom.first!.cujo-hello-container .code' },
+				collection: { $ref: 'helloSources' }
+			}
+		}
+	},
+
+	helloSources: { create: 'cola/Collection' },
+	helloSourcesData: {
+		create: {
+			module: 'cola/adapter/Array',
+			args: [[
+				{
+					id: 1,
+					name: 'template.html',
+					content: { module: 'highlight!hello/app/template.html' }
+				},
+				{
+					id: 2,
+					name: 'controller.js',
+					content: { module: 'highlight!hello/app/controller.js' }
+				},
+				{
+					id: 3,
+					name: 'strings.js',
+					content: { module: 'highlight!hello/app/strings.js' }
+				},
+				{
+					id: 4,
+					name: 'main.js',
+					content: { module: 'highlight!hello/app/main.js' }
+				}
+			]]
+		},
+		bind: { $ref: 'helloSources' }
 	},
 
 	$plugins: ['wire/dom', 'wire/dom/render', 'wire/on', 'cola']
@@ -868,6 +868,10 @@ define('app/subheader/selectText', function () {
 
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
+
+;define('curl/plugin/text!app/subheader/template.html', function () {
+	return "<h2 class=\"subheader\">${text}</h2>\n";
+});
 
 ;define('hello/app/main', { // Wire spec
 
@@ -937,8 +941,24 @@ define('app/subheader/selectText', function () {
 	plugins: ['wire/dom', 'wire/dom/render', 'wire/on', 'wire/aop', 'cola']
 });
 
+;define('highlight/amd!hello/app/template.html', function () {
+	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">div</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>${name} <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">placeholder</span>=<span class=\"value\">\"${hint}\"</span>/&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">p</span>&gt;</span>${hello} <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>!<span class=\"tag\">&lt;/<span class=\"title\">p</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">div</span>&gt;</span></code></pre>";
+});
+
+;define('highlight/amd!hello/app/controller.js', function () {
+	return "<pre><code class=\"javascript\">define(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n  <span class=\"keyword\">return</span> {\n    update: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(e)</span> {</span>\n      <span class=\"keyword\">this</span>.node.innerHTML = e.target.value;\n    }\n  };\n});</code></pre>";
+});
+
+;define('highlight/amd!hello/app/main.js', function () {
+	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// Wire spec</span>\n\n  controller: {\n    create: <span class=\"string\">'hello/app/controller'</span>,\n    properties: {\n      node: { $ref: <span class=\"string\">'first!span'</span>, at: <span class=\"string\">'view'</span> }\n    },\n    on: { view: { <span class=\"string\">'input'</span>: <span class=\"string\">'update'</span> } }\n  },\n\n  view: {\n    render: {\n      template: { module: <span class=\"string\">'text!hello/app/template.html'</span> },\n      replace: { module: <span class=\"string\">'i18n!hello/app/strings.js'</span> }\n    },\n    insert: { last: <span class=\"string\">'root'</span> }\n  },\n\n  $plugins: [<span class=\"string\">'wire/dom'</span>, <span class=\"string\">'wire/dom/render'</span>, <span class=\"string\">'wire/on'</span>]\n});</code></pre>";
+});
+
 ;define('curl/plugin/text!app/contacts-sample/template.html', function () {
 	return "<div class=\"cujo-contacts\">\n    <div class=\"contacts-view-container\"></div>\n</div>";
+});
+
+;define('highlight/amd!hello/app/strings.js', function () {
+	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// i18n</span>\n  name: <span class=\"string\">'What\'s your name?'</span>,\n  hint: <span class=\"string\">'Type your name'</span>,\n  hello: <span class=\"string\">'Hello'</span>\n});</code></pre>";
 });
 
 ;define('contacts/app/main', {// Wire spec
@@ -999,8 +1019,32 @@ define('app/subheader/selectText', function () {
 	$plugins: ['wire/dom','wire/dom/render','wire/on','wire/connect','cola']
 });
 
-;define('curl/plugin/text!app/subheader/template.html', function () {
-	return "<h2 class=\"subheader\">${text}</h2>\n";
+;define('highlight/amd!contacts/app/controller.js', function () {
+	return "<pre><code class=\"javascript\">define(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n\n  <span class=\"keyword\">return</span> {\n    editContact: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(contact)</span> {</span>\n      <span class=\"keyword\">this</span>._updateForm(<span class=\"keyword\">this</span>._form, contact);\n    }\n  };\n\n});</code></pre>";
+});
+
+;define('highlight/amd!contacts/app/list/template.html', function () {
+	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">ul</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"contact-list-view\"</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">li</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"contact\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"remove\"</span>&gt;</span>&amp;times;<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"first-name\"</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"last-name\"</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">li</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">ul</span>&gt;</span></code></pre>";
+});
+
+;define('highlight/amd!contacts/app/edit/template.html', function () {
+	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">form</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"edit-contact-view\"</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">fieldset</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${firstName}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"first-name\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"firstName\"</span>/&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${lastName}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"last-name\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"lastName\"</span>/&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${phone}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"phone\"</span>&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${email}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"email\"</span>&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">fieldset</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"id\"</span>/&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">fieldset</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"controls\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"submit\"</span> <span class=\"attribute\">value</span>=<span class=\"value\">\"${save}\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"reset\"</span> <span class=\"attribute\">value</span>=<span class=\"value\">\"${clear}\"</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">fieldset</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">form</span>&gt;</span></code></pre>";
+});
+
+;define('highlight/amd!contacts/app/main.js', function () {
+	return "<pre><code class=\"javascript\">define({<span class=\"comment\">// Wire spec</span>\n\n  contactsCollection: { wire: <span class=\"string\">'contacts/app/collection/spec'</span> },\n\n  controller: {\n    create: <span class=\"string\">'contacts/app/controller'</span>,\n    properties: {\n      _form: { $ref: <span class=\"string\">'editView'</span> },\n      _updateForm: { $ref: <span class=\"string\">'form.setValues'</span> }\n    },\n    connect: {\n      <span class=\"string\">'contactsCollection.onEdit'</span>: <span class=\"string\">'editContact'</span>\n    }\n  },\n\n  editView: {\n    render: {\n      template: { module: <span class=\"string\">'text!contacts/app/edit/template.html'</span> },\n      replace: { module: <span class=\"string\">'i18n!contacts/app/edit/strings'</span> },\n      css: { module: <span class=\"string\">'css!contacts/app/edit/structure.css'</span> }\n    },\n    insert: { after: <span class=\"string\">'listView'</span> },\n    on: {\n      submit: <span class=\"string\">'form.getValues | contactsCollection.update'</span>\n    },\n    connect: {\n      <span class=\"string\">'contactsCollection.onChange'</span>: <span class=\"string\">'reset'</span>\n    }\n  },\n\n  listView: {\n    render: {\n      template: {module: <span class=\"string\">'text!contacts/app/list/template.html'</span> },\n      css: { module: <span class=\"string\">'css!contacts/app/list/structure.css'</span> }\n    },\n    insert: {\n      first: { $ref: <span class=\"string\">'dom.first!.contacts-view-container'</span>, at: <span class=\"string\">'root'</span> }\n    },\n    on: {\n      <span class=\"string\">'click:.contact'</span>: <span class=\"string\">'contactsCollection.edit'</span>,\n      <span class=\"string\">'click:.remove'</span>: <span class=\"string\">'contactsCollection.remove'</span>\n    },\n    bind: {\n      to: { $ref: <span class=\"string\">'contactsCollection'</span> },\n      comparator: { module: <span class=\"string\">'contacts/app/list/compareByLastFirst'</span> },\n      bindings: {\n        firstName: <span class=\"string\">'.first-name'</span>,\n        lastName: <span class=\"string\">'.last-name'</span>\n      }\n    }\n  },\n\n  theme: { module: <span class=\"string\">'css!contacts/theme/basic.css'</span> },\n  form: { module: <span class=\"string\">'cola/dom/form'</span> },\n\n  $plugins: [<span class=\"string\">'wire/dom'</span>,<span class=\"string\">'wire/dom/render'</span>,<span class=\"string\">'wire/on'</span>,<span class=\"string\">'wire/connect'</span>,<span class=\"string\">'cola'</span>]\n});</code></pre>";
+});
+
+;define('highlight/amd!app/main.js', function () {
+	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// Wire spec</span>\n\n  helloSample: { wire: <span class=\"string\">'app/hello-sample/spec'</span> },\n\n  contactsSample: { wire: <span class=\"string\">'app/contacts-sample/spec'</span> },\n\n  homepageSample: { wire: <span class=\"string\">'app/homepage-sample/spec'</span> },\n\n  subheaderStrings: { module: <span class=\"string\">'i18n!app/subheader/strings'</span> },\n  subheaderText: {\n    create: {\n      module: <span class=\"string\">'app/subheader/selectText'</span>,\n      args: { $ref: <span class=\"string\">'subheaderStrings.phrases'</span> }\n    }\n  },\n\n  subheader: {\n    render: {\n      template: { module: <span class=\"string\">'text!app/subheader/template.html'</span> },\n      replace: { text: { $ref: <span class=\"string\">'subheaderText'</span> } }\n    },\n    insert: { last: { $ref: <span class=\"string\">'first!.header-content'</span> } }\n  },\n\n  theme: { module: <span class=\"string\">'css!theme/basic.css'</span> },\n  highlightTheme: { module: <span class=\"string\">'css!highlight/github.css'</span> },\n\n  $plugins: [\n    { module: <span class=\"string\">'wire/dom'</span>, classes: { init: <span class=\"string\">'loading'</span> } },\n    <span class=\"string\">'wire/dom/render'</span>\n  ]\n});</code></pre>";
+});
+
+;define('highlight/amd!app/subheader/selectText.js', function () {
+	return "<pre><code class=\"javascript\">(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(define)</span> {</span>\ndefine(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n\n  <span class=\"comment\">/**\n   * Selects a text string from the provided strings array\n   */</span>\n  <span class=\"keyword\">return</span> <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(strings, selector)</span> {</span>\n    <span class=\"keyword\">var</span> len = strings &amp;&amp; strings.length;\n    <span class=\"keyword\">return</span> len ? strings[(selector || defaultSelector)(len)] : <span class=\"string\">''</span>;\n  };\n\n  <span class=\"function\"><span class=\"keyword\">function</span> <span class=\"title\">defaultSelector</span><span class=\"params\">(n)</span> {</span>\n    <span class=\"keyword\">return</span> Math.floor(Math.random() * n);\n  }\n\n});\n}(<span class=\"keyword\">typeof</span> define === <span class=\"string\">'function'</span> &amp;&amp; define.amd ? define : <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(factory)</span> {</span> module.exports = factory(); }));\n</code></pre>";
+});
+
+;define('highlight/amd!test/subheader/selectText-test.js', function () {
+	return "<pre><code class=\"javascript\">(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(define)</span> {</span>\ndefine(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(require)</span> {</span>\n\n  <span class=\"keyword\">var</span> buster, selectText;\n\n  buster = require(<span class=\"string\">'buster'</span>);\n  selectText = require(<span class=\"string\">'../../app/subheader/selectText'</span>);\n\n  buster.testCase(<span class=\"string\">'subheader/selectText'</span>, {\n    <span class=\"string\">'should return empty string when input is empty'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      assert.equals(selectText([]), <span class=\"string\">''</span>);\n    },\n\n    <span class=\"string\">'should return empty string when input not provided'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      assert.equals(selectText(), <span class=\"string\">''</span>);\n    },\n\n    <span class=\"string\">'should call provided selector function'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      <span class=\"keyword\">var</span> spy, input;\n\n      input = [<span class=\"string\">'a'</span>, <span class=\"string\">'b'</span>, <span class=\"string\">'c'</span>];\n      spy = <span class=\"keyword\">this</span>.stub().returns(<span class=\"number\">1</span>);\n\n      selectText(input, spy);\n      assert.calledOnceWith(spy, input.length);\n    },\n\n    <span class=\"string\">'should return selected string'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      <span class=\"keyword\">var</span> spy, input;\n\n      input = [<span class=\"string\">'a'</span>, <span class=\"string\">'b'</span>, <span class=\"string\">'c'</span>];\n      spy = <span class=\"keyword\">this</span>.stub().returns(<span class=\"number\">1</span>);\n\n      assert.equals(selectText(input, spy), <span class=\"string\">'b'</span>);\n    }\n  });\n\n});\n}(<span class=\"keyword\">typeof</span> define === <span class=\"string\">'function'</span> &amp;&amp; define.amd ? define : <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(factory)</span> {</span> module.exports = factory(require); }));\n\n</code></pre>";
 });
 
 ;define('hello/app/controller', function () {
@@ -2620,8 +2664,6 @@ typeof define == 'function'
 	? define
 	: function (factory) { module.exports = factory(); }
 ));
-
-;define('highlight/highlight.pack', function () {var a=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;").replace(/>/gm,"&gt;")}function c(q){for(var p=q.firstChild;p;p=p.nextSibling){if(p.nodeName=="CODE"){return p}if(!(p.nodeType==3&&p.nodeValue.match(/\s+/))){break}}}function i(q,p){return Array.prototype.map.call(q.childNodes,function(r){if(r.nodeType==3){return p?r.nodeValue.replace(/\n/g,""):r.nodeValue}if(r.nodeName=="BR"){return"\n"}return i(r,p)}).join("")}function b(r){var q=(r.className+" "+(r.parentNode?r.parentNode.className:"")).split(/\s+/);q=q.map(function(s){return s.replace(/^language-/,"")});for(var p=0;p<q.length;p++){if(f[q[p]]||q[p]=="no-highlight"){return q[p]}}}function d(r){var p=[];(function q(s,t){for(var u=s.firstChild;u;u=u.nextSibling){if(u.nodeType==3){t+=u.nodeValue.length}else{if(u.nodeName=="BR"){t+=1}else{if(u.nodeType==1){p.push({event:"start",offset:t,node:u});t=q(u,t);p.push({event:"stop",offset:t,node:u})}}}}return t})(r,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(B){function A(C){return" "+C.nodeName+'="'+m(C.value)+'"'}return"<"+B.nodeName+Array.prototype.map.call(B.attributes,A).join("")+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function g(s){function p(t){return(t&&t.source)||t}function q(u,t){return RegExp(p(u),"m"+(s.cI?"i":"")+(t?"g":""))}function r(A,y){if(A.compiled){return}A.compiled=true;var v=[];if(A.k){var u={};function B(C,t){t.split(" ").forEach(function(D){var E=D.split("|");u[E[0]]=[C,E[1]?Number(E[1]):1];v.push(E[0])})}A.lR=q(A.l||a.IR+"(?!\\.)",true);if(typeof A.k=="string"){B("keyword",A.k)}else{for(var z in A.k){if(!A.k.hasOwnProperty(z)){continue}B(z,A.k[z])}}A.k=u}if(y){if(A.bWK){A.b="\\b("+v.join("|")+")\\b(?!\\.)\\s*"}A.bR=q(A.b?A.b:"\\B|\\b");if(!A.e&&!A.eW){A.e="\\B|\\b"}if(A.e){A.eR=q(A.e)}A.tE=p(A.e)||"";if(A.eW&&y.tE){A.tE+=(A.e?"|":"")+y.tE}}if(A.i){A.iR=q(A.i)}if(A.r===undefined){A.r=1}if(!A.c){A.c=[]}for(var x=0;x<A.c.length;x++){if(A.c[x]=="self"){A.c[x]=A}r(A.c[x],A)}if(A.starts){r(A.starts,y)}var w=[];for(var x=0;x<A.c.length;x++){w.push(p(A.c[x].b))}if(A.tE){w.push(p(A.tE))}if(A.i){w.push(p(A.i))}A.t=w.length?q(w.join("|"),true):{exec:function(t){return null}}}r(s)}function e(F,G,D){function p(r,O){for(var N=0;N<O.c.length;N++){var M=O.c[N].bR.exec(r);if(M&&M.index==0){return O.c[N]}}}function t(M,r){if(M.e&&M.eR.test(r)){return M}if(M.eW){return t(M.parent,r)}}function u(r,M){return !D&&M.i&&M.iR.test(r)}function z(N,r){var M=H.cI?r[0].toLowerCase():r[0];return N.k.hasOwnProperty(M)&&N.k[M]}function I(){var M=m(x);if(!B.k){return M}var r="";var P=0;B.lR.lastIndex=0;var N=B.lR.exec(M);while(N){r+=M.substr(P,N.index-P);var O=z(B,N);if(O){w+=O[1];r+='<span class="'+O[0]+'">'+N[0]+"</span>"}else{r+=N[0]}P=B.lR.lastIndex;N=B.lR.exec(M)}return r+M.substr(P)}function A(){if(B.sL&&!f[B.sL]){return m(x)}var r=B.sL?e(B.sL,x):h(x);if(B.r>0){w+=r.keyword_count;C+=r.r}return'<span class="'+r.language+'">'+r.value+"</span>"}function L(){return B.sL!==undefined?A():I()}function K(N,r){var M=N.cN?'<span class="'+N.cN+'">':"";if(N.rB){y+=M;x=""}else{if(N.eB){y+=m(r)+M;x=""}else{y+=M;x=r}}B=Object.create(N,{parent:{value:B}})}function E(M,r){x+=M;if(r===undefined){y+=L();return 0}var O=p(r,B);if(O){y+=L();K(O,r);return O.rB?0:r.length}var P=t(B,r);if(P){var N=B;if(!(N.rE||N.eE)){x+=r}y+=L();do{if(B.cN){y+="</span>"}C+=B.r;B=B.parent}while(B!=P.parent);if(N.eE){y+=m(r)}x="";if(P.starts){K(P.starts,"")}return N.rE?0:r.length}if(u(r,B)){throw new Error('Illegal lexem "'+r+'" for mode "'+(B.cN||"<unnamed>")+'"')}x+=r;return r.length||1}var H=f[F];g(H);var B=H;var x="";var C=0;var w=0;var y="";try{var v,s,q=0;while(true){B.t.lastIndex=q;v=B.t.exec(G);if(!v){break}s=E(G.substr(q,v.index-q),v[0]);q=v.index+s}E(G.substr(q));return{r:C,keyword_count:w,value:y,language:F}}catch(J){if(J.message.indexOf("Illegal")!=-1){return{r:0,keyword_count:0,value:m(G)}}else{throw J}}}function h(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in f){if(!f.hasOwnProperty(q)){continue}var s=e(q,t,false);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function j(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(s,v,q){var w=i(s,q);var u=b(s);if(u=="no-highlight"){return}var x=u?e(u,w,true):h(w);u=x.language;var p=d(s);if(p.length){var r=document.createElement("pre");r.innerHTML=x.value;x.value=k(p,d(r),w)}x.value=j(x.value,v,q);var t=s.className;if(!t.match("(\\s|^)(language-)?"+u+"(\\s|$)")){t=t?(t+" "+u):u}s.innerHTML=x.value;s.className=t;s.result={language:u,kw:x.keyword_count,re:x.r};if(x.second_best){s.second_best={language:x.second_best.language,kw:x.second_best.keyword_count,re:x.second_best.r}}}function o(){if(o.called){return}o.called=true;Array.prototype.map.call(document.getElementsByTagName("pre"),c).filter(Boolean).forEach(function(p){n(p,a.tabReplace)})}function l(){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}var f={};this.LANGUAGES=f;this.highlight=e;this.highlightAuto=h;this.fixMarkup=j;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<<|<<=|<=|<|===|==|=|>>>=|>>=|>=|>>>|>>|>|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.BE={b:"\\\\[\\s\\S]",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.REGEXP_MODE={cN:"regexp",b:/\//,e:/\/[gim]*/,i:/\n/,c:[this.BE,{b:/\[/,e:/\]/,r:0,c:[this.BE]}]};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();a.LANGUAGES.css=function(b){var c="[a-zA-Z-][a-zA-Z0-9_-]*";var d={cN:"function",b:c+"\\(",e:"\\)",c:["self",b.NM,b.ASM,b.QSM]};return{cI:true,i:"[=/|']",c:[b.CBLCLM,{cN:"id",b:"\\#[A-Za-z0-9_-]+"},{cN:"class",b:"\\.[A-Za-z0-9_-]+",r:0},{cN:"attr_selector",b:"\\[",e:"\\]",i:"$"},{cN:"pseudo",b:":(:)?[a-zA-Z0-9\\_\\-\\+\\(\\)\\\"\\']+"},{cN:"at_rule",b:"@(font-face|page)",l:"[a-z-]+",k:"font-face page"},{cN:"at_rule",b:"@",e:"[{;]",c:[{cN:"keyword",b:/\S+/},{b:/\s/,eW:true,eE:true,r:0,c:[d,b.ASM,b.QSM,b.NM]}]},{cN:"tag",b:c,r:0},{cN:"rules",b:"{",e:"}",i:"[^\\s]",r:0,c:[b.CBLCLM,{cN:"rule",b:"[^\\s]",rB:true,e:";",eW:true,c:[{cN:"attribute",b:"[A-Z\\_\\.\\-]+",e:":",eE:true,i:"[^\\s]",starts:{cN:"value",eW:true,eE:true,c:[d,b.NM,b.QSM,b.ASM,b.CBLCLM,{cN:"hexcolor",b:"#[0-9A-Fa-f]+"},{cN:"important",b:"!important"}]}}]}]}]}}(a);a.LANGUAGES.javascript=function(b){return{k:{keyword:"in if for while finally var new function do return void else break catch instanceof with throw case default try this switch continue typeof delete let yield const",literal:"true false null undefined NaN Infinity"},c:[b.ASM,b.QSM,b.CLCM,b.CBLCLM,b.CNM,{b:"("+b.RSR+"|\\b(case|return|throw)\\b)\\s*",k:"return throw case",c:[b.CLCM,b.CBLCLM,b.REGEXP_MODE,{b:/</,e:/>;/,sL:"xml"}],r:0},{cN:"function",bWK:true,e:/{/,k:"function",c:[{cN:"title",b:/[A-Za-z$_][0-9A-Za-z$_]*/},{cN:"params",b:/\(/,e:/\)/,c:[b.CLCM,b.CBLCLM],i:/["'\(]/}],i:/\[|%/}]}}(a);a.LANGUAGES.json=function(b){var f={literal:"true false null"};var e=[b.QSM,b.CNM];var d={cN:"value",e:",",eW:true,eE:true,c:e,k:f};var c={b:"{",e:"}",c:[{cN:"attribute",b:'\\s*"',e:'"\\s*:\\s*',eB:true,eE:true,c:[b.BE],i:"\\n",starts:d}],i:"\\S"};var g={b:"\\[",e:"\\]",c:[b.inherit(d,{cN:null})],i:"\\S"};e.splice(e.length,0,c,g);return{c:e,k:f,i:"\\S"}}(a);a.LANGUAGES.xml=function(b){var d="[A-Za-z0-9\\._:-]+";var c={eW:true,r:0,c:[{cN:"attribute",b:d,r:0},{b:'="',rB:true,e:'"',c:[{cN:"value",b:'"',eW:true}]},{b:"='",rB:true,e:"'",c:[{cN:"value",b:"'",eW:true}]},{b:"=",c:[{cN:"value",b:"[^\\s/>]+"}]}]};return{cI:true,c:[{cN:"pi",b:"<\\?",e:"\\?>",r:10},{cN:"doctype",b:"<!DOCTYPE",e:">",r:10,c:[{b:"\\[",e:"\\]"}]},{cN:"comment",b:"<!--",e:"-->",r:10},{cN:"cdata",b:"<\\!\\[CDATA\\[",e:"\\]\\]>",r:10},{cN:"tag",b:"<style(?=\\s|>|$)",e:">",k:{title:"style"},c:[c],starts:{e:"</style>",rE:true,sL:"css"}},{cN:"tag",b:"<script(?=\\s|>|$)",e:">",k:{title:"script"},c:[c],starts:{e:"<\/script>",rE:true,sL:"javascript"}},{b:"<%",e:"%>",sL:"vbscript"},{cN:"tag",b:"</?",e:"/?>",r:0,c:[{cN:"title",b:"[^ /><]+"},c]}]}}(a);return a});
 /** @license MIT License (c) copyright 2011-2013 original author or authors */
 
 /**
@@ -3863,21 +3905,6 @@ define('cola/identifier/property', function () {
 		? define
 		: function (factory) { module.exports = factory(); }
 ));
-
-;define('highlight/amd', ['highlight/highlight.pack'], function (highlight) {
-	return {
-		load: function(name, require, done) {
-			require(['text!' + name], function(code) {
-				var highlighted, result;
-
-				highlighted = highlight.highlightAuto(code);
-				result = '<pre><code class="' + highlighted.language + '">'
-					+ highlighted.value + '</code></pre>';
-				done(highlight.fixMarkup(result, '  '));
-			});
-		}
-	}
-});
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -3973,6 +4000,66 @@ define('wire/lib/graph/DirectedGraph', function () {
 
 });
 }(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); }));
+
+;(function (define) {
+define('cola/enqueue', function () {
+	"use strict";
+
+	var enqueue;
+
+	if (typeof process !== "undefined") {
+		// node
+		enqueue = process.nextTick;
+	} else if (typeof msSetImmediate === "function") {
+		// IE 10. From http://github.com/kriskowal/q
+		// bind is necessary
+		enqueue = msSetImmediate.bind(window);
+	} else if (typeof setImmediate === "function") {
+		enqueue = setImmediate;
+	} else if (typeof MessageChannel !== "undefined") {
+		enqueue = initMessageChannel();
+	} else {
+		// older envs w/only setTimeout
+		enqueue = function (task) {
+			setTimeout(task, 0);
+		};
+	}
+
+	return enqueue;
+
+	/**
+	 * MessageChannel for browsers that support it
+	 * From http://www.nonblocking.io/2011/06/windownexttick.html
+	 */
+	function initMessageChannel() {
+		var channel, head, tail;
+
+		channel = new MessageChannel();
+		head = {};
+		tail = head;
+
+		channel.port1.onmessage = function () {
+			var task;
+
+			head = head.next;
+			task = head.task;
+			delete head.task;
+
+			task();
+		};
+
+		return function (task) {
+			tail = tail.next = {task: task};
+			channel.port2.postMessage(0);
+		};
+	}
+});
+}(
+	typeof define == 'function' && define.amd
+		? define
+		: function (factory) { module.exports = factory(); }
+));
+
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 (function (define) {
@@ -4436,66 +4523,6 @@ define('cola/dom/classList', ['require', 'exports'], function (require, exports)
 		? define
 		: function (factory) { module.exports = factory(require); }
 ));
-
-;(function (define) {
-define('cola/enqueue', function () {
-	"use strict";
-
-	var enqueue;
-
-	if (typeof process !== "undefined") {
-		// node
-		enqueue = process.nextTick;
-	} else if (typeof msSetImmediate === "function") {
-		// IE 10. From http://github.com/kriskowal/q
-		// bind is necessary
-		enqueue = msSetImmediate.bind(window);
-	} else if (typeof setImmediate === "function") {
-		enqueue = setImmediate;
-	} else if (typeof MessageChannel !== "undefined") {
-		enqueue = initMessageChannel();
-	} else {
-		// older envs w/only setTimeout
-		enqueue = function (task) {
-			setTimeout(task, 0);
-		};
-	}
-
-	return enqueue;
-
-	/**
-	 * MessageChannel for browsers that support it
-	 * From http://www.nonblocking.io/2011/06/windownexttick.html
-	 */
-	function initMessageChannel() {
-		var channel, head, tail;
-
-		channel = new MessageChannel();
-		head = {};
-		tail = head;
-
-		channel.port1.onmessage = function () {
-			var task;
-
-			head = head.next;
-			task = head.task;
-			delete head.task;
-
-			task();
-		};
-
-		return function (task) {
-			tail = tail.next = {task: task};
-			channel.port2.postMessage(0);
-		};
-	}
-});
-}(
-	typeof define == 'function' && define.amd
-		? define
-		: function (factory) { module.exports = factory(); }
-));
-
 
 ;(function (define) {
 define('cola/network/strategy/base', function () {
@@ -5158,10 +5185,6 @@ define('cola/adapter/Array', ['require', 'when/when'], function (require, $cram_
 		? define
 		: function(factory) { module.exports = factory(require); }
 );
-
-;
-
-;
 /** @license MIT License (c) copyright original author or authors */
 
 /**
@@ -5605,8 +5628,6 @@ define('cola/cola', ['when/when', 'cola/relational/propertiesKey', 'cola/compara
 	? define
 	: function(deps, factory) { module.exports = factory.apply(this, deps.map(require)); }
 );
-
-;
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 (function(global, define) {
@@ -5710,8 +5731,6 @@ define('cola/adapter/LocalStorage', ['require', 'cola/identifier/default', 'when
 		? define
 		: function(factory) { module.exports = factory(require); }
 );
-
-;
 
 ;
 
@@ -5869,8 +5888,6 @@ define('cola/dom/guess', ['require', 'cola/dom/has', 'cola/dom/classList'], func
 
 ;define('highlight/github.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = "/*\n\ngithub.com style (c) Vasily Polovnyov <vast@whiteants.net>\n\n*/\n\npre code {\n  display: block; padding: 0.5em;\n  color: #333;\n  background: #fff\n  /*background: #f8f8ff*/\n}\n\npre .comment,\npre .template_comment,\npre .diff .header,\npre .javadoc {\n  color: #998;\n  font-style: italic\n}\n\npre .keyword,\npre .css .rule .keyword,\npre .winutils,\npre .javascript .title,\npre .nginx .title,\npre .subst,\npre .request,\npre .status {\n  color: #333;\n  font-weight: bold\n}\n\npre .number,\npre .hexcolor,\npre .ruby .constant {\n  color: #099;\n}\n\npre .string,\npre .tag .value,\npre .phpdoc,\npre .tex .formula {\n  color: #d14\n}\n\npre .title,\npre .id,\npre .coffeescript .params,\npre .scss .preprocessor {\n  color: #900;\n  font-weight: bold\n}\n\npre .javascript .title,\npre .lisp .title,\npre .clojure .title,\npre .subst {\n  font-weight: normal\n}\n\npre .class .title,\npre .haskell .type,\npre .vhdl .literal,\npre .tex .command {\n  color: #458;\n  font-weight: bold\n}\n\npre .tag,\npre .tag .title,\npre .rules .property,\npre .django .tag .keyword {\n  color: #000080;\n  font-weight: normal\n}\n\npre .attribute,\npre .variable,\npre .lisp .body {\n  color: #008080\n}\n\npre .regexp {\n  color: #009926\n}\n\npre .class {\n  color: #458;\n  font-weight: bold\n}\n\npre .symbol,\npre .ruby .symbol .string,\npre .lisp .keyword,\npre .tex .special,\npre .prompt {\n  color: #990073\n}\n\npre .built_in,\npre .lisp .title,\npre .clojure .built_in {\n  color: #0086b3\n}\n\npre .preprocessor,\npre .pi,\npre .doctype,\npre .shebang,\npre .cdata {\n  color: #999;\n  font-weight: bold\n}\n\npre .deletion {\n  background: #fdd\n}\n\npre .addition {\n  background: #dfd\n}\n\npre .diff .change {\n  background: #0086b3\n}\n\npre .chunk {\n  color: #aaa\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
 define('curl/plugin/css!highlight/github.css', ['curl/plugin/style!highlight/github.css'], function (sheet) { return sheet; });
-
-;
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6213,10 +6230,6 @@ define('wire/lib/dom/base', ['require', 'wire/lib/WireProxy', 'wire/lib/plugin/p
 
 ;
 
-;
-
-;
-
 ;define('app/tabs/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".tabs {\n    position: relative;\n    padding: 0;\n    margin: 0;\n    line-height: 1;\n}\n\n.tabs .item {\n    display: inline-block;\n    list-style-type: none;\n}\n\n.stack {\n    height: 100%;\n    position: relative;\n    padding: 0;\n    margin: 0;\n    clear: both;\n}\n\n.stack .item {\n    display: none;\n    list-style-type: none;\n    position: relative;\n    left: 0;\n    top: 0;\n    right: 0;\n}\n\n.stack .item.active {\n    display: block;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
 define('curl/plugin/css!app/tabs/structure.css', ['curl/plugin/style!app/tabs/structure.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
@@ -6497,8 +6510,6 @@ define('cola/dom/bindingHandler', ['require', 'cola/dom/guess', 'cola/dom/form']
 ));
 
 ;
-
-;
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6723,8 +6734,6 @@ define('wire/dom/render', ['wire/lib/dom/base', 'when/when'], function (base, wh
 
 });
 
-;
-
 ;define('contacts/app/edit/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".edit-contact-view {\n\tpadding: 0;\n\tposition: absolute;\n\tright: 0;\n\theight: 100%;\n\twidth: 70%;\n}\n\n.edit-contact-view fieldset {\n\tmargin: .5em 1em;\n}\n\n.edit-contact-view label {\n\tdisplay: block;\n\twidth: 100%;\n}\n\n.edit-contact-view label span {\n    display: inline-block;\n    padding: 0 2px;\n    width: 7em;\n}\n\n.edit-contact-view input[type=\"text\"] {\n\twidth: 8em;\n}\n\n.edit-contact-view input[name=\"id\"] {\n    display: none;\n}\n\n.edit-contact-view .controls {\n    position: absolute;\n    bottom: 0;\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
 define('curl/plugin/css!contacts/app/edit/structure.css', ['curl/plugin/style!contacts/app/edit/structure.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
@@ -6890,8 +6899,6 @@ define('wire/lib/functional', ['require', 'when/when'], function (require, $cram
 	// CommonJS
 	: function(factory) { module.exports = factory(require); }
 );
-
-;
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 
@@ -7290,8 +7297,6 @@ define('wire/lib/plugin-base/dom', ['wire/domReady', 'when/when', 'wire/lib/dom/
 		};
 	};
 });
-
-;
 
 ;define('contacts/app/list/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".contact-list-view {\n\tposition: absolute;\n\theight: 100%;\n\twidth: 30%;\n    margin: 0;\n    padding: 0;\n}\n\n.contact-list-view .contact {\n    padding: .25em;\n\tlist-style: none;\n}\n\n.contact-list-view {\n\toverflow-y: auto;\n}\n\n.contact-list-view .remove {\n    color: #aaa;\n    opacity: 0;\n}\n\n.contact-list-view .contact:hover .remove {\n    opacity: 1;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
 define('curl/plugin/css!contacts/app/list/structure.css', ['curl/plugin/style!contacts/app/list/structure.css'], function (sheet) { return sheet; });
@@ -8111,6 +8116,68 @@ define('cola/adapter/Query', ['require', 'when/when', 'cola/SortedMap'], functio
 		? define
 		: function(factory) { module.exports = factory(require); }
 );
+
+;(function (define) {
+define('cola/network/strategy/compose', ['require', 'when/when'], function (require, $cram_r0) {
+"use strict";
+
+	var when = $cram_r0;
+
+	/**
+	 * Returns a network strategy that is a composition of two or more
+	 * other strategies.  The strategies are executed in the order
+	 * in which they're provided.  If any strategy cancels, the remaining
+	 * strategies are never executed and the cancel is sent back to the Hub.
+	 *
+	 * @param strategies {Array} collection of network strategies.
+	 * @return {Function} a composite network strategy function
+	 */
+	return function composeStrategies (strategies) {
+		return function (source, dest, data, type, api) {
+
+			return when.reduce(strategies,
+				function(result, strategy) {
+					var strategyResult = strategy(source, dest, data, type, api);
+					return api.isCanceled()
+						? when.reject(strategyResult)
+						: strategyResult;
+				},
+				data
+			).then(propagateSuccess, propagateSuccess);
+
+		}
+
+	};
+
+	function propagateSuccess(x) {
+		return x;
+	}
+
+});
+}(
+	typeof define == 'function' && define.amd
+		? define
+		: function (factory) { module.exports = factory(require); }
+));
+/**
+ * collectionAdapterResolver
+ * @author: brian
+ */
+(function(define) {
+define('cola/collectionAdapterResolver', ['require', 'cola/adapterResolver', 'cola/adapter/Array', 'cola/dom/adapter/NodeList', 'cola/adapter/Query'], function (require, $cram_r0, $cram_r1, $cram_r2, $cram_r3) {
+
+	var adapterResolver = $cram_r0;
+
+	return Object.create(adapterResolver, {
+		adapters: { value: [
+			$cram_r1,
+			$cram_r2,
+			$cram_r3
+		]}
+	});
+
+});
+}(typeof define === 'function' ? define : function(factory) { module.exports = factory(require); }));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -8321,68 +8388,6 @@ define('wire/lib/connection', ['require', 'when/when', 'wire/lib/array', 'wire/l
 	// CommonJS
 	: function(factory) { module.exports = factory(require); }
 );
-
-;(function (define) {
-define('cola/network/strategy/compose', ['require', 'when/when'], function (require, $cram_r0) {
-"use strict";
-
-	var when = $cram_r0;
-
-	/**
-	 * Returns a network strategy that is a composition of two or more
-	 * other strategies.  The strategies are executed in the order
-	 * in which they're provided.  If any strategy cancels, the remaining
-	 * strategies are never executed and the cancel is sent back to the Hub.
-	 *
-	 * @param strategies {Array} collection of network strategies.
-	 * @return {Function} a composite network strategy function
-	 */
-	return function composeStrategies (strategies) {
-		return function (source, dest, data, type, api) {
-
-			return when.reduce(strategies,
-				function(result, strategy) {
-					var strategyResult = strategy(source, dest, data, type, api);
-					return api.isCanceled()
-						? when.reject(strategyResult)
-						: strategyResult;
-				},
-				data
-			).then(propagateSuccess, propagateSuccess);
-
-		}
-
-	};
-
-	function propagateSuccess(x) {
-		return x;
-	}
-
-});
-}(
-	typeof define == 'function' && define.amd
-		? define
-		: function (factory) { module.exports = factory(require); }
-));
-/**
- * collectionAdapterResolver
- * @author: brian
- */
-(function(define) {
-define('cola/collectionAdapterResolver', ['require', 'cola/adapterResolver', 'cola/adapter/Array', 'cola/dom/adapter/NodeList', 'cola/adapter/Query'], function (require, $cram_r0, $cram_r1, $cram_r2, $cram_r3) {
-
-	var adapterResolver = $cram_r0;
-
-	return Object.create(adapterResolver, {
-		adapters: { value: [
-			$cram_r1,
-			$cram_r2,
-			$cram_r3
-		]}
-	});
-
-});
-}(typeof define === 'function' ? define : function(factory) { module.exports = factory(require); }));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
