@@ -22,6 +22,8 @@ define({ // Wire spec
 		}
 	},
 
+	highlightTheme: { module: 'css!highlight/github.css' },
+
 	$plugins: [
 		{ module: 'wire/dom', classes: { init: 'loading' } },
 		'wire/dom/render'

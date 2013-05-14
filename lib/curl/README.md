@@ -6,26 +6,19 @@ Check out the newly updated [wiki](https://github.com/cujojs/curl/wiki)!
 See the [wiki](https://github.com/cujojs/curl/wiki) for information about using
 curl.js with jQuery, dojo, or underscore.
 
-Please Note: this project has moved from unscriptable/curl to cujojs/curl.
-Any existing forks have been automatically moved to cujojs/curl. However,
-you will need to update your clone and submodule remotes manually.
-
-Update the url in your .git/config, and also .gitmodules for submodules:
-	git://github.com/cujojs/curl.git
-	https://cujojs@github.com/cujojs/curl.git
-
-Helpful link for updating submodules:
-[Git Submodules: Adding, Using, Removing, Updating](http://chrisjean.com/2009/04/20/git-submodules-adding-using-removing-and-updating/)
-
 What's New?
 =======
 
-IE10 compatibility: the following commits are compatible with IE10 (and Safari 6):
-
-* [anything 0.7.x or higher](https://github.com/cujojs/curl)
-* [0.6.8](https://github.com/cujojs/curl/tree/3568bea941a6a6068995bfbeb56fa72c65835056)
-* [0.6.2a](https://github.com/cujojs/curl/tree/2683057e4cdf45eec44dd69dfd814ece75b7ae70)
-
+* 0.7.4
+	* curl.js is now available on CDN: http://cdnjs.com/#curl and
+	  http://jsdelivr.com/#!curl.js
+	* "main" modules specified in config are fetched after a delay for better
+	  compatibility with bundles.
+	* cram.js support
+	* data-curl-run attribute for loading run.js files.
+	* fix to stop IE6-8 complaining about sourceURL when @cc_on.
+	* new debug dist version of curl.js.
+	* bug fixes for running curl.js inside node.js.
 * 0.7.3
 	* css! plugin no longer fails when sniffing for Opera (Fixes #147)
 	* new curl.config() API method
@@ -68,12 +61,11 @@ What is curl.js?
 ================
 
 curl.js is a small and very fast AMD-compliant asynchronous loader.
-Size: 5KB (2.5KB gzipped) using Google's Closure Compiler.
+Size: <4KB (gzipped) using Google's Closure Compiler.
 
 If you'd like to use curl.js for non-AMD modules (ordinary javascript files),
 you'll want to  use a version with the js! plugin built in.  You may also
-want to build-in the domReady module.  The combined curl+js+domReady loader
-is still only 6.5KB (3KB gzipped).
+want to build-in the domReady module.
 
 What the heck is "cujo"?  cujo.js is a web app development platform.
 See the bottom of this file for more info.
@@ -584,9 +576,7 @@ What are AMD plugins?
 AMD supports the notion of plugins. Plugins are AMD modules that can be used to
 load javascript modules -- or other types of resources. curl comes with several
 plugins already, including a text plugin (for templates or other text
-resources), two different css plugins, a dojo 1.6 compatibility plugin,
-a dom-ready plugin and a debug plugin (for collecting and logging details of the
-inner workings of curl).
+resources), two different css plugins, a dom-ready plugin, and several others.
 
 Plugins are designated by a prefix on the name of the module or resource to be
 loaded. They are delineated by a ! symbol. The following example shows the use
