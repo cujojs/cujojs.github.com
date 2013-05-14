@@ -458,11 +458,23 @@ pre code {
     text-align: center;
 }
 
-/* Manifesto */
+/* Page variants */
 
-.manifesto .content.box {
+.constrain .content.box {
     max-width: 700px;
+    border: none;
 }
+
+/* Errors */
+.error footer {
+    height: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+/* Manifesto */
 
 .manifesto .mission {
     font-size: 1.5em;
