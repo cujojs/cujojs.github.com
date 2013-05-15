@@ -613,6 +613,12 @@ pre code {
         width: 45%;
     }
 
+    footer .col2:last-child {
+        float: right;
+        margin-right: 0;
+        text-align: right;
+    }
+
     .app-container .app {
         width: 35%;
     }
