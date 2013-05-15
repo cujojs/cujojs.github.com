@@ -61,6 +61,280 @@ define('poly/lib/_base', ['require', 'exports', 'module'], function (require, ex
 	}
 
 });
+/**
+ * Object polyfill / shims
+ *
+ * (c) copyright 2011-2012 Brian Cavalier and John Hann
+ *
+ * This module is part of the cujo.js family of libraries (http://cujojs.com/).
+ *
+ * Licensed under the MIT License at:
+ * 		http://www.opensource.org/licenses/mit-license.php
+ */
+/**
+ * The goal of these shims is to emulate a JavaScript 1.8.5+ environments as
+ * much as possible.  While it's not feasible to fully shim Object,
+ * we can try to maximize code compatibility with older js engines.
+ *
+ * Note: these shims cannot fix `for (var p in obj) {}`. Instead, use this:
+ *     Object.keys(obj).forEach(function (p) {}); // shimmed Array
+ *
+ * Also, these shims can't prevent writing to object properties.
+ *
+ * If you want your code to fail loudly if a shim can't mimic ES5 closely
+ * then set the AMD loader config option `failIfShimmed`.  Possible values
+ * for `failIfShimmed` include:
+ *
+ * true: fail on every shimmed Object function
+ * false: fail never
+ * function: fail for shims whose name returns true from function (name) {}
+ *
+ * By default, no shims fail.
+ *
+ * The following functions are safely shimmed:
+ * create (unless the second parameter is specified since that calls defineProperties)
+ * keys
+ * getOwnPropertyNames
+ * getPrototypeOf
+ * isExtensible
+ *
+ * In order to play nicely with several third-party libs (including Promises/A
+ * implementations), the following functions don't fail by default even though
+ * they can't be correctly shimmed:
+ * freeze
+ * seal
+ * isFrozen
+ * isSealed
+ *
+ * Note: this shim doesn't do anything special with IE8's minimally useful
+ * Object.defineProperty(domNode).
+ *
+ * The poly/strict module will set failIfShimmed to fail for some shims.
+ * See the documentation for more information.
+ *
+ * IE missing enum properties fixes copied from kangax:
+ * https://github.com/kangax/protolicious/blob/master/experimental/object.for_in.js
+ *
+ */
+define('poly/object', ['poly/lib/_base'], function (base) {
+"use strict";
+
+	var refObj,
+		refProto,
+		getPrototypeOf,
+		keys,
+		featureMap,
+		shims,
+		undef;
+
+	refObj = Object;
+	refProto = refObj.prototype;
+
+	getPrototypeOf = typeof {}.__proto__ == 'object'
+		? function (object) { return object.__proto__; }
+		: function (object) { return object.constructor ? object.constructor.prototype : refProto; };
+
+	keys = !hasNonEnumerableProps
+		? _keys
+		: (function (masked) {
+			return function (object) {
+				var result = _keys(object), i = 0, m;
+				while (m = masked[i++]) {
+					if (hasProp(object, m)) result.push(m);
+				}
+				return result;
+			}
+		}([ 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf' ]));
+
+	featureMap = {
+		'object-create': 'create',
+		'object-freeze': 'freeze',
+		'object-isfrozen': 'isFrozen',
+		'object-seal': 'seal',
+		'object-issealed': 'isSealed',
+		'object-getprototypeof': 'getPrototypeOf',
+		'object-keys': 'keys',
+		'object-getownpropertynames': 'getOwnPropertyNames',
+		'object-defineproperty': 'defineProperty',
+		'object-defineproperties': 'defineProperties',
+		'object-isextensible': 'isExtensible',
+		'object-preventextensions': 'preventExtensions',
+		'object-getownpropertydescriptor': 'getOwnPropertyDescriptor'
+	};
+
+	shims = {};
+
+	function hasNonEnumerableProps () {
+		for (var p in { toString: 1 }) return false;
+		return true;
+	}
+
+	function createFlameThrower (feature) {
+		return function () {
+			throw new Error('poly/object: ' + feature + ' is not safely supported.');
+		}
+	}
+
+	function has (feature) {
+		var prop = featureMap[feature];
+		return prop in refObj;
+	}
+
+	function PolyBase () {}
+
+	// for better compression
+	function hasProp (object, name) {
+		return object.hasOwnProperty(name);
+	}
+
+	function _keys (object) {
+		var result = [];
+		for (var p in object) {
+			if (hasProp(object, p)) {
+				result.push(p);
+			}
+		}
+		return result;
+	}
+
+	if (!has('object-create')) {
+		Object.create = shims.create = function create (proto, props) {
+			var obj;
+
+			if (typeof proto != 'object') throw new TypeError('prototype is not of type Object or Null.');
+
+			PolyBase.prototype = proto;
+			obj = new PolyBase(props);
+			PolyBase.prototype = null;
+
+			if (arguments.length > 1) {
+				// defineProperties could throw depending on `shouldThrow`
+				Object.defineProperties(obj, props);
+			}
+
+			return obj;
+		};
+	}
+
+	if (!has('object-freeze')) {
+		Object.freeze = shims.freeze = function freeze (object) {
+			return object;
+		};
+	}
+
+	if (!has('object-isfrozen')) {
+		Object.isFrozen = shims.isFrozen = function isFrozen (object) {
+			return false;
+		};
+	}
+
+	if (!has('object-seal')) {
+		Object.seal = shims.seal = function seal (object) {
+			return object;
+		};
+	}
+
+	if (!has('object-issealed')) {
+		Object.isSealed = shims.isSealed = function isSealed (object) {
+			return false;
+		};
+	}
+
+	if (!has('object-getprototypeof')) {
+		Object.getPrototypeOf = shims.getPrototypeOf = getPrototypeOf;
+	}
+
+	if (!has('object-keys')) {
+		Object.keys = keys;
+	}
+
+	if (!has('object-getownpropertynames')) {
+		Object.getOwnPropertyNames = shims.getOwnPropertyNames = function getOwnPropertyNames (object) {
+			return keys(object);
+		};
+	}
+
+	if (!has('object-defineproperty') || !has('object-defineproperties')) {
+		Object.defineProperty = shims.defineProperty = function defineProperty (object, name, descriptor) {
+			object[name] = descriptor && descriptor.value;
+			return object;
+		};
+	}
+
+	if (!has('object-defineproperties') || !has('object-create')) {
+		Object.defineProperties = shims.defineProperties = function defineProperties (object, descriptors) {
+			var names, name;
+			names = keys(descriptors);
+			while ((name = names.pop())) {
+				Object.defineProperty(object, name, descriptors[name]);
+			}
+			return object;
+		};
+	}
+
+	if (!has('object-isextensible')) {
+		Object.isExtensible = shims.isExtensible = function isExtensible (object) {
+			var prop = '_poly_';
+			try {
+				// create unique property name
+				while (prop in object) prop += '_';
+				// try to set it
+				object[prop] = 1;
+				return hasProp(object, prop);
+			}
+			catch (ex) { return false; }
+			finally {
+				try { delete object[prop]; } catch (ex) { /* squelch */ }
+			}
+		};
+	}
+
+	if (!has('object-preventextensions')) {
+		Object.preventExtensions = shims.preventExtensions = function preventExtensions (object) {
+			return object;
+		};
+	}
+
+	if (!has('object-getownpropertydescriptor')) {
+		Object.getOwnPropertyDescriptor = shims.getOwnPropertyDescriptor = function getOwnPropertyDescriptor (object, name) {
+			return hasProp(object, name)
+				? {
+					value: object[name],
+					enumerable: true,
+					configurable: true,
+					writable: true
+				}
+				: undef;
+		};
+	}
+
+	function failIfShimmed (failTest) {
+		var shouldThrow;
+
+		if (typeof failTest == 'function') {
+			shouldThrow = failTest;
+		}
+		else {
+			// assume truthy/falsey
+			shouldThrow = function () { return failTest; };
+		}
+
+		// create throwers for some features
+		for (var feature in shims) {
+			Object[feature] = shouldThrow(feature)
+				? createFlameThrower(feature)
+				: shims[feature];
+		}
+	}
+
+	// this is effectively a no-op, so why execute it?
+	//failIfShimmed(false);
+
+	return {
+		failIfShimmed: failIfShimmed
+	};
+
+});
 /*
 	Array -- a stand-alone module for using Javascript 1.6 array features
 	in lame-o browsers that don't support Javascript 1.6
@@ -359,280 +633,6 @@ define('poly/array', ['poly/lib/_base'], function (base) {
 	if (!Array.isArray) {
 		Array.isArray = isArray;
 	}
-
-});
-/**
- * Object polyfill / shims
- *
- * (c) copyright 2011-2012 Brian Cavalier and John Hann
- *
- * This module is part of the cujo.js family of libraries (http://cujojs.com/).
- *
- * Licensed under the MIT License at:
- * 		http://www.opensource.org/licenses/mit-license.php
- */
-/**
- * The goal of these shims is to emulate a JavaScript 1.8.5+ environments as
- * much as possible.  While it's not feasible to fully shim Object,
- * we can try to maximize code compatibility with older js engines.
- *
- * Note: these shims cannot fix `for (var p in obj) {}`. Instead, use this:
- *     Object.keys(obj).forEach(function (p) {}); // shimmed Array
- *
- * Also, these shims can't prevent writing to object properties.
- *
- * If you want your code to fail loudly if a shim can't mimic ES5 closely
- * then set the AMD loader config option `failIfShimmed`.  Possible values
- * for `failIfShimmed` include:
- *
- * true: fail on every shimmed Object function
- * false: fail never
- * function: fail for shims whose name returns true from function (name) {}
- *
- * By default, no shims fail.
- *
- * The following functions are safely shimmed:
- * create (unless the second parameter is specified since that calls defineProperties)
- * keys
- * getOwnPropertyNames
- * getPrototypeOf
- * isExtensible
- *
- * In order to play nicely with several third-party libs (including Promises/A
- * implementations), the following functions don't fail by default even though
- * they can't be correctly shimmed:
- * freeze
- * seal
- * isFrozen
- * isSealed
- *
- * Note: this shim doesn't do anything special with IE8's minimally useful
- * Object.defineProperty(domNode).
- *
- * The poly/strict module will set failIfShimmed to fail for some shims.
- * See the documentation for more information.
- *
- * IE missing enum properties fixes copied from kangax:
- * https://github.com/kangax/protolicious/blob/master/experimental/object.for_in.js
- *
- */
-define('poly/object', ['poly/lib/_base'], function (base) {
-"use strict";
-
-	var refObj,
-		refProto,
-		getPrototypeOf,
-		keys,
-		featureMap,
-		shims,
-		undef;
-
-	refObj = Object;
-	refProto = refObj.prototype;
-
-	getPrototypeOf = typeof {}.__proto__ == 'object'
-		? function (object) { return object.__proto__; }
-		: function (object) { return object.constructor ? object.constructor.prototype : refProto; };
-
-	keys = !hasNonEnumerableProps
-		? _keys
-		: (function (masked) {
-			return function (object) {
-				var result = _keys(object), i = 0, m;
-				while (m = masked[i++]) {
-					if (hasProp(object, m)) result.push(m);
-				}
-				return result;
-			}
-		}([ 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toString', 'toLocaleString', 'valueOf' ]));
-
-	featureMap = {
-		'object-create': 'create',
-		'object-freeze': 'freeze',
-		'object-isfrozen': 'isFrozen',
-		'object-seal': 'seal',
-		'object-issealed': 'isSealed',
-		'object-getprototypeof': 'getPrototypeOf',
-		'object-keys': 'keys',
-		'object-getownpropertynames': 'getOwnPropertyNames',
-		'object-defineproperty': 'defineProperty',
-		'object-defineproperties': 'defineProperties',
-		'object-isextensible': 'isExtensible',
-		'object-preventextensions': 'preventExtensions',
-		'object-getownpropertydescriptor': 'getOwnPropertyDescriptor'
-	};
-
-	shims = {};
-
-	function hasNonEnumerableProps () {
-		for (var p in { toString: 1 }) return false;
-		return true;
-	}
-
-	function createFlameThrower (feature) {
-		return function () {
-			throw new Error('poly/object: ' + feature + ' is not safely supported.');
-		}
-	}
-
-	function has (feature) {
-		var prop = featureMap[feature];
-		return prop in refObj;
-	}
-
-	function PolyBase () {}
-
-	// for better compression
-	function hasProp (object, name) {
-		return object.hasOwnProperty(name);
-	}
-
-	function _keys (object) {
-		var result = [];
-		for (var p in object) {
-			if (hasProp(object, p)) {
-				result.push(p);
-			}
-		}
-		return result;
-	}
-
-	if (!has('object-create')) {
-		Object.create = shims.create = function create (proto, props) {
-			var obj;
-
-			if (typeof proto != 'object') throw new TypeError('prototype is not of type Object or Null.');
-
-			PolyBase.prototype = proto;
-			obj = new PolyBase(props);
-			PolyBase.prototype = null;
-
-			if (arguments.length > 1) {
-				// defineProperties could throw depending on `shouldThrow`
-				Object.defineProperties(obj, props);
-			}
-
-			return obj;
-		};
-	}
-
-	if (!has('object-freeze')) {
-		Object.freeze = shims.freeze = function freeze (object) {
-			return object;
-		};
-	}
-
-	if (!has('object-isfrozen')) {
-		Object.isFrozen = shims.isFrozen = function isFrozen (object) {
-			return false;
-		};
-	}
-
-	if (!has('object-seal')) {
-		Object.seal = shims.seal = function seal (object) {
-			return object;
-		};
-	}
-
-	if (!has('object-issealed')) {
-		Object.isSealed = shims.isSealed = function isSealed (object) {
-			return false;
-		};
-	}
-
-	if (!has('object-getprototypeof')) {
-		Object.getPrototypeOf = shims.getPrototypeOf = getPrototypeOf;
-	}
-
-	if (!has('object-keys')) {
-		Object.keys = keys;
-	}
-
-	if (!has('object-getownpropertynames')) {
-		Object.getOwnPropertyNames = shims.getOwnPropertyNames = function getOwnPropertyNames (object) {
-			return keys(object);
-		};
-	}
-
-	if (!has('object-defineproperty') || !has('object-defineproperties')) {
-		Object.defineProperty = shims.defineProperty = function defineProperty (object, name, descriptor) {
-			object[name] = descriptor && descriptor.value;
-			return object;
-		};
-	}
-
-	if (!has('object-defineproperties') || !has('object-create')) {
-		Object.defineProperties = shims.defineProperties = function defineProperties (object, descriptors) {
-			var names, name;
-			names = keys(descriptors);
-			while ((name = names.pop())) {
-				Object.defineProperty(object, name, descriptors[name]);
-			}
-			return object;
-		};
-	}
-
-	if (!has('object-isextensible')) {
-		Object.isExtensible = shims.isExtensible = function isExtensible (object) {
-			var prop = '_poly_';
-			try {
-				// create unique property name
-				while (prop in object) prop += '_';
-				// try to set it
-				object[prop] = 1;
-				return hasProp(object, prop);
-			}
-			catch (ex) { return false; }
-			finally {
-				try { delete object[prop]; } catch (ex) { /* squelch */ }
-			}
-		};
-	}
-
-	if (!has('object-preventextensions')) {
-		Object.preventExtensions = shims.preventExtensions = function preventExtensions (object) {
-			return object;
-		};
-	}
-
-	if (!has('object-getownpropertydescriptor')) {
-		Object.getOwnPropertyDescriptor = shims.getOwnPropertyDescriptor = function getOwnPropertyDescriptor (object, name) {
-			return hasProp(object, name)
-				? {
-					value: object[name],
-					enumerable: true,
-					configurable: true,
-					writable: true
-				}
-				: undef;
-		};
-	}
-
-	function failIfShimmed (failTest) {
-		var shouldThrow;
-
-		if (typeof failTest == 'function') {
-			shouldThrow = failTest;
-		}
-		else {
-			// assume truthy/falsey
-			shouldThrow = function () { return failTest; };
-		}
-
-		// create throwers for some features
-		for (var feature in shims) {
-			Object[feature] = shouldThrow(feature)
-				? createFlameThrower(feature)
-				: shims[feature];
-		}
-	}
-
-	// this is effectively a no-op, so why execute it?
-	//failIfShimmed(false);
-
-	return {
-		failIfShimmed: failIfShimmed
-	};
 
 });
 /**
@@ -942,24 +942,12 @@ define('app/subheader/selectText', function () {
 	plugins: ['wire/dom', 'wire/dom/render', 'wire/on', 'wire/aop', 'cola']
 });
 
-;define('highlight/amd!hello/app/template.html', function () {
-	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">div</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>${name} <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">placeholder</span>=<span class=\"value\">\"${hint}\"</span>/&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">p</span>&gt;</span>${hello} <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>!<span class=\"tag\">&lt;/<span class=\"title\">p</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">div</span>&gt;</span></code></pre>";
-});
-
-;define('highlight/amd!hello/app/controller.js', function () {
-	return "<pre><code class=\"javascript\">define(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n  <span class=\"keyword\">return</span> {\n    update: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(e)</span> {</span>\n      <span class=\"keyword\">this</span>.node.innerHTML = e.target.value;\n    }\n  };\n});</code></pre>";
-});
-
 ;define('highlight/amd!hello/app/strings.js', function () {
 	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// i18n</span>\n  name: <span class=\"string\">'What\'s your name?'</span>,\n  hint: <span class=\"string\">'Type your name'</span>,\n  hello: <span class=\"string\">'Hello'</span>\n});</code></pre>";
 });
 
 ;define('highlight/amd!hello/app/main.js', function () {
 	return "<pre><code class=\"javascript\">define({ <span class=\"comment\">// Wire spec</span>\n\n  controller: {\n    create: <span class=\"string\">'hello/app/controller'</span>,\n    properties: {\n      node: { $ref: <span class=\"string\">'first!span'</span>, at: <span class=\"string\">'view'</span> }\n    },\n    on: { view: { <span class=\"string\">'input'</span>: <span class=\"string\">'update'</span> } }\n  },\n\n  view: {\n    render: {\n      template: { module: <span class=\"string\">'text!hello/app/template.html'</span> },\n      replace: { module: <span class=\"string\">'i18n!hello/app/strings.js'</span> }\n    },\n    insert: { last: <span class=\"string\">'root'</span> }\n  },\n\n  $plugins: [<span class=\"string\">'wire/dom'</span>, <span class=\"string\">'wire/dom/render'</span>, <span class=\"string\">'wire/on'</span>]\n});</code></pre>";
-});
-
-;define('curl/plugin/text!app/contacts-sample/template.html', function () {
-	return "<div class=\"cujo-contacts\">\n    <div class=\"contacts-view-container\"></div>\n</div>";
 });
 
 ;define('contacts/app/main', {// Wire spec
@@ -1020,16 +1008,16 @@ define('app/subheader/selectText', function () {
 	$plugins: ['wire/dom','wire/dom/render','wire/on','wire/connect','cola']
 });
 
-;define('highlight/amd!contacts/app/controller.js', function () {
-	return "<pre><code class=\"javascript\">define(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n\n  <span class=\"keyword\">return</span> {\n    editContact: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(contact)</span> {</span>\n      <span class=\"keyword\">this</span>._updateForm(<span class=\"keyword\">this</span>._form, contact);\n    }\n  };\n\n});</code></pre>";
+;define('highlight/amd!hello/app/template.html', function () {
+	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">div</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>${name} <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">placeholder</span>=<span class=\"value\">\"${hint}\"</span>/&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">p</span>&gt;</span>${hello} <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>!<span class=\"tag\">&lt;/<span class=\"title\">p</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">div</span>&gt;</span></code></pre>";
 });
 
-;define('highlight/amd!contacts/app/list/template.html', function () {
-	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">ul</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"contact-list-view\"</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">li</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"contact\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"remove\"</span>&gt;</span>&amp;times;<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"first-name\"</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"last-name\"</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">li</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">ul</span>&gt;</span></code></pre>";
+;define('highlight/amd!hello/app/controller.js', function () {
+	return "<pre><code class=\"javascript\">define(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n  <span class=\"keyword\">return</span> {\n    update: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(e)</span> {</span>\n      <span class=\"keyword\">this</span>.node.innerHTML = e.target.value;\n    }\n  };\n});</code></pre>";
 });
 
-;define('highlight/amd!contacts/app/edit/template.html', function () {
-	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">form</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"edit-contact-view\"</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">fieldset</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${firstName}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"first-name\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"firstName\"</span>/&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${lastName}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"last-name\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"lastName\"</span>/&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${phone}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"phone\"</span>&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${email}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"email\"</span>&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">fieldset</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"id\"</span>/&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">fieldset</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"controls\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"submit\"</span> <span class=\"attribute\">value</span>=<span class=\"value\">\"${save}\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"reset\"</span> <span class=\"attribute\">value</span>=<span class=\"value\">\"${clear}\"</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">fieldset</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">form</span>&gt;</span></code></pre>";
+;define('curl/plugin/text!app/contacts-sample/template.html', function () {
+	return "<div class=\"cujo-contacts\">\n    <div class=\"contacts-view-container\"></div>\n</div>";
 });
 
 ;define('highlight/amd!contacts/app/main.js', function () {
@@ -1044,8 +1032,8 @@ define('app/subheader/selectText', function () {
 	return "<pre><code class=\"javascript\">(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(define)</span> {</span>\ndefine(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n\n  <span class=\"comment\">/**\n   * Selects a text string from the provided strings array\n   */</span>\n  <span class=\"keyword\">return</span> <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(strings, selector)</span> {</span>\n    <span class=\"keyword\">var</span> len = strings &amp;&amp; strings.length;\n    <span class=\"keyword\">return</span> len ? strings[(selector || defaultSelector)(len)] : <span class=\"string\">''</span>;\n  };\n\n  <span class=\"function\"><span class=\"keyword\">function</span> <span class=\"title\">defaultSelector</span><span class=\"params\">(n)</span> {</span>\n    <span class=\"keyword\">return</span> Math.floor(Math.random() * n);\n  }\n\n});\n}(<span class=\"keyword\">typeof</span> define === <span class=\"string\">'function'</span> &amp;&amp; define.amd ? define : <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(factory)</span> {</span> module.exports = factory(); }));\n</code></pre>";
 });
 
-;define('highlight/amd!test/subheader/selectText-test.js', function () {
-	return "<pre><code class=\"javascript\">(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(define)</span> {</span>\ndefine(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(require)</span> {</span>\n\n  <span class=\"keyword\">var</span> buster, selectText;\n\n  buster = require(<span class=\"string\">'buster'</span>);\n  selectText = require(<span class=\"string\">'../../app/subheader/selectText'</span>);\n\n  buster.testCase(<span class=\"string\">'subheader/selectText'</span>, {\n    <span class=\"string\">'should return empty string when input is empty'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      assert.equals(selectText([]), <span class=\"string\">''</span>);\n    },\n\n    <span class=\"string\">'should return empty string when input not provided'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      assert.equals(selectText(), <span class=\"string\">''</span>);\n    },\n\n    <span class=\"string\">'should call provided selector function'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      <span class=\"keyword\">var</span> spy, input;\n\n      input = [<span class=\"string\">'a'</span>, <span class=\"string\">'b'</span>, <span class=\"string\">'c'</span>];\n      spy = <span class=\"keyword\">this</span>.stub().returns(<span class=\"number\">1</span>);\n\n      selectText(input, spy);\n      assert.calledOnceWith(spy, input.length);\n    },\n\n    <span class=\"string\">'should return selected string'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      <span class=\"keyword\">var</span> spy, input;\n\n      input = [<span class=\"string\">'a'</span>, <span class=\"string\">'b'</span>, <span class=\"string\">'c'</span>];\n      spy = <span class=\"keyword\">this</span>.stub().returns(<span class=\"number\">1</span>);\n\n      assert.equals(selectText(input, spy), <span class=\"string\">'b'</span>);\n    }\n  });\n\n});\n}(<span class=\"keyword\">typeof</span> define === <span class=\"string\">'function'</span> &amp;&amp; define.amd ? define : <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(factory)</span> {</span> module.exports = factory(require); }));\n\n</code></pre>";
+;define('highlight/amd!contacts/app/controller.js', function () {
+	return "<pre><code class=\"javascript\">define(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n\n  <span class=\"keyword\">return</span> {\n    editContact: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(contact)</span> {</span>\n      <span class=\"keyword\">this</span>._updateForm(<span class=\"keyword\">this</span>._form, contact);\n    }\n  };\n\n});</code></pre>";
 });
 
 ;define('hello/app/controller', function () {
@@ -1058,6 +1046,18 @@ define('app/subheader/selectText', function () {
 
 ;define('curl/plugin/text!hello/app/template.html', function () {
 	return "<div>\n    <label>${name} <input placeholder=\"${hint}\"/></label>\n    <p>${hello} <span></span>!</p>\n</div>";
+});
+
+;define('highlight/amd!contacts/app/list/template.html', function () {
+	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">ul</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"contact-list-view\"</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">li</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"contact\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"remove\"</span>&gt;</span>&amp;times;<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"first-name\"</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">span</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"last-name\"</span>&gt;</span><span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">li</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">ul</span>&gt;</span></code></pre>";
+});
+
+;define('highlight/amd!contacts/app/edit/template.html', function () {
+	return "<pre><code class=\"xml\"><span class=\"tag\">&lt;<span class=\"title\">form</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"edit-contact-view\"</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">fieldset</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${firstName}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"first-name\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"firstName\"</span>/&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${lastName}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"last-name\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"lastName\"</span>/&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${phone}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"phone\"</span>&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">label</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">span</span>&gt;</span>${email}<span class=\"tag\">&lt;/<span class=\"title\">span</span>&gt;</span>\n            <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"email\"</span>&gt;</span>\n        <span class=\"tag\">&lt;/<span class=\"title\">label</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">fieldset</span>&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"text\"</span> <span class=\"attribute\">name</span>=<span class=\"value\">\"id\"</span>/&gt;</span>\n    <span class=\"tag\">&lt;<span class=\"title\">fieldset</span> <span class=\"attribute\">class</span>=<span class=\"value\">\"controls\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"submit\"</span> <span class=\"attribute\">value</span>=<span class=\"value\">\"${save}\"</span>&gt;</span>\n        <span class=\"tag\">&lt;<span class=\"title\">input</span> <span class=\"attribute\">type</span>=<span class=\"value\">\"reset\"</span> <span class=\"attribute\">value</span>=<span class=\"value\">\"${clear}\"</span>&gt;</span>\n    <span class=\"tag\">&lt;/<span class=\"title\">fieldset</span>&gt;</span>\n<span class=\"tag\">&lt;/<span class=\"title\">form</span>&gt;</span></code></pre>";
+});
+
+;define('highlight/amd!test/subheader/selectText-test.js', function () {
+	return "<pre><code class=\"javascript\">(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(define)</span> {</span>\ndefine(<span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(require)</span> {</span>\n\n  <span class=\"keyword\">var</span> buster, selectText;\n\n  buster = require(<span class=\"string\">'buster'</span>);\n  selectText = require(<span class=\"string\">'../../app/subheader/selectText'</span>);\n\n  buster.testCase(<span class=\"string\">'subheader/selectText'</span>, {\n    <span class=\"string\">'should return empty string when input is empty'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      assert.equals(selectText([]), <span class=\"string\">''</span>);\n    },\n\n    <span class=\"string\">'should return empty string when input not provided'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      assert.equals(selectText(), <span class=\"string\">''</span>);\n    },\n\n    <span class=\"string\">'should call provided selector function'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      <span class=\"keyword\">var</span> spy, input;\n\n      input = [<span class=\"string\">'a'</span>, <span class=\"string\">'b'</span>, <span class=\"string\">'c'</span>];\n      spy = <span class=\"keyword\">this</span>.stub().returns(<span class=\"number\">1</span>);\n\n      selectText(input, spy);\n      assert.calledOnceWith(spy, input.length);\n    },\n\n    <span class=\"string\">'should return selected string'</span>: <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">()</span> {</span>\n      <span class=\"keyword\">var</span> spy, input;\n\n      input = [<span class=\"string\">'a'</span>, <span class=\"string\">'b'</span>, <span class=\"string\">'c'</span>];\n      spy = <span class=\"keyword\">this</span>.stub().returns(<span class=\"number\">1</span>);\n\n      assert.equals(selectText(input, spy), <span class=\"string\">'b'</span>);\n    }\n  });\n\n});\n}(<span class=\"keyword\">typeof</span> define === <span class=\"string\">'function'</span> &amp;&amp; define.amd ? define : <span class=\"function\"><span class=\"keyword\">function</span><span class=\"params\">(factory)</span> {</span> module.exports = factory(require); }));\n\n</code></pre>";
 });
 
 ;(function(define) {
@@ -1124,10 +1124,6 @@ define('app/tabs/controller', function () {
 	return "<ul class=\"tabs\">\n    <li class=\"item\"><a href=\"#\" class=\"tab-title\"></a></li>\n</ul>";
 });
 
-;define('curl/plugin/text!app/tabs/stack.html', function () {
-	return "<ul class=\"stack\">\n    <li class=\"item\"></li>\n</ul>";
-});
-
 ;define('contacts/app/collection/spec', {
 
 	$exports: { $ref: 'contacts' },
@@ -1178,6 +1174,10 @@ define('app/tabs/controller', function () {
 
 ;define('curl/plugin/text!contacts/app/list/template.html', function () {
 	return "<ul class=\"contact-list-view\">\n    <li class=\"contact\">\n        <span class=\"remove\">&times;</span>\n        <span class=\"first-name\"></span>\n        <span class=\"last-name\"></span>\n    </li>\n</ul>";
+});
+
+;define('curl/plugin/text!app/tabs/stack.html', function () {
+	return "<ul class=\"stack\">\n    <li class=\"item\"></li>\n</ul>";
 });
 
 ;define('contacts/app/list/compareByLastFirst', function () {
@@ -1493,6 +1493,59 @@ define('cola/dom/form', function () {
 	}
 
 });
+
+;define('curl/plugin/_fetchText', function () {
+
+	var xhr, progIds;
+
+	progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
+
+	xhr = function () {
+		if (typeof XMLHttpRequest !== "undefined") {
+			// rewrite the getXhr method to always return the native implementation
+			xhr = function () {
+				return new XMLHttpRequest();
+			};
+		}
+		else {
+			// keep trying progIds until we find the correct one, then rewrite the getXhr method
+			// to always return that one.
+			var noXhr = xhr = function () {
+				throw new Error("getXhr(): XMLHttpRequest not available");
+			};
+			while (progIds.length > 0 && xhr === noXhr) (function (id) {
+				try {
+					new ActiveXObject(id);
+					xhr = function () {
+						return new ActiveXObject(id);
+					};
+				}
+				catch (ex) {
+				}
+			}(progIds.shift()));
+		}
+		return xhr();
+	};
+
+	function fetchText (url, callback, errback) {
+		var x = xhr();
+		x.open('GET', url, true);
+		x.onreadystatechange = function (e) {
+			if (x.readyState === 4) {
+				if (x.status < 400) {
+					callback(x.responseText);
+				}
+				else {
+					errback(new Error('fetchText() failed. status: ' + x.statusText));
+				}
+			}
+		};
+		x.send(null);
+	}
+
+	return fetchText;
+
+});
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -1628,59 +1681,6 @@ define('cola/dom/form', function () {
 	});
 
 }(this, this.document));
-
-;define('curl/plugin/_fetchText', function () {
-
-	var xhr, progIds;
-
-	progIds = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'];
-
-	xhr = function () {
-		if (typeof XMLHttpRequest !== "undefined") {
-			// rewrite the getXhr method to always return the native implementation
-			xhr = function () {
-				return new XMLHttpRequest();
-			};
-		}
-		else {
-			// keep trying progIds until we find the correct one, then rewrite the getXhr method
-			// to always return that one.
-			var noXhr = xhr = function () {
-				throw new Error("getXhr(): XMLHttpRequest not available");
-			};
-			while (progIds.length > 0 && xhr === noXhr) (function (id) {
-				try {
-					new ActiveXObject(id);
-					xhr = function () {
-						return new ActiveXObject(id);
-					};
-				}
-				catch (ex) {
-				}
-			}(progIds.shift()));
-		}
-		return xhr();
-	};
-
-	function fetchText (url, callback, errback) {
-		var x = xhr();
-		x.open('GET', url, true);
-		x.onreadystatechange = function (e) {
-			if (x.readyState === 4) {
-				if (x.status < 400) {
-					callback(x.responseText);
-				}
-				else {
-					errback(new Error('fetchText() failed. status: ' + x.statusText));
-				}
-			}
-		};
-		x.send(null);
-	}
-
-	return fetchText;
-
-});
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -3296,44 +3296,63 @@ define('curl/plugin/domReady', ['curl/domReady'], function (domReady) {
 	};
 
 });
-/** MIT License (c) copyright B Cavalier & J Hann */
+/** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
- * curl text! loader plugin
- *
  * Licensed under the MIT License at:
- * 		http://www.opensource.org/licenses/mit-license.php
+ * http://www.opensource.org/licenses/mit-license.php
  */
 
-/**
- * TODO: load xdomain text, too, somehow
- *
- */
+(function(define){ 'use strict';
+define('wire/lib/object', function () {
 
-define('curl/plugin/text', ['curl/plugin/_fetchText'], function (fetchText) {
+	var hasOwn;
+
+	hasOwn = Object.prototype.hasOwnProperty.call.bind(Object.prototype.hasOwnProperty);
 
 	return {
-
-		'normalize': function (resourceId, toAbsId) {
-			// remove options
-			return resourceId ? toAbsId(resourceId.split("!")[0]) : resourceId;
-		},
-
-		load: function (resourceName, req, callback, config) {
-			// remove suffixes (future)
-			// get the text
-			fetchText(req['toUrl'](resourceName), callback, callback['error'] || error);
-		},
-
-		'cramPlugin': '../cram/text'
-
+		hasOwn: hasOwn,
+		isObject: isObject,
+		inherit: inherit,
+		mixin: mixin
 	};
 
-	function error (ex) {
-		throw ex;
+	function isObject(it) {
+		// In IE7 tos.call(null) is '[object Object]'
+		// so we need to check to see if 'it' is
+		// even set
+		return it && Object.prototype.toString.call(it) == '[object Object]';
+	}
+
+	function inherit(parent) {
+		return parent ? Object.create(parent) : {};
+	}
+
+	/**
+	 * Brute force copy own properties from -> to. Effectively an
+	 * ES6 Object.assign polyfill, usable with Array.prototype.reduce.
+	 * @param {object} to
+	 * @param {object} from
+	 * @returns {object} to
+	 */
+	function mixin(to, from) {
+		if(!from) {
+			return to;
+		}
+
+		return Object.keys(from).reduce(function(to, key) {
+			to[key] = from[key];
+			return to;
+		}, to);
 	}
 
 });
+})(typeof define == 'function'
+	// AMD
+	? define
+	// CommonJS
+	: function(factory) { module.exports = factory(); }
+);
 /** @license MIT License (c) copyright 2010-2013 original author or authors */
 
 /**
@@ -3414,63 +3433,6 @@ define('wire/domReady', ['require'], function (req) {
 
 });
 })(this);
-/** @license MIT License (c) copyright B Cavalier & J Hann */
-
-/**
- * Licensed under the MIT License at:
- * http://www.opensource.org/licenses/mit-license.php
- */
-
-(function(define){ 'use strict';
-define('wire/lib/object', function () {
-
-	var hasOwn;
-
-	hasOwn = Object.prototype.hasOwnProperty.call.bind(Object.prototype.hasOwnProperty);
-
-	return {
-		hasOwn: hasOwn,
-		isObject: isObject,
-		inherit: inherit,
-		mixin: mixin
-	};
-
-	function isObject(it) {
-		// In IE7 tos.call(null) is '[object Object]'
-		// so we need to check to see if 'it' is
-		// even set
-		return it && Object.prototype.toString.call(it) == '[object Object]';
-	}
-
-	function inherit(parent) {
-		return parent ? Object.create(parent) : {};
-	}
-
-	/**
-	 * Brute force copy own properties from -> to. Effectively an
-	 * ES6 Object.assign polyfill, usable with Array.prototype.reduce.
-	 * @param {object} to
-	 * @param {object} from
-	 * @returns {object} to
-	 */
-	function mixin(to, from) {
-		if(!from) {
-			return to;
-		}
-
-		return Object.keys(from).reduce(function(to, key) {
-			to[key] = from[key];
-			return to;
-		}, to);
-	}
-
-});
-})(typeof define == 'function'
-	// AMD
-	? define
-	// CommonJS
-	: function(factory) { module.exports = factory(); }
-);
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -3742,6 +3704,44 @@ define('cola/network/strategy/collectThenDeliver', function () {
 		? define
 		: function (factory) { module.exports = factory(); }
 ));
+/** MIT License (c) copyright B Cavalier & J Hann */
+
+/**
+ * curl text! loader plugin
+ *
+ * Licensed under the MIT License at:
+ * 		http://www.opensource.org/licenses/mit-license.php
+ */
+
+/**
+ * TODO: load xdomain text, too, somehow
+ *
+ */
+
+define('curl/plugin/text', ['curl/plugin/_fetchText'], function (fetchText) {
+
+	return {
+
+		'normalize': function (resourceId, toAbsId) {
+			// remove options
+			return resourceId ? toAbsId(resourceId.split("!")[0]) : resourceId;
+		},
+
+		load: function (resourceName, req, callback, config) {
+			// remove suffixes (future)
+			// get the text
+			fetchText(req['toUrl'](resourceName), callback, callback['error'] || error);
+		},
+
+		'cramPlugin': '../cram/text'
+
+	};
+
+	function error (ex) {
+		throw ex;
+	}
+
+});
 
 ;(function (define) {
 define('cola/network/strategy/validate', function () {
@@ -3776,43 +3776,6 @@ define('cola/network/strategy/validate', function () {
 	function defaultValidator(item) {
 		return { valid: item != null };
 	}
-
-});
-}(
-	typeof define == 'function' && define.amd
-		? define
-		: function (factory) { module.exports = factory(); }
-));
-
-;(function (define) {
-define('cola/network/strategy/changeEvent', function () {
-	"use strict";
-
-	var beforeEvents, afterEvents;
-
-	beforeEvents = {
-		sync: 1
-	};
-	afterEvents = {
-		add: 1,
-		update: 1,
-		remove: 1
-	};
-
-	/**
-	 * Trigger a change event as a result of other events.
-	 * @return {Function} a network strategy function.
-	 */
-	return function configure () {
-
-		return function queueChange (source, dest, data, type, api) {
-			if (api.isBefore() && beforeEvents[type]
-				|| api.isAfter() && afterEvents[type]) {
-				api.queueEvent(source, data, 'change');
-			}
-		};
-
-	};
 
 });
 }(
@@ -3882,6 +3845,43 @@ define('wire/lib/array', function () {
 	// CommonJS
 	: function(factory) { module.exports = factory(); }
 );
+
+;(function (define) {
+define('cola/network/strategy/changeEvent', function () {
+	"use strict";
+
+	var beforeEvents, afterEvents;
+
+	beforeEvents = {
+		sync: 1
+	};
+	afterEvents = {
+		add: 1,
+		update: 1,
+		remove: 1
+	};
+
+	/**
+	 * Trigger a change event as a result of other events.
+	 * @return {Function} a network strategy function.
+	 */
+	return function configure () {
+
+		return function queueChange (source, dest, data, type, api) {
+			if (api.isBefore() && beforeEvents[type]
+				|| api.isAfter() && afterEvents[type]) {
+				api.queueEvent(source, data, 'change');
+			}
+		};
+
+	};
+
+});
+}(
+	typeof define == 'function' && define.amd
+		? define
+		: function (factory) { module.exports = factory(); }
+));
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 (function (define) {
@@ -4782,22 +4782,6 @@ define('cola/comparator/byProperty', ['require', 'cola/comparator/naturalOrder']
 		? define
 		: function (factory) { module.exports = factory(require); }
 ));
-/** MIT License (c) copyright B Cavalier & J Hann */
-
-(function (define) {
-define('cola/identifier/default', ['require', 'cola/identifier/property'], function (require, $cram_r0) {
-	"use strict";
-
-	var property = $cram_r0;
-
-	return property('id');
-
-});
-}(
-	typeof define == 'function'
-		? define
-		: function (factory) { module.exports = factory(require); }
-));
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -5186,6 +5170,24 @@ define('cola/adapter/Array', ['require', 'when/when'], function (require, $cram_
 		? define
 		: function(factory) { module.exports = factory(require); }
 );
+/** MIT License (c) copyright B Cavalier & J Hann */
+
+(function (define) {
+define('cola/identifier/default', ['require', 'cola/identifier/property'], function (require, $cram_r0) {
+	"use strict";
+
+	var property = $cram_r0;
+
+	return property('id');
+
+});
+}(
+	typeof define == 'function'
+		? define
+		: function (factory) { module.exports = factory(require); }
+));
+
+;
 /** @license MIT License (c) copyright original author or authors */
 
 /**
@@ -5292,8 +5294,6 @@ define('wire/lib/invoker', function () {
 });
 })(typeof define === 'function' && define.amd ? define : function(factory) { module.exports = factory(); });
 
-;
-
 ;(function (define, global, document) {
 define('cola/dom/has', function () {
 	"use strict";
@@ -5326,6 +5326,9 @@ define('cola/dom/has', function () {
 	this,
 	this.document
 ));
+
+;define('highlight/github.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = "/*\n\ngithub.com style (c) Vasily Polovnyov <vast@whiteants.net>\n\n*/\n\npre code {\n  display: block; padding: 0.5em;\n  color: #333;\n  background: #fff\n  /*background: #f8f8ff*/\n}\n\npre .comment,\npre .template_comment,\npre .diff .header,\npre .javadoc {\n  color: #998;\n  font-style: italic\n}\n\npre .keyword,\npre .css .rule .keyword,\npre .winutils,\npre .javascript .title,\npre .nginx .title,\npre .subst,\npre .request,\npre .status {\n  color: #333;\n  font-weight: bold\n}\n\npre .number,\npre .hexcolor,\npre .ruby .constant {\n  color: #099;\n}\n\npre .string,\npre .tag .value,\npre .phpdoc,\npre .tex .formula {\n  color: #d14\n}\n\npre .title,\npre .id,\npre .coffeescript .params,\npre .scss .preprocessor {\n  color: #900;\n  font-weight: bold\n}\n\npre .javascript .title,\npre .lisp .title,\npre .clojure .title,\npre .subst {\n  font-weight: normal\n}\n\npre .class .title,\npre .haskell .type,\npre .vhdl .literal,\npre .tex .command {\n  color: #458;\n  font-weight: bold\n}\n\npre .tag,\npre .tag .title,\npre .rules .property,\npre .django .tag .keyword {\n  color: #000080;\n  font-weight: normal\n}\n\npre .attribute,\npre .variable,\npre .lisp .body {\n  color: #008080\n}\n\npre .regexp {\n  color: #009926\n}\n\npre .class {\n  color: #458;\n  font-weight: bold\n}\n\npre .symbol,\npre .ruby .symbol .string,\npre .lisp .keyword,\npre .tex .special,\npre .prompt {\n  color: #990073\n}\n\npre .built_in,\npre .lisp .title,\npre .clojure .built_in {\n  color: #0086b3\n}\n\npre .preprocessor,\npre .pi,\npre .doctype,\npre .shebang,\npre .cdata {\n  color: #999;\n  font-weight: bold\n}\n\npre .deletion {\n  background: #fdd\n}\n\npre .addition {\n  background: #dfd\n}\n\npre .diff .change {\n  background: #0086b3\n}\n\npre .chunk {\n  color: #aaa\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
+define('curl/plugin/css!highlight/github.css', ['curl/plugin/style!highlight/github.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -5483,9 +5486,6 @@ define('wire/lib/WireProxy', ['require', 'wire/lib/object', 'wire/lib/array'], f
 	// CommonJS
 	: function(factory) { module.exports = factory(require); }
 );
-
-;define('highlight/github.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = "/*\n\ngithub.com style (c) Vasily Polovnyov <vast@whiteants.net>\n\n*/\n\npre code {\n  display: block; padding: 0.5em;\n  color: #333;\n  background: #fff\n  /*background: #f8f8ff*/\n}\n\npre .comment,\npre .template_comment,\npre .diff .header,\npre .javadoc {\n  color: #998;\n  font-style: italic\n}\n\npre .keyword,\npre .css .rule .keyword,\npre .winutils,\npre .javascript .title,\npre .nginx .title,\npre .subst,\npre .request,\npre .status {\n  color: #333;\n  font-weight: bold\n}\n\npre .number,\npre .hexcolor,\npre .ruby .constant {\n  color: #099;\n}\n\npre .string,\npre .tag .value,\npre .phpdoc,\npre .tex .formula {\n  color: #d14\n}\n\npre .title,\npre .id,\npre .coffeescript .params,\npre .scss .preprocessor {\n  color: #900;\n  font-weight: bold\n}\n\npre .javascript .title,\npre .lisp .title,\npre .clojure .title,\npre .subst {\n  font-weight: normal\n}\n\npre .class .title,\npre .haskell .type,\npre .vhdl .literal,\npre .tex .command {\n  color: #458;\n  font-weight: bold\n}\n\npre .tag,\npre .tag .title,\npre .rules .property,\npre .django .tag .keyword {\n  color: #000080;\n  font-weight: normal\n}\n\npre .attribute,\npre .variable,\npre .lisp .body {\n  color: #008080\n}\n\npre .regexp {\n  color: #009926\n}\n\npre .class {\n  color: #458;\n  font-weight: bold\n}\n\npre .symbol,\npre .ruby .symbol .string,\npre .lisp .keyword,\npre .tex .special,\npre .prompt {\n  color: #990073\n}\n\npre .built_in,\npre .lisp .title,\npre .clojure .built_in {\n  color: #0086b3\n}\n\npre .preprocessor,\npre .pi,\npre .doctype,\npre .shebang,\npre .cdata {\n  color: #999;\n  font-weight: bold\n}\n\npre .deletion {\n  background: #fdd\n}\n\npre .addition {\n  background: #dfd\n}\n\npre .diff .change {\n  background: #0086b3\n}\n\npre .chunk {\n  color: #aaa\n}\n"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
-define('curl/plugin/css!highlight/github.css', ['curl/plugin/style!highlight/github.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -5886,6 +5886,9 @@ define('cola/dom/guess', ['require', 'cola/dom/has', 'cola/dom/classList'], func
 		? define
 		: function (factory) { module.exports = factory(require); }
 ));
+
+;define('app/tabs/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".tabs {\n    position: relative;\n    padding: 0;\n    margin: 0;\n    line-height: 1;\n}\n\n.tabs .item {\n    display: inline-block;\n    list-style-type: none;\n}\n\n.stack {\n    height: 100%;\n    position: relative;\n    padding: 0;\n    margin: 0;\n    clear: both;\n}\n\n.stack .item {\n    display: none;\n    list-style-type: none;\n    position: relative;\n    left: 0;\n    top: 0;\n    right: 0;\n}\n\n.stack .item.active {\n    display: block;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
+define('curl/plugin/css!app/tabs/structure.css', ['curl/plugin/style!app/tabs/structure.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6191,9 +6194,6 @@ define('wire/lib/dom/base', ['require', 'wire/lib/WireProxy', 'wire/lib/plugin/p
 		? define
 		: function (factory) { module.exports = factory(require); }
 ));
-
-;define('app/tabs/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".tabs {\n    position: relative;\n    padding: 0;\n    margin: 0;\n    line-height: 1;\n}\n\n.tabs .item {\n    display: inline-block;\n    list-style-type: none;\n}\n\n.stack {\n    height: 100%;\n    position: relative;\n    padding: 0;\n    margin: 0;\n    clear: both;\n}\n\n.stack .item {\n    display: none;\n    list-style-type: none;\n    position: relative;\n    left: 0;\n    top: 0;\n    right: 0;\n}\n\n.stack .item.active {\n    display: block;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
-define('curl/plugin/css!app/tabs/structure.css', ['curl/plugin/style!app/tabs/structure.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6236,46 +6236,166 @@ define('curl/plugin/css!contacts/app/edit/structure.css', ['curl/plugin/style!co
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
- * sequence.js
+ * functional
+ * Helper library for working with pure functions in wire and wire plugins
  *
- * Run a set of task functions in sequence.  All tasks will
- * receive the same args.
+ * NOTE: This lib assumes Function.prototype.bind is available
  *
- * @author brian@hovercraftstudios.com
+ * wire is part of the cujo.js family of libraries (http://cujojs.com/)
+ *
+ * Licensed under the MIT License at:
+ * http://www.opensource.org/licenses/mit-license.php
  */
+(function (define) { 'use strict';
+define('wire/lib/functional', ['require', 'when/when'], function (require, $cram_r0) {
 
-(function(define) {
-define('when/sequence', ['require', 'when/when'], function (require, $cram_r0) {
-
-	var when;
+	var when, slice;
 
 	when = $cram_r0;
+	slice = [].slice;
 
 	/**
-	 * Run array of tasks in sequence with no overlap
-	 * @param tasks {Array|Promise} array or promiseForArray of task functions
-	 * @param [args] {*} arguments to be passed to all tasks
-	 * @return {Promise} promise for an array containing
-	 * the result of each task in the array position corresponding
-	 * to position of the task in the tasks array
+	 * Create a partial function
+	 * @param f {Function}
+	 * @param [args] {*} additional arguments will be bound to the returned partial
+	 * @return {Function}
 	 */
-	return function sequence(tasks /*, args... */) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		return when.reduce(tasks, function(results, task) {
-			return when(task.apply(null, args), function(result) {
-				results.push(result);
-				return results;
+	function partial(f, args/*...*/) {
+		// What we want here is to allow the partial function to be called in
+		// any context, by attaching it to an object, or using partialed.call/apply
+		// That's why we're not using Function.bind() here.  It has no way to bind
+		// arguments but allow the context to default.  In other words, you MUST bind
+		// the the context to something with Function.bind().
+
+		// Optimization: return f if no args provided
+		if(arguments.length == 1) {
+			return f;
+		}
+
+		args = slice.call(arguments, 1);
+
+		return function() {
+			return f.apply(this, args.concat(slice.call(arguments)));
+		};
+	}
+
+	/**
+	 * Compose functions
+	 * @param funcs {Array} array of functions to compose
+	 * @return {Function} composed function
+	 */
+	function compose(funcs) {
+
+		var first;
+		first = funcs[0];
+		funcs = funcs.slice(1);
+
+		return function composed() {
+			var context = this;
+			return funcs.reduce(function(result, f) {
+				return conditionalWhen(result, function(result) {
+					return f.call(context, result);
+				});
+			}, first.apply(this, arguments));
+		};
+	}
+
+	/**
+	 * Parses the function composition string, resolving references as needed, and
+	 * composes a function from the resolved refs.
+	 * @param proxy {Object} wire proxy on which to invoke the final method of the composition
+	 * @param composeString {String} function composition string
+	 *  of the form: 'transform1 | transform2 | ... | methodOnProxyTarget"
+	 *  @param {function} wire
+	 * @param {function} wire.resolveRef function to use is resolving references, returns a promise
+	 * @param {function} wire.getProxy function used to obtain a proxy for a component
+	 * @return {Promise} a promise for the composed function
+	 */
+	compose.parse = function parseCompose(proxy, composeString, wire) {
+
+		var bindSpecs, resolveRef, getProxy;
+
+		if(typeof composeString != 'string') {
+			return wire(composeString).then(function(func) {
+				return createProxyInvoker(proxy, func);
 			});
-		}, []);
+		}
+
+		bindSpecs = composeString.split(/\s*\|\s*/);
+		resolveRef = wire.resolveRef;
+		getProxy = wire.getProxy;
+
+		function createProxyInvoker(proxy, method) {
+			return function() {
+				return proxy.invoke(method, arguments);
+			};
+		}
+
+		function createBound(proxy, bindSpec) {
+			var target, method;
+
+			target = bindSpec.split('.');
+
+			if(target.length > 2) {
+				throw new Error('Only 1 "." is allowed in refs: ' + bindSpec);
+			}
+
+			if(target.length > 1) {
+				method = target[1];
+				target = target[0];
+				if(!target) {
+					return function(target) {
+						return target[method].apply(target, slice.call(arguments, 1));
+					};
+				}
+				return when(getProxy(target), function(proxy) {
+					return createProxyInvoker(proxy, method);
+				});
+			} else {
+				if(proxy && typeof proxy.get(bindSpec) == 'function') {
+					return createProxyInvoker(proxy, bindSpec);
+				} else {
+					return resolveRef(bindSpec);
+				}
+			}
+
+		}
+
+		// First, resolve each transform function, stuffing it into an array
+		// The result of this reduce will an array of concrete functions
+		// Then add the final context[method] to the array of funcs and
+		// return the composition.
+		return when.reduce(bindSpecs, function(funcs, bindSpec) {
+			return when(createBound(proxy, bindSpec), function(func) {
+				funcs.push(func);
+				return funcs;
+			});
+		}, []).then(
+			function(funcs) {
+				var context = proxy && proxy.target;
+				return (funcs.length == 1 ? funcs[0] : compose(funcs)).bind(context);
+			}
+		);
+	};
+
+	function conditionalWhen(promiseOrValue, onFulfill, onReject) {
+		return when.isPromise(promiseOrValue)
+			? when(promiseOrValue, onFulfill, onReject)
+			: onFulfill(promiseOrValue);
+	}
+
+	return {
+		compose: compose,
+		partial: partial
 	};
 
 });
-})(
-	typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); }
-	// Boilerplate for AMD and Node
+})(typeof define == 'function'
+	// AMD
+	? define
+	// CommonJS
+	: function(factory) { module.exports = factory(require); }
 );
-
-
 
 ;(function (define) {
 define('cola/dom/bindingHandler', ['require', 'cola/dom/guess', 'cola/dom/form'], function (require, $cram_r0, $cram_r1) {
@@ -6511,6 +6631,9 @@ define('cola/dom/bindingHandler', ['require', 'cola/dom/guess', 'cola/dom/form']
 ));
 
 ;
+
+;define('contacts/app/list/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".contact-list-view {\n\tposition: absolute;\n\theight: 100%;\n\twidth: 30%;\n    margin: 0;\n    padding: 0;\n}\n\n.contact-list-view .contact {\n    padding: .25em;\n\tlist-style: none;\n}\n\n.contact-list-view {\n\toverflow-y: auto;\n}\n\n.contact-list-view .remove {\n    color: #aaa;\n    opacity: 0;\n}\n\n.contact-list-view .contact:hover .remove {\n    opacity: 1;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
+define('curl/plugin/css!contacts/app/list/structure.css', ['curl/plugin/style!contacts/app/list/structure.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
@@ -6734,172 +6857,49 @@ define('wire/dom/render', ['wire/lib/dom/base', 'when/when'], function (base, wh
 	return render;
 
 });
-
-;define('contacts/app/list/structure.css', ['curl/plugin/style', 'require'], function (injector, require) { var text = ".contact-list-view {\n\tposition: absolute;\n\theight: 100%;\n\twidth: 30%;\n    margin: 0;\n    padding: 0;\n}\n\n.contact-list-view .contact {\n    padding: .25em;\n\tlist-style: none;\n}\n\n.contact-list-view {\n\toverflow-y: auto;\n}\n\n.contact-list-view .remove {\n    color: #aaa;\n    opacity: 0;\n}\n\n.contact-list-view .contact:hover .remove {\n    opacity: 1;\n}"; if (0) text = injector.translateUrls(text, require.toUrl("")); return text; });
-define('curl/plugin/css!contacts/app/list/structure.css', ['curl/plugin/style!contacts/app/list/structure.css'], function (sheet) { return sheet; });
 /** @license MIT License (c) copyright B Cavalier & J Hann */
 
 /**
- * functional
- * Helper library for working with pure functions in wire and wire plugins
+ * sequence.js
  *
- * NOTE: This lib assumes Function.prototype.bind is available
+ * Run a set of task functions in sequence.  All tasks will
+ * receive the same args.
  *
- * wire is part of the cujo.js family of libraries (http://cujojs.com/)
- *
- * Licensed under the MIT License at:
- * http://www.opensource.org/licenses/mit-license.php
+ * @author brian@hovercraftstudios.com
  */
-(function (define) { 'use strict';
-define('wire/lib/functional', ['require', 'when/when'], function (require, $cram_r0) {
 
-	var when, slice;
+(function(define) {
+define('when/sequence', ['require', 'when/when'], function (require, $cram_r0) {
+
+	var when;
 
 	when = $cram_r0;
-	slice = [].slice;
 
 	/**
-	 * Create a partial function
-	 * @param f {Function}
-	 * @param [args] {*} additional arguments will be bound to the returned partial
-	 * @return {Function}
+	 * Run array of tasks in sequence with no overlap
+	 * @param tasks {Array|Promise} array or promiseForArray of task functions
+	 * @param [args] {*} arguments to be passed to all tasks
+	 * @return {Promise} promise for an array containing
+	 * the result of each task in the array position corresponding
+	 * to position of the task in the tasks array
 	 */
-	function partial(f, args/*...*/) {
-		// What we want here is to allow the partial function to be called in
-		// any context, by attaching it to an object, or using partialed.call/apply
-		// That's why we're not using Function.bind() here.  It has no way to bind
-		// arguments but allow the context to default.  In other words, you MUST bind
-		// the the context to something with Function.bind().
-
-		// Optimization: return f if no args provided
-		if(arguments.length == 1) {
-			return f;
-		}
-
-		args = slice.call(arguments, 1);
-
-		return function() {
-			return f.apply(this, args.concat(slice.call(arguments)));
-		};
-	}
-
-	/**
-	 * Compose functions
-	 * @param funcs {Array} array of functions to compose
-	 * @return {Function} composed function
-	 */
-	function compose(funcs) {
-
-		var first;
-		first = funcs[0];
-		funcs = funcs.slice(1);
-
-		return function composed() {
-			var context = this;
-			return funcs.reduce(function(result, f) {
-				return conditionalWhen(result, function(result) {
-					return f.call(context, result);
-				});
-			}, first.apply(this, arguments));
-		};
-	}
-
-	/**
-	 * Parses the function composition string, resolving references as needed, and
-	 * composes a function from the resolved refs.
-	 * @param proxy {Object} wire proxy on which to invoke the final method of the composition
-	 * @param composeString {String} function composition string
-	 *  of the form: 'transform1 | transform2 | ... | methodOnProxyTarget"
-	 *  @param {function} wire
-	 * @param {function} wire.resolveRef function to use is resolving references, returns a promise
-	 * @param {function} wire.getProxy function used to obtain a proxy for a component
-	 * @return {Promise} a promise for the composed function
-	 */
-	compose.parse = function parseCompose(proxy, composeString, wire) {
-
-		var bindSpecs, resolveRef, getProxy;
-
-		if(typeof composeString != 'string') {
-			return wire(composeString).then(function(func) {
-				return createProxyInvoker(proxy, func);
+	return function sequence(tasks /*, args... */) {
+		var args = Array.prototype.slice.call(arguments, 1);
+		return when.reduce(tasks, function(results, task) {
+			return when(task.apply(null, args), function(result) {
+				results.push(result);
+				return results;
 			});
-		}
-
-		bindSpecs = composeString.split(/\s*\|\s*/);
-		resolveRef = wire.resolveRef;
-		getProxy = wire.getProxy;
-
-		function createProxyInvoker(proxy, method) {
-			return function() {
-				return proxy.invoke(method, arguments);
-			};
-		}
-
-		function createBound(proxy, bindSpec) {
-			var target, method;
-
-			target = bindSpec.split('.');
-
-			if(target.length > 2) {
-				throw new Error('Only 1 "." is allowed in refs: ' + bindSpec);
-			}
-
-			if(target.length > 1) {
-				method = target[1];
-				target = target[0];
-				if(!target) {
-					return function(target) {
-						return target[method].apply(target, slice.call(arguments, 1));
-					};
-				}
-				return when(getProxy(target), function(proxy) {
-					return createProxyInvoker(proxy, method);
-				});
-			} else {
-				if(proxy && typeof proxy.get(bindSpec) == 'function') {
-					return createProxyInvoker(proxy, bindSpec);
-				} else {
-					return resolveRef(bindSpec);
-				}
-			}
-
-		}
-
-		// First, resolve each transform function, stuffing it into an array
-		// The result of this reduce will an array of concrete functions
-		// Then add the final context[method] to the array of funcs and
-		// return the composition.
-		return when.reduce(bindSpecs, function(funcs, bindSpec) {
-			return when(createBound(proxy, bindSpec), function(func) {
-				funcs.push(func);
-				return funcs;
-			});
-		}, []).then(
-			function(funcs) {
-				var context = proxy && proxy.target;
-				return (funcs.length == 1 ? funcs[0] : compose(funcs)).bind(context);
-			}
-		);
-	};
-
-	function conditionalWhen(promiseOrValue, onFulfill, onReject) {
-		return when.isPromise(promiseOrValue)
-			? when(promiseOrValue, onFulfill, onReject)
-			: onFulfill(promiseOrValue);
-	}
-
-	return {
-		compose: compose,
-		partial: partial
+		}, []);
 	};
 
 });
-})(typeof define == 'function'
-	// AMD
-	? define
-	// CommonJS
-	: function(factory) { module.exports = factory(require); }
+})(
+	typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); }
+	// Boilerplate for AMD and Node
 );
+
+
 /** MIT License (c) copyright B Cavalier & J Hann */
 
 
