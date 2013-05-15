@@ -370,10 +370,12 @@ pre code {
 .ribbon {
     background: none;
     overflow: hidden;
-    height: 100px;
+    height: 10em;
+    width: 10em;
     position: absolute;
-    right: -38px;
-    top: 29px;
+    right: 0;
+    top: 2em;
+	margin-top: 1px; /* accounts for border width */
     z-index: 1;
 }
 
@@ -387,21 +389,28 @@ pre code {
     display: block;
     font-size: 0.8em;
     font-weight: bold;
-    height: 18px;
+    height: 1.75em;
     line-height: 1;
-    margin-top: 13px;
-    padding: .5em 3em 0;
+    padding: .5em 0 0;
     text-decoration: none;
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
-    -moz-transform: rotate(45deg);
-    -o-transform: rotate(45deg);
+    text-align: center;
+    transform: translate(2.75em, 1.75em) rotate(45deg);
+    -webkit-transform: translate(2.75em, 1.75em) rotate(45deg);
+    -moz-transform: translate(2.75em, 1.75em) rotate(45deg);
+    -o-transform: translate(2.75em, 1.75em) rotate(45deg);
     filter:  progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=-0.70710678, M21=0.70710678, M22=0.70710678, sizingMethod='auto expand'); /* IE6, IE7 */
-    -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=-0.70710678, M21=0.70710678, M22=0.70710678, sizingMethod='auto expand')"; /* IE8 */
     zoom: 1;
-    position: relative\9; /* the \9 is intentional, @see http://paulirish.com/2009/browser-specific-css-hacks/*/
-    top: -21px\9;
-    left: -21px\9;
+    /*
+     * IE hacks. \9 is intentional. @see http://paulirish.com/2009/browser-specific-css-hacks/
+       undone in IE10 by the IE10-targeted hack below.
+     */
+    position: relative\9;
+    top: -1.75em\9;
+    left: 3.75em\9;
+	width: 100%\9;
+}
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+	.ribbon a { position: static; }
 }
 
 .get h2 {
@@ -579,15 +588,8 @@ pre code {
         line-height: 1;
     }
 
-    .ribbon {
-        right: -35px;
-        top: 29px;
-    }
-
     .ribbon a {
         font-size: 0.9em;
-        height: 20px;
-        margin-top: 20px;
     }
 
     .tabs .item a {
