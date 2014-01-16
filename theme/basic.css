@@ -82,7 +82,7 @@ nav li {
 .social [class^="icon-"]:before, .social [class*=" icon-"]:before {
     font-size: 1.25em;
     margin-right: .5em;
-    margin-top: -.25em;
+    margin-top: -.2em;
     vertical-align: middle;
 }
 /* Buttons */
