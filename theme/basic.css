@@ -1,4 +1,4 @@
-@import url("font/cujojs/font.css");
+@import url("font/cujojs/cujojs.css");
 
 html {
 	font-size: 100%;
@@ -426,7 +426,7 @@ pre code {
 
 .icon-grid li {
     display: inline-block;
-    margin: 0;
+    margin: 8px 0;
     padding: 0;
     text-align: center;
     width: 19%;
